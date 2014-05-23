@@ -74,8 +74,11 @@
 
                 <configuration>
                     <artifactSet>
-                        <include>org.avaje.ebeanorm:avaje-ebeanorm</include>
-                        <include>com.mchange:*</include>
+                        <includes>
+                            <include>org.avaje.ebeanorm:avaje-ebeanorm</include>
+                            <include>com.mchange:*</include>
+                        </includes>
+
                     </artifactSet>
                     <relocations>
                         <relocation>
