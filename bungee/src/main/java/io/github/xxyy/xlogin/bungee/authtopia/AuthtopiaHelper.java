@@ -167,6 +167,7 @@ public class AuthtopiaHelper {
                 }
 
                 evt.getConnection().setOnlineMode(onlineMode);
+                plugin.getLogger().info(evt.getConnection().getName()+":premium="+evt.getConnection().isOnlineMode());
 
                 evt.completeIntent(plugin);
             }
