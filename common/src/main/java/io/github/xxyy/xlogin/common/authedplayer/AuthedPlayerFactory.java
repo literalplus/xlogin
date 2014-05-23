@@ -50,11 +50,11 @@ public final class AuthedPlayerFactory {
 
     public static void save(AuthedPlayer ap) {
         PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
-                        "uuid=?,username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?,x=?,y=?,z=?," +
-                        "world=?,sessions_enabled=?", ap.getUuid(),
+                        "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?,x=?,y=?,z=?," +
+                        "world=?,sessions_enabled=? WHERE uuid=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
                 ap.isDisabledPremiumMessage(), ap.getLastLogoutBlockX(), ap.getLastLogoutBlockY(),
-                ap.getLastLogoutBlockZ(), ap.getLastWorldName(), ap.isSessionsEnabled()
+                ap.getLastLogoutBlockZ(), ap.getLastWorldName(), ap.isSessionsEnabled(), ap.getUuid()
         );
     }
 
