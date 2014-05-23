@@ -82,10 +82,6 @@
                     </artifactSet>
                     <relocations>
                         <relocation>
-                            <pattern>com.avaje.ebean</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.bungee.lib.com.avaje.ebean</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>com.mchange</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.bungee.lib.com.mchange</shadedPattern>
                         </relocation>

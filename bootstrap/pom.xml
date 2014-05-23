@@ -41,6 +41,10 @@
             <groupId>com.google.gag</groupId>
             <artifactId>gag</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -64,6 +68,7 @@
                             <include>org.projectlombok:lombok</include>
                             <include>io.github.xxyy:common</include>
                             <include>com.google.gag:gag</include>
+                            <include>org.apache.commons:commons-lang3</include>
                         </includes>
                     </artifactSet>
                     <relocations>
@@ -79,9 +84,14 @@
                             <pattern>io.github.xxyy.common</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.lib.common</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.apache.commons.lang3</pattern>
+                            <shadedPattern>io.github.xxyy.xlogin.lib.org.apache.commons.lang3</shadedPattern>
+                        </relocation>
                     </relocations>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
                             <resource>AUTHORS</resource>
                             <resource>LICENSE</resource>
                             <resource>changelog.txt</resource>

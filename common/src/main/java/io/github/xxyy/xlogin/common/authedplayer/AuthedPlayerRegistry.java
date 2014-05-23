@@ -3,7 +3,7 @@ package io.github.xxyy.xlogin.common.authedplayer;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.Callback;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.util.HashMap;
 import java.util.Map;

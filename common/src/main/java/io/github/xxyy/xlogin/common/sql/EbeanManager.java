@@ -11,7 +11,7 @@ import io.github.xxyy.common.sql.SqlConnectables;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Helps managing Avaje Ebean.
