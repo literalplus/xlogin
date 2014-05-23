@@ -56,16 +56,16 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
+        final boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             public void run() {
-                if(plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
-                    plugin.getLogger().info("Player left before PostLogin: "+evt.getPlayer().getName());
+                if (plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
+                    plugin.getLogger().info("Player left before PostLogin: " + evt.getPlayer().getName());
                     return;
                 }
 
                 checkIp(evt);
 
-                boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
                 AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
                         .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
 
@@ -98,7 +98,7 @@ public class AuthtopiaListener implements Listener {
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
                         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
                         authedPlayer.setPremium(true);
-        //                fakeRegister(evt.getPlayer());
+                        //                fakeRegister(evt.getPlayer());
                     }
 
                     AuthedPlayerFactory.save(authedPlayer);
