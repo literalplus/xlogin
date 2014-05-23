@@ -116,7 +116,9 @@ public class AuthtopiaListener implements Listener {
 
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
-                    authedPlayer.authenticateSession();
+                    if(authedPlayer.authenticateSession()){
+                        evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
+                    }
                 }
 
                 if(evt.getPlayer().getServer() != null && authedPlayer != null) {

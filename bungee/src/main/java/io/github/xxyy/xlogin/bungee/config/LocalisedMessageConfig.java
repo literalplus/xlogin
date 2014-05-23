@@ -43,6 +43,7 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String sessionsDisabled = "Sitzungen sind deaktiviert.";
 
     public String premiumLoggedIn           = "§6[§a/premium§6] §7Du wurdest automatisch eingeloggt!";
+    public String sessionsLoggedIn          = "§6[§a/sessions§6] §7Deine Sitzung ist noch gültig.";
     public String successfullyAuthenticated = "Du hast dich erfolgreich eingeloggt!";
     public String premiumAvailable          = "Hast du diesen Account bei minecraft.net gekauft? Verwende §8/premium §7, um dich nicht mehr einloggen zu müssen!";
 
@@ -63,7 +64,8 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String passwordTooShort   = "Bitte verwende ein Passwort mit mehr als 4 Zeichen!";
     public String passwordInsecure   = "Bitte verwende ein sichereres Passwort! :)";
 
-    public String wrongPassword = "Falsches Passwort! :(";
+    public String wrongPassword   = "Falsches Passwort! :(";
+    public String sessionsEngaged = "Du musst dich für eine Zeit nicht mehr einloggen, da du Sitzungen Aktiviert hast! Verwende §6/sessions off§f, um dies abzuschalten.";
 
     public String oldPasswordIncorrect = "Dein altes Passwort ist inkorrekt!";
     public String passwordChanged      = "Passwort geändert!";

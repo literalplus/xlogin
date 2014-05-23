@@ -142,10 +142,6 @@ public class AuthedPlayer {
 
         AuthedPlayerFactory.save(this);
 
-        if(isSessionsEnabled()) {
-            SessionHelper.start(this);
-        }
-
         return true;
     }
 

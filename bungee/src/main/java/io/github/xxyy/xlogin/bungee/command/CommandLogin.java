@@ -3,6 +3,7 @@ package io.github.xxyy.xlogin.bungee.command;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.ips.SessionHelper;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -62,6 +63,11 @@ public class CommandLogin extends Command {
 
         //Last location
         plugin.teleportToLastLocation(plr);
+
+        if(authedPlayer.isSessionsEnabled()) {
+            SessionHelper.start(authedPlayer);
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsEngaged));
+        }
 
 
 //        //Failed login attempts
