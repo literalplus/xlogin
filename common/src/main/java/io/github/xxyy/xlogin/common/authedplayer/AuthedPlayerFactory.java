@@ -37,7 +37,7 @@ public final class AuthedPlayerFactory {
                 return authedPlayer;
             } else {
                 PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO "+AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET " +
-                        "uuid=?, username=?", uuid, username);
+                        "uuid=?, username=?", uuid.toString(), username);
                 AuthedPlayer authedPlayer = new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()),
                         0, 0, 0, null, true);
                 players.put(uuid, authedPlayer);
