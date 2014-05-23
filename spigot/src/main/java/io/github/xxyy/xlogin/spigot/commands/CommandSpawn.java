@@ -34,7 +34,7 @@ public class CommandSpawn implements CommandExecutor {
         final Player plr = (Player) sender;
 
         if(plr.hasPermission("xlogin.notpdelay")){
-
+            completeTp(plr);
         } else {
             plr.sendMessage(plugin.getConfig().getString("messages.spawndelay"));
             final Location oldLoc = plr.getLocation();
