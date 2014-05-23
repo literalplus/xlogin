@@ -57,6 +57,7 @@ public class MainListener implements Listener {
 
                     if(command.equals("resend")) {
                         ProxyServer.getInstance().getLogger().info("Resending auth data!");
+                        ProxiedPlayer finalPlr = null;
 
                         for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
                             AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
@@ -65,7 +66,11 @@ public class MainListener implements Listener {
                                 plugin.sendAuthNotification(plr, authedPlayer);
                                 plugin.teleportToLastLocation(plr);
                             }
+
+                            finalPlr = plr;
                         }
+
+                        plugin.sendAPIMessage(finalPlr, "resend-ok");
                     }
                 }
             } catch (IOException e) {

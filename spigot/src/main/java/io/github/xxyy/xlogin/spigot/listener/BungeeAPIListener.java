@@ -62,6 +62,8 @@ public class BungeeAPIListener implements PluginMessageListener {
                     UUID uuid = UUID.fromString(ds.readUTF());
 
                     XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(uuid, true);
+                } else if(command.equalsIgnoreCase("resend-ok")) {
+                    GenericListener.skip = false;
                 } else {
                     plugin.getLogger().info("Received unknown API message with action=" + command);
                 }

@@ -73,6 +73,7 @@ public class XLoginPlugin extends JavaPlugin {
 
         if(Bukkit.getOnlinePlayers().length > 0) {
             sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
+            GenericListener.skip = true;
         }
     }
 

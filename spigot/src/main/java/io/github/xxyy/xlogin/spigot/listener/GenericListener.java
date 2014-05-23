@@ -16,6 +16,7 @@ public class GenericListener implements Listener {
     private final String notLoggedInMessage;
     private final String notRegisteredMessage;
     private final XLoginPlugin plugin;
+    public static boolean skip = false;
 
     public GenericListener(XLoginPlugin plugin) {
         this.plugin = plugin;
@@ -52,6 +53,10 @@ public class GenericListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent evt) {
+        if(skip){
+            return;
+        }
+
         Player plr = evt.getPlayer();
         if (!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
             if (((evt.getTo().getX() != evt.getFrom().getX()) || (evt.getTo().getZ() != evt.getFrom().getZ()))) {
@@ -77,6 +82,10 @@ public class GenericListener implements Listener {
     }
 
     public void checkLoginAndMsg(Cancellable e, Player plr) {
+        if(skip) {
+            return;
+        }
+
         if (!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
             plr.sendMessage(this.notRegisteredMessage);
 
