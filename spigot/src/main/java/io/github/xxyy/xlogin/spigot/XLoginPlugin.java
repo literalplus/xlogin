@@ -17,6 +17,10 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * Represents the main interface of the xLogin plugin for Spigot.
  *
@@ -26,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class XLoginPlugin extends JavaPlugin {
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry();
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final String API_CHANNEL_NAME = "xLo-BungeeAPI";
     @Getter
     private Location spawnLocation;
 
@@ -49,7 +54,7 @@ public class XLoginPlugin extends JavaPlugin {
         //Register Bukkit stuffs
         BungeeAPIListener apiListener = new BungeeAPIListener(this);
 
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "xLo-BungeeAPI");
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, API_CHANNEL_NAME);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "xLo-BungeeAPI", apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
@@ -61,6 +66,10 @@ public class XLoginPlugin extends JavaPlugin {
 
         //Init config
         initConfig();
+
+        if(Bukkit.getOnlinePlayers().length > 0) {
+            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
+        }
     }
 
     public void initConfig() {
@@ -114,6 +123,23 @@ public class XLoginPlugin extends JavaPlugin {
 
             plr.teleport(new Location(world, authedPlayer.getLastLogoutBlockX(),
                     authedPlayer.getLastLogoutBlockY(), authedPlayer.getLastLogoutBlockZ()));
+        }
+    }
+
+    public void sendAPIMessage(Player plr, String action) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
+            try (DataOutputStream dos = new DataOutputStream(bos)) {
+                dos.writeUTF(action);
+                dos.writeUTF(plr.getUniqueId().toString());
+            } catch (IOException ignore) {
+                //go home Spigot, you have drunk
+            }
+
+            plr.sendPluginMessage(this, API_CHANNEL_NAME, bos.toByteArray());
+
+        } catch (IOException ignore) {
+            //oke what you're gonna do tho
         }
     }
 }
