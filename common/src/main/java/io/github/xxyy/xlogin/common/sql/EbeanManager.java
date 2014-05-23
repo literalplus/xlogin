@@ -51,7 +51,7 @@ public final class EbeanManager {
         sqlDbConfig.setUsername(sqlConnectable.getSqlUser());
         sqlDbConfig.setPassword(sqlConnectable.getSqlPwd());
         sqlDbConfig.setUrl(SqlConnectables.getHostString(sqlConnectable));
-        sqlDbConfig.setDriver("mysql");
+        sqlDbConfig.setDriver("org.mysql.jdbc.driver");
         config.setDataSourceConfig(sqlDbConfig);
 
         config.setDdlGenerate(true);
