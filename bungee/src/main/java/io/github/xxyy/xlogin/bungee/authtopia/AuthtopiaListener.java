@@ -166,6 +166,9 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), null);
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
+
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
     }
 

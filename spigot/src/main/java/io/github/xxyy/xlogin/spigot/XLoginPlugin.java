@@ -8,6 +8,7 @@ import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
+import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
 import lombok.Getter;
@@ -58,6 +59,7 @@ public class XLoginPlugin extends JavaPlugin {
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "xLo-BungeeAPI", apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
+        getCommand("spawn").setExecutor(new CommandSpawn(this));
 
         //Register the database we stole from Bukkit with our common lib
 //        EbeanManager.setEbean(getDatabase());
