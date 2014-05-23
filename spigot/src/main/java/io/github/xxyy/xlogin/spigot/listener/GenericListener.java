@@ -105,6 +105,6 @@ public class GenericListener implements Listener {
 
         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
 
-        evt.getPlayer().teleport(this.plugin.getSpawnLocation());
+        evt.getPlayer().teleport(plugin.getSpawnLocation());
     }
 }

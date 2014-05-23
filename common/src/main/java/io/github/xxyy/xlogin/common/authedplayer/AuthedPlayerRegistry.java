@@ -1,7 +1,5 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.Callback;
 import org.apache.commons.lang3.Validate;
 
@@ -17,7 +15,6 @@ import java.util.UUID;
  */
 public class AuthedPlayerRegistry {
     private final Map<UUID, AuthedPlayer> authedPlayers = new HashMap<>();
-    @Getter @Setter
     private Callback<AuthedPlayer> authenticationCallback = null;
 
     public boolean isAuthenticated(UUID uuid){
@@ -60,5 +57,13 @@ public class AuthedPlayerRegistry {
 
     public void clear() {
         authedPlayers.clear();
+    }
+
+    public Callback<AuthedPlayer> getAuthenticationCallback() {
+        return this.authenticationCallback;
+    }
+
+    public void setAuthenticationCallback(Callback<AuthedPlayer> authenticationCallback) {
+        this.authenticationCallback = authenticationCallback;
     }
 }

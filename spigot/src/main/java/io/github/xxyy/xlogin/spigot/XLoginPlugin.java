@@ -85,6 +85,13 @@ public class XLoginPlugin extends JavaPlugin {
             getLogger().warning("Unable to get spawn location! Using default spawn! Details: "+e.getMessage());
         }
 
+        if(spawnLocation == null) {
+            getLogger().warning("Couldn't load spawn.");
+            spawnLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
+        }
+
+        spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
+
         SpawnLocationHolder.setSpawn(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ(),
                 spawnLocation.getPitch(), spawnLocation.getYaw(), spawnLocation.getWorld().getName());
     }
