@@ -68,7 +68,12 @@ public class XLoginPlugin extends Plugin {
 
         //Establish database connection
         this.authtopiaHelper = new AuthtopiaHelper(this);
-        EbeanManager.initialise(getConnectableFromConfig());
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            EbeanManager.initialise(getConnectableFromConfig());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         //Register BungeeCord stuff
         this.getProxy().getPluginManager().registerListener(this, new AuthtopiaListener(this));
@@ -88,9 +93,9 @@ public class XLoginPlugin extends Plugin {
         String databaseName = config.getString("mysql.database", "bungee");
         return SqlConnectables.fromCredentials(
                 SqlConnectables.getHostString(config.getString("mysql.host", "localhost"), config.getInt("mysql.port", 3306), databaseName),
+                databaseName,
                 config.getString("mysql.user", "root"),
-                config.getString("mysql.passwd", ""),
-                databaseName
+                config.getString("mysql.passwd", "")
         );
     }
 

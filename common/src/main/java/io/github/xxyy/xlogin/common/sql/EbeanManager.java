@@ -45,19 +45,21 @@ public final class EbeanManager {
 
     public static EbeanServer initialise(SqlConnectable sqlConnectable) {
         ServerConfig config = new ServerConfig();
-        config.setName(EBEAN_SERVER_NAME);
 
         DataSourceConfig sqlDbConfig = new DataSourceConfig();
         sqlDbConfig.setUsername(sqlConnectable.getSqlUser());
         sqlDbConfig.setPassword(sqlConnectable.getSqlPwd());
         sqlDbConfig.setUrl(SqlConnectables.getHostString(sqlConnectable));
-        sqlDbConfig.setDriver("com.mysql.jdbc.driver");
+        sqlDbConfig.setDriver(com.mysql.jdbc.Driver.class.getName());
         config.setDataSourceConfig(sqlDbConfig);
 
         config.setDdlGenerate(true);
         config.setDdlRun(true);
 
+        config.setName(EBEAN_SERVER_NAME);
         config.setDefaultServer(false);
+        config.setRegister(false);
+        sqlDbConfig.setUrl(SqlConnectables.getHostString(sqlConnectable));
 
         AutofetchConfig autofetchConfig = new AutofetchConfig();
 
