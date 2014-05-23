@@ -66,8 +66,13 @@ public class AuthtopiaListener implements Listener {
 
                 checkIp(evt);
 
-                AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
-                        .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+                AuthedPlayer authedPlayer = null;
+
+                if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
+                    authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
+                            .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+                    authedPlayer.setValid(true);
+                }
 
                 if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     authedPlayer.setPremium(true);
@@ -83,6 +88,7 @@ public class AuthtopiaListener implements Listener {
                 } else { //  v^ Inform player if they are premium
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
 
+                    //noinspection ConstantConditions
                     if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
                             !authedPlayer.isDisabledPremiumMessage()) {
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAvailable));
@@ -92,7 +98,7 @@ public class AuthtopiaListener implements Listener {
 
                 //Make sure the user is in database
                 if (!knownBefore) {
-                    if (authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
+                    if (authedPlayer != null && authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
                             .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
@@ -104,9 +110,7 @@ public class AuthtopiaListener implements Listener {
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
                     authedPlayer.authenticateSession();
-                } /*else {
-                    fakeRegister(evt.getPlayer());
-                }*/
+                }
             }
         }, 500, TimeUnit.MILLISECONDS);
     }

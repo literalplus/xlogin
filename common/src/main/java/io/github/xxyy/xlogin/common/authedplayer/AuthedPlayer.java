@@ -3,9 +3,8 @@ package io.github.xxyy.xlogin.common.authedplayer;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
 import lombok.NonNull;
-import org.apache.commons.lang3.Validate;
 
-import javax.persistence.*;
+import javax.persistence.Transient;
 import java.sql.Timestamp;
 
 /**
@@ -82,7 +81,7 @@ public class AuthedPlayer {
     }
 
     public void setValid(boolean newValid) {
-        Validate.isTrue(isValid() || !newValid, "Cannot re-validate player!");
+//        Validate.isTrue(isValid() || !newValid, "Cannot re-validate player!");
 
         if (isValid() == newValid) {
             return;

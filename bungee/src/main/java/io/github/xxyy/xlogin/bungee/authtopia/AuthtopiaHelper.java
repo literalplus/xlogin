@@ -160,7 +160,7 @@ public class AuthtopiaHelper {
 
                 if (profiles.length == 1 && !profiles[0].getDemo()) {
                     onlineMode = true;
-                } else {
+                } else if (profiles.length != 0) {
                     plugin.getLogger().info(String.format("Encountered multiple profiles for username %s: %s!",
                             evt.getConnection().getName(),
                             CommandHelper.CSCollection(Arrays.asList(profiles))));
