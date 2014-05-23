@@ -21,14 +21,14 @@ public final class AuthedPlayerFactory {
     }
 
     public static AuthedPlayer get(UUID uuid, String username) {
-        if(players.containsKey(uuid)) {
+        if (players.containsKey(uuid)) {
             return players.get(uuid);
         }
 
-        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM "+AuthedPlayer.AUTH_DATA_TABLE_NAME+" WHERE uuid = ?", uuid.toString())
-        .assertHasResultSet()) {
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid = ?", uuid.toString())
+                .assertHasResultSet()) {
             ResultSet rs = qr.rs();
-            if(rs.next()) {
+            if (rs.next()) {
                 AuthedPlayer authedPlayer = new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
                         rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
                         rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
@@ -36,7 +36,7 @@ public final class AuthedPlayerFactory {
                 players.put(uuid, authedPlayer);
                 return authedPlayer;
             } else {
-                PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO "+AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET " +
+                PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "uuid=?, username=?", uuid.toString(), username);
                 AuthedPlayer authedPlayer = new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()),
                         0, 0, 0, null, true);
@@ -49,15 +49,16 @@ public final class AuthedPlayerFactory {
     }
 
     public static void save(AuthedPlayer ap) {
-        PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO "+AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET " +
-                "uuid=?,username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?,x=?,y=?,z=?," +
-                "world=?,sessions_enabled=?", ap.getUuid(),
+        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
+                        "uuid=?,username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?,x=?,y=?,z=?," +
+                        "world=?,sessions_enabled=?", ap.getUuid(),
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
                 ap.isDisabledPremiumMessage(), ap.getLastLogoutBlockX(), ap.getLastLogoutBlockY(),
-                ap.getLastLogoutBlockZ(), ap.getLastWorldName(), ap.isSessionsEnabled());
+                ap.getLastLogoutBlockZ(), ap.getLastWorldName(), ap.isSessionsEnabled()
+        );
     }
 
-    public static void remove(UUID uuid){
+    public static void remove(UUID uuid) {
         players.remove(uuid);
     }
 }
