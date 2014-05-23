@@ -65,7 +65,7 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String passwordInsecure   = "Bitte verwende ein sichereres Passwort! :)";
 
     public String wrongPassword   = "Falsches Passwort! :(";
-    public String sessionsEngaged = "Du musst dich für eine Zeit nicht mehr einloggen, da du Sitzungen Aktiviert hast! Verwende §6/sessions off§f, um dies abzuschalten.";
+    public String sessionsEngaged = "Du musst dich für eine Zeit nicht mehr einloggen, da du Sitzungen aktiviert hast! Verwende §6/sessions off§f, um dies abzuschalten.";
 
     public String oldPasswordIncorrect = "Dein altes Passwort ist inkorrekt!";
     public String passwordChanged      = "Passwort geändert!";

@@ -117,6 +117,7 @@ public class AuthtopiaListener implements Listener {
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
                     if(authedPlayer.authenticateSession()){
+                        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                     }
                 }
