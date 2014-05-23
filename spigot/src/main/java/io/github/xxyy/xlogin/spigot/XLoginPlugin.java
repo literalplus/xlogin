@@ -87,6 +87,10 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().addDefault("messages.spawntp", "§6Du wurdest zum Spawn teleportiert.");
         this.getConfig().addDefault("messages.notloggedin", "§6Du bist nicht eingeloggt! Versuche §e/login§6!");
         this.getConfig().addDefault("messages.notregistered", "§6Du bist nicht registriert! Versuche §e/register§6!");
+        this.getConfig().addDefault("messages.spawndelay", "§6Du wirst in 2 Sekunden teleportiert. Bewege dich nicht!");
+        this.getConfig().addDefault("messages.tpdmove", "§cDu hast dich bewegt!");
+        this.getConfig().addDefault("messages.tpdhit", "§cDu hast Schaden genommen!");
+        this.getConfig().addDefault("messages.tpdair", "§cTrockne dich zuerst ab, bevor zu zum Spawn gehst ;)");
         this.saveConfig();
 
         try {

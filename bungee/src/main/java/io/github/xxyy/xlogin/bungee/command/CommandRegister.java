@@ -64,6 +64,8 @@ public class CommandRegister extends Command {
         authedPlayer.setSalt(salt);
         authedPlayer.setPassword(PasswordHelper.encrypt(args[0], salt));
 
+        authedPlayer.setValid(true);
+
         Validate.isTrue(authedPlayer.authenticatePassword(args[0], plr.getAddress().getAddress().toString()), "Setting password failed for registration!");
 
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);

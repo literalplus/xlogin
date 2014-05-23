@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.spigot.commands;
 
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,7 +21,7 @@ public class CommandSpawn implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
         if(args.length > 0 && args[0].equalsIgnoreCase("help")) {
             return false;
         }
@@ -30,9 +31,43 @@ public class CommandSpawn implements CommandExecutor {
             return true;
         }
 
-        ((Player) sender).teleport(plugin.getSpawnLocation());
-        sender.sendMessage(plugin.getConfig().getString("messages.spawntp"));
+        final Player plr = (Player) sender;
+
+        if(plr.hasPermission("xlogin.notpdelay")){
+
+        } else {
+            plr.sendMessage(plugin.getConfig().getString("messages.spawndelay"));
+            final Location oldLoc = plr.getLocation();
+            final double oldHealth = plr.getHealth();
+            final double oldAir = plr.getRemainingAir();
+
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                public void run() {
+                    String denyMsg = null;
+
+                    if(plr.getLocation() != oldLoc) {
+                        denyMsg = "tpdmove";
+                    } else if (plr.getHealth() != oldHealth) {
+                        denyMsg = "tpdhit";
+                    } else if (plr.getRemainingAir() != oldAir) {
+                        denyMsg = "tpdair";
+                    }
+
+                    if(denyMsg != null) {
+                        plr.sendMessage(plugin.getConfig().getString("messages."+denyMsg));
+                        return;
+                    }
+
+                    completeTp(plr);
+                }
+            }, 2 * 20L);
+        }
 
         return true;
+    }
+
+    protected void completeTp(Player plr) {
+        plr.teleport(plugin.getSpawnLocation());
+        plr.sendMessage(plugin.getConfig().getString("messages.spawntp"));
     }
 }
