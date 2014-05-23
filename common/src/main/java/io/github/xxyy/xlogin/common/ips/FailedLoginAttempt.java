@@ -1,10 +1,6 @@
 package io.github.xxyy.xlogin.common.ips;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,14 +11,10 @@ import java.sql.Timestamp;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 17.5.14
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"id", "ip"})
 @Entity
 @Table(name = FailedLoginAttempt.TABLE_NAME)
 public class FailedLoginAttempt {
-    public static final String TABLE_NAME = "mt_main.xlogin_login_attempts";
+    public static final String TABLE_NAME = "xlogin_login_attempts";
 
     @Id
     private int id;
@@ -32,11 +24,71 @@ public class FailedLoginAttempt {
     private AuthedPlayer user;
     private Timestamp timestamp;
 
-    public void setUser(AuthedPlayer newUser) {
-        this.user = newUser;
+    @java.beans.ConstructorProperties({"id", "ip", "user", "timestamp"})
+    public FailedLoginAttempt(int id, String ip, AuthedPlayer user, Timestamp timestamp) {
+        this.id = id;
+        this.ip = ip;
+        this.user = user;
+        this.timestamp = timestamp;
+    }
 
-        if(!user.getLoginAttempts().contains(this)) {
-            user.getLoginAttempts().add(this);
-        }
+    public FailedLoginAttempt() {
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public AuthedPlayer getUser() {
+        return this.user;
+    }
+
+    public Timestamp getTimestamp() {
+        return this.timestamp;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String toString() {
+        return "io.github.xxyy.xlogin.common.ips.FailedLoginAttempt(id=" + this.id + ", ip=" + this.ip + ", user=" + this.user + ", timestamp=" + this.timestamp + ")";
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof FailedLoginAttempt)) return false;
+        final FailedLoginAttempt other = (FailedLoginAttempt) o;
+        if (!other.canEqual((Object) this)) return false;
+        if (this.getId() != other.getId()) return false;
+        final Object this$ip = this.getIp();
+        final Object other$ip = other.getIp();
+        if (this$ip == null ? other$ip != null : !this$ip.equals(other$ip)) return false;
+        return true;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        result = result * PRIME + this.getId();
+        final Object $ip = this.getIp();
+        result = result * PRIME + ($ip == null ? 0 : $ip.hashCode());
+        return result;
+    }
+
+    public boolean canEqual(Object other) {
+        return other instanceof FailedLoginAttempt;
     }
 }

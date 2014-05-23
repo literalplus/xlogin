@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -35,6 +36,8 @@ public class GenericListener implements Listener {
         }
 
         evt.setQuitMessage(null);
+
+        AuthedPlayerFactory.remove(plr.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -97,5 +100,7 @@ public class GenericListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
         evt.setJoinMessage(null); //TODO configurable
+
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
     }
 }

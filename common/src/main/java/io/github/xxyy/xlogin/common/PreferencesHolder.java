@@ -1,9 +1,6 @@
 package io.github.xxyy.xlogin.common;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import io.github.xxyy.common.sql.SafeSql;
 
 /**
  * Holds some server-specific preferences used by the common library.
@@ -12,10 +9,27 @@ import lombok.Setter;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 17.5.14
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PreferencesHolder {
-    @Getter @Setter
     private static int maxUsersPerIp;
-    @Getter @Setter
     private static int sessionExpriyTime;
+    public static SafeSql sql;
+
+    private PreferencesHolder() {
+    }
+
+    public static int getMaxUsersPerIp() {
+        return PreferencesHolder.maxUsersPerIp;
+    }
+
+    public static int getSessionExpriyTime() {
+        return PreferencesHolder.sessionExpriyTime;
+    }
+
+    public static void setMaxUsersPerIp(int maxUsersPerIp) {
+        PreferencesHolder.maxUsersPerIp = maxUsersPerIp;
+    }
+
+    public static void setSessionExpriyTime(int sessionExpriyTime) {
+        PreferencesHolder.sessionExpriyTime = sessionExpriyTime;
+    }
 }

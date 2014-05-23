@@ -1,11 +1,13 @@
 package io.github.xxyy.xlogin.spigot;
 
+import io.github.xxyy.common.sql.SafeSql;
+import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
 import lombok.Getter;
@@ -27,6 +29,16 @@ public class XLoginPlugin extends JavaPlugin {
     @Getter
     private Location spawnLocation;
 
+//    @Override
+//    public List<Class<?>> getDatabaseClasses() {
+//        List<Class<?>> list = new ArrayList<>();
+//        list.add(IpAddress.class);
+//        list.add(AuthedPlayer.class);
+//        list.add(Session.class);
+//        list.add(FailedLoginAttempt.class);
+//        return list;
+//    }
+
     @Override
     public void onDisable() {
 
@@ -43,7 +55,9 @@ public class XLoginPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
 
         //Register the database we stole from Bukkit with our common lib
-        EbeanManager.setEbean(getDatabase());
+//        EbeanManager.setEbean(getDatabase());
+        PreferencesHolder.sql = new SafeSql(SqlConnectables.fromCredentials("jdbc:mysql://localhost:3306/mt_main", "mt_main",
+                "bungeecord", "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps"));
 
         //Init config
         initConfig();
@@ -58,7 +72,7 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().addDefault("spawn.z", 0);
         this.getConfig().addDefault("spawn.pitch", 0F);
         this.getConfig().addDefault("spawn.yaw", 0F);
-        this.getConfig().addDefault("spawn.world", Bukkit.getWorlds().get(0));
+        this.getConfig().addDefault("spawn.world", Bukkit.getWorlds().get(0).getName());
         this.getConfig().addDefault("messages.spawntp", "§6Du wurdest zum Spawn teleportiert.");
         this.getConfig().addDefault("messages.notloggedin", "§6Du bist nicht eingeloggt! Versuche §e/login§6!");
         this.getConfig().addDefault("messages.notregistered", "§6Du bist nicht registriert! Versuche §e/register§6!");

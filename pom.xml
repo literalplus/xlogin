@@ -22,6 +22,7 @@
         <bungeecord.version>1.7</bungeecord.version>
         <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ebean.version>2.8.1</ebean.version>
     </properties>
 
     <dependencyManagement>
@@ -77,9 +78,9 @@
                 <version>4.0.10.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.avaje.ebeanorm</groupId>
-                <artifactId>avaje-ebeanorm</artifactId>
-                <version>3.3.1</version>
+                <groupId>org.avaje</groupId>
+                <artifactId>ebean</artifactId>
+                <version>${ebean.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.gag</groupId>
@@ -130,7 +131,7 @@
             <dependency>
                 <groupId>org.avaje.ebeanorm</groupId>
                 <artifactId>avaje-ebeanorm-agent</artifactId>
-                <version>4.1.2</version>
+                <version>${ebean.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

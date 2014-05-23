@@ -40,9 +40,9 @@ public class BungeeAPIListener implements PluginMessageListener {
                     plugin.teleportToLastLocation(plr);
                 } else if (command.equalsIgnoreCase("auth")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
-                    AuthedPlayer.AuthenticationProvider authProvider = AuthedPlayer.AuthenticationProvider.values()[ds.readInt()];
 
                     Player plr = Bukkit.getPlayer(uuid);
+                    AuthedPlayer.AuthenticationProvider authProvider = AuthedPlayer.AuthenticationProvider.values()[ds.readInt()];
 
                     if (plr == null) {
                         plugin.getLogger().info(MessageFormat.format("Received auth notification for unknown player '{'UUID={0}, AuthenticationProvider={1}'}'",
@@ -50,7 +50,11 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(uuid, plr.getName()));
+                    AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(uuid, plr.getName());
+                    authedPlayer.setAuthenticationProvider(authProvider);
+
+
+                    XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());

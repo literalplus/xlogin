@@ -1,8 +1,10 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
+import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
 import lombok.NonNull;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,30 +31,32 @@ public class AuthedPlayerRepository {
         if (knownPlayers.containsKey(uuid)) {
             return knownPlayers.get(uuid);
         }
+        boolean rtrn = false;
 
-        boolean rtrn = EbeanManager.getEbean().createSqlQuery("SELECT COUNT(*) AS count FROM `"
-                + AuthedPlayer.AUTH_DATA_TABLE_NAME + "` WHERE uuid=?")
-                .setParameter(1, uuid.toString())
-                .setMaxRows(1).findUnique()
-                .getInteger("count") > 0;
+        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) FROM "+AuthedPlayer.AUTH_DATA_TABLE_NAME+" WHERE uuid=?", uuid.toString()).assertHasResultSet()) {
+            rtrn = qr.rs().next() && qr.rs().getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         this.knownPlayers.put(uuid, rtrn);
 
         return rtrn;
     }
 
-    /**
-     * Fetches a player from the database.
-     * Will not create new data if no object was found.
-     *
-     * @param uuid Unique Id of the player to find
-     * @return An object representing the player or {@code null} if there is no such player.
-     */
-    public AuthedPlayer fetchPlayer(@NonNull UUID uuid) {
-        return EbeanManager.getEbean().find(AuthedPlayer.class)
-                .where()
-                .eq("uuid", uuid.toString())
-                .findUnique();
-    }
+//    /**
+//     * Fetches a player from the database.
+//     * Will not create new data if no object was found.
+//     *
+//     * @param uuid Unique Id of the player to find
+//     * @return An object representing the player or {@code null} if there is no such player.
+//     */
+//    public AuthedPlayer fetchPlayer(@NonNull UUID uuid) {
+////        return EbeanManager.getEbean().find(AuthedPlayer.class)
+////                .where()
+////                .eq("uuid", uuid.toString())
+////                .findUnique();
+//        return AuthedPlayerFactory.get(uuid)
+//    }
 
     /**
      * Fetches a player from database or creates it if there is no such player.
@@ -62,19 +66,11 @@ public class AuthedPlayerRepository {
      * @return An AuthedPLayer instance corresponding to the arguments
      */
     public AuthedPlayer getPlayer(@NonNull UUID uuid, @NonNull String name) {
-        AuthedPlayer aplr = fetchPlayer(uuid);
-
-        if (aplr == null) {
-            aplr = new AuthedPlayer();
-
-            aplr.setUuid(uuid.toString());
-            aplr.setName(name);
-            EbeanManager.getEbean().save(aplr);
-        }
+        AuthedPlayer aplr = AuthedPlayerFactory.get(uuid, name);
 
         if(!aplr.getName().equals(name)) {
             aplr.setName(name);
-            EbeanManager.getEbean().save(aplr);
+            AuthedPlayerFactory.save(aplr);
         }
 
         return aplr;
@@ -82,7 +78,6 @@ public class AuthedPlayerRepository {
 
     public void clear() {
         this.knownPlayers.clear();
-        EbeanManager.getEbean().getServerCacheManager().clearAll();
     }
 
     public void updateKnown(UUID uuid, boolean knownState) {

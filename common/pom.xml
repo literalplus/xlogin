@@ -25,10 +25,6 @@
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.avaje.ebeanorm</groupId>
-            <artifactId>avaje-ebeanorm</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.gag</groupId>
             <artifactId>gag</artifactId>
         </dependency>
@@ -40,9 +36,63 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>mysql</groupId>-->
+            <!--<artifactId>mysql-connector-java</artifactId>-->
+        <!--</dependency>-->
     </dependencies>
+
+    <build>
+        <plugins>
+            <!--<plugin>-->
+                <!--<groupId>org.avaje</groupId>-->
+                <!--<artifactId>ebean-maven-enhancement-plugin</artifactId>-->
+                <!--<version>${ebean.version}</version>-->
+
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>process-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>enhance</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<packages>io.github.xxyy.xlogin.common.**</packages>-->
+                            <!--<transformArgs>debug=2</transformArgs>-->
+                            <!--&lt;!&ndash;<classSource>${project.build.outputDirectory}</classSource>-->
+                            <!--<classDestination>${project.build.outputDirectory}</classDestination>&ndash;&gt;-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>lombok-needs-tools-jar</id>-->
+            <!--<activation>-->
+                <!--<file>-->
+                    <!--<exists>${java.home}/../lib/tools.jar</exists>-->
+                <!--</file>-->
+            <!--</activation>-->
+            <!--<build>-->
+                <!--<plugins>-->
+                    <!--<plugin>-->
+                        <!--<groupId>org.projectlombok</groupId>-->
+                        <!--<artifactId>lombok-maven-plugin</artifactId>-->
+                        <!--<version>1.12.6.0</version>-->
+                        <!--<dependencies>-->
+                            <!--<dependency>-->
+                                <!--<groupId>sun.jdk</groupId>-->
+                                <!--<artifactId>tools</artifactId>-->
+                                <!--<version>1.6</version>-->
+                                <!--<scope>system</scope>-->
+                                <!--<systemPath>${java.home}/../lib/tools.jar</systemPath>-->
+                            <!--</dependency>-->
+                        <!--</dependencies>-->
+                    <!--</plugin>-->
+                <!--</plugins>-->
+            <!--</build>-->
+        <!--</profile>-->
+    <!--</profiles>-->
 </project>

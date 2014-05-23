@@ -1,9 +1,5 @@
 package io.github.xxyy.xlogin.common.api;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 /**
  * Holds the xLogin spawn location.
  * Implementation chosen for licensing purposes.
@@ -11,20 +7,16 @@ import lombok.NoArgsConstructor;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.5.14
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SpawnLocationHolder {
-    @Getter
     private static int x;
-    @Getter
     private static int y;
-    @Getter
     private static int z;
-    @Getter
     private static float pitch;
-    @Getter
     private static float yaw;
-    @Getter
     private static String worldName;
+
+    private SpawnLocationHolder() {
+    }
 
     public static void setSpawn(int newX, int newY, int newZ, float newPitch, float newYaw, String braveNewWorld) {
         x = newX;
@@ -33,5 +25,29 @@ public final class SpawnLocationHolder {
         pitch = newPitch;
         yaw = newYaw;
         worldName = braveNewWorld;
+    }
+
+    public static int getX() {
+        return SpawnLocationHolder.x;
+    }
+
+    public static int getY() {
+        return SpawnLocationHolder.y;
+    }
+
+    public static int getZ() {
+        return SpawnLocationHolder.z;
+    }
+
+    public static float getPitch() {
+        return SpawnLocationHolder.pitch;
+    }
+
+    public static float getYaw() {
+        return SpawnLocationHolder.yaw;
+    }
+
+    public static String getWorldName() {
+        return SpawnLocationHolder.worldName;
     }
 }
