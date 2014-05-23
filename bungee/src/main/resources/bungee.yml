@@ -1,0 +1,4 @@
+name: xLogin BungeeCord
+version: ${project.version}
+main: io.github.xxyy.xlogin.bungee.XLoginPlugin
+author: xxyy

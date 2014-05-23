@@ -1,0 +1,28 @@
+name: xLogin_Spigot
+version: ${project.version}
+description: Login thing. Spigot side of things. Premium detection.
+main: io.github.xxyy.xlogin.spigot.XLoginPlugin
+author: xxyy98 (Philipp Nowak)
+load: STARTUP
+database: true
+website: http://xxyy.github.io/
+prefix: xLo
+loadbefore: [MinoTopiaCore, McSystem]
+
+commands:
+  xlos:
+    description: Manages the xLogin Spigot compat plugin.
+    aliases: [xlogins, xlogin_spigot]
+    permission: xlogin.manage
+    permission-message: Du darfst das n...um...Dieser Befehl existiert nicht.
+  spawn:
+    description: Teleports players to the spawn
+    aliases: [sporn, spawnpunkt, espawn]
+    permission: xlogin.spawn
+    usage: "/<command> - Teleportiert dich zum Spawn."
+
+permissions:
+  xlogin.spawn:
+    default: true
+  xlogin.manage:
+    default: op
