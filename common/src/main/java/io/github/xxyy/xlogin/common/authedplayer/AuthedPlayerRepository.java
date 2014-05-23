@@ -81,7 +81,11 @@ public class AuthedPlayerRepository {
         this.knownPlayers.clear();
     }
 
-    public void updateKnown(UUID uuid, boolean knownState) {
-        this.knownPlayers.put(uuid, knownState);
+    public void updateKnown(UUID uuid, Boolean knownState) {
+        if (knownState == null) {
+            this.knownPlayers.remove(uuid);
+        } else {
+            this.knownPlayers.put(uuid, knownState);
+        }
     }
 }

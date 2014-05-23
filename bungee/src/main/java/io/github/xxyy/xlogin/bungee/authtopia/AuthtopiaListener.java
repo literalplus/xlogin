@@ -124,6 +124,8 @@ public class AuthtopiaListener implements Listener {
                 if(evt.getPlayer().getServer() != null && authedPlayer != null) {
                     plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
                 }
+
+                XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), null);
             }
         }, 500, TimeUnit.MILLISECONDS);
     }
