@@ -40,6 +40,7 @@ public class GenericListener implements Listener {
         evt.setQuitMessage(null);
 
         AuthedPlayerFactory.remove(plr.getUniqueId());
+        XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

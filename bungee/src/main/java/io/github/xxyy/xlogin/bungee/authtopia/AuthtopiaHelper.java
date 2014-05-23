@@ -102,6 +102,10 @@ public class AuthtopiaHelper {
         plr.getServer().sendData(CHANNEL_NAME, bada.toByteArray());
 
 
+        tryRegisterAuth(plr, authedPlayer);
+    }
+
+    public void tryRegisterAuth(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
         if (authedPlayer.isAuthenticated()) {
             plugin.sendAuthNotification(plr, authedPlayer);
             plugin.teleportToLastLocation(plr);

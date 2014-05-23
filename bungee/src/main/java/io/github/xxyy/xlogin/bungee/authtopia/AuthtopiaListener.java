@@ -104,12 +104,16 @@ public class AuthtopiaListener implements Listener {
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
                         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
                         authedPlayer.setPremium(true);
-                        //                fakeRegister(evt.getPlayer());
+                        fakeRegister(evt.getPlayer());
                     }
 
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
                     authedPlayer.authenticateSession();
+                }
+
+                if(evt.getPlayer().getServer() != null && authedPlayer != null) {
+                    plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
                 }
             }
         }, 500, TimeUnit.MILLISECONDS);
@@ -119,7 +123,9 @@ public class AuthtopiaListener implements Listener {
 //        ProxyServer.getInstance().getScheduler().runAsync(plugin, new Runnable() {
 //            @Override
 //            public void run() {
-        plugin.sendAPIMessage(plr, "register");
+        if(plr.getServer() != null) {
+            plugin.sendAPIMessage(plr, "register");
+        }
 //            }
 //        });
     }
