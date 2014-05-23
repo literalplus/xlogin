@@ -74,6 +74,10 @@
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -102,6 +106,7 @@
                             <include>joda-time:joda-time</include>
                             <include>javax.validation:validation-api</include>
                             <include>javax.transaction:jta</include>
+                            <include>mysql:mysql-connector-java</include>
                         </includes>
                     </artifactSet>
                     <relocations>

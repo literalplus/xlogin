@@ -101,31 +101,32 @@
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
             </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.29</version>
+            </dependency>
 
             <dependency>
                 <groupId>javax.transaction</groupId>
                 <artifactId>jta</artifactId>
                 <version>1.1</version>
             </dependency>
-
             <dependency>
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>1.0.0.GA</version>
             </dependency>
-
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>1.6</version>
             </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>1.7.2</version>
             </dependency>
-
             <dependency>
                 <groupId>org.avaje.ebeanorm</groupId>
                 <artifactId>avaje-ebeanorm-agent</artifactId>
