@@ -7,7 +7,6 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -56,6 +55,11 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
+        AuthedPlayer cachedPlayer = AuthedPlayerFactory.getCache(evt.getPlayer().getUniqueId());
+        if(cachedPlayer != null) {
+            cachedPlayer.setValid(false);
+        }
+
         final boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             public void run() {
@@ -104,7 +108,10 @@ public class AuthtopiaListener implements Listener {
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
                         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
                         authedPlayer.setPremium(true);
-                        fakeRegister(evt.getPlayer());
+
+                        if(evt.getPlayer().getServer() != null) {
+                            plugin.notifyRegister(evt.getPlayer());
+                        }
                     }
 
                     AuthedPlayerFactory.save(authedPlayer);
@@ -117,17 +124,6 @@ public class AuthtopiaListener implements Listener {
                 }
             }
         }, 500, TimeUnit.MILLISECONDS);
-    }
-
-    private void fakeRegister(final ProxiedPlayer plr) {
-//        ProxyServer.getInstance().getScheduler().runAsync(plugin, new Runnable() {
-//            @Override
-//            public void run() {
-        if(plr.getServer() != null) {
-            plugin.sendAPIMessage(plr, "register");
-        }
-//            }
-//        });
     }
 
     private void checkIp(PostLoginEvent evt) {

@@ -65,8 +65,8 @@ public class CommandRegister extends Command {
         authedPlayer.setPassword(PasswordHelper.encrypt(args[0], salt));
 
         Validate.isTrue(authedPlayer.authenticatePassword(args[0], plr.getAddress().getAddress().toString()), "Setting password failed for registration!");
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
 
+        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, plr.getName()));
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
@@ -74,5 +74,6 @@ public class CommandRegister extends Command {
 
         AuthedPlayerFactory.save(authedPlayer);
         plugin.notifyRegister(plr);
+        plugin.sendAuthNotification(plr, authedPlayer);
     }
 }

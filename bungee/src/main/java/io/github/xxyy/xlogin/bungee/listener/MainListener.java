@@ -40,10 +40,7 @@ public class MainListener implements Listener {
                 evt.setCancelled(true);
 
                 plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
-                return;
-            }
-
-            if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+            } else if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
                 evt.setCancelled(true);
 
                 plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));

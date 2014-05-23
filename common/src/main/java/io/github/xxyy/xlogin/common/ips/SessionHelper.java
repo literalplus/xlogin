@@ -43,4 +43,14 @@ public final class SessionHelper {
         return isValid;
     }
 
+    public static boolean start(AuthedPlayer authedPlayer) {
+        if(!authedPlayer.isAuthenticated() || !authedPlayer.isValid() || authedPlayer.isPremium()) {
+            return false;
+        }
+
+        PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO mt_main.xlogin_sessions SET user=?,ip=?,expiry_time=?",
+                authedPlayer.getUuid(), authedPlayer.getLastIp(), (System.currentTimeMillis() / 1000L) + PreferencesHolder.getSessionExpriyTime());
+
+        return true;
+    }
 }
