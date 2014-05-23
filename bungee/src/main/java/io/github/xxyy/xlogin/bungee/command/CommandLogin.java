@@ -46,6 +46,8 @@ public class CommandLogin extends Command {
 
         AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
 
+        authedPlayer.setValid(true);
+
         if(!authedPlayer
                 .authenticatePassword(args[0], plr.getAddress().getAddress().toString())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().wrongPassword));
