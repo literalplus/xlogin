@@ -47,7 +47,9 @@ public class XLoginPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        for(Player plr : Bukkit.getOnlinePlayers()) {
+            saveLocation(plr);
+        }
     }
 
     @Override
@@ -146,6 +148,17 @@ public class XLoginPlugin extends JavaPlugin {
 
         } catch (IOException ignore) {
             //oke what you're gonna do tho
+        }
+    }
+
+    public void saveLocation(Player plr) {
+        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+
+        if (authedPlayer != null) {
+            authedPlayer.setLastLogoutBlockX(plr.getLocation().getBlockX());
+            authedPlayer.setLastLogoutBlockY(plr.getLocation().getBlockY());
+            authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
+            authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
         }
     }
 }

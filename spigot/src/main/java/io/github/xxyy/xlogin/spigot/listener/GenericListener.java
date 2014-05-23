@@ -1,6 +1,5 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.entity.EntityType;
@@ -28,14 +27,7 @@ public class GenericListener implements Listener {
     public void onQuit(final PlayerQuitEvent evt) {
         Player plr = evt.getPlayer();
 
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
-
-        if (authedPlayer != null) {
-            authedPlayer.setLastLogoutBlockX(plr.getLocation().getBlockX());
-            authedPlayer.setLastLogoutBlockY(plr.getLocation().getBlockY());
-            authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
-            authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
-        }
+        plugin.saveLocation(plr);
 
         evt.setQuitMessage(null);
 
