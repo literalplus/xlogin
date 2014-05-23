@@ -33,6 +33,8 @@ public class GenericListener implements Listener {
             authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
             authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
         }
+
+        evt.setQuitMessage(null);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -90,5 +92,10 @@ public class GenericListener implements Listener {
             e.setCancelled(true);
             return;
         }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent evt) {
+        evt.setJoinMessage(null); //TODO configurable
     }
 }

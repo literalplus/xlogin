@@ -54,6 +54,26 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.avaje.ebeanorm</groupId>
+            <artifactId>avaje-ebeanorm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.transaction</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -77,8 +97,12 @@
                         <includes>
                             <include>org.avaje.ebeanorm:avaje-ebeanorm</include>
                             <include>com.mchange:*</include>
+                            <include>org.slf4j:slf4j-api</include>
+                            <include>org.avaje.ebeanorm:avaje-ebeanorm-agent</include>
+                            <include>joda-time:joda-time</include>
+                            <include>javax.validation:validation-api</include>
+                            <include>javax.transaction:jta</include>
                         </includes>
-
                     </artifactSet>
                     <relocations>
                         <relocation>
@@ -86,6 +110,7 @@
                             <shadedPattern>io.github.xxyy.xlogin.bungee.lib.com.mchange</shadedPattern>
                         </relocation>
                     </relocations>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
         </plugins>

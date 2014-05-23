@@ -73,7 +73,8 @@
                             <include>io.github.xxyy:common</include>
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
-                            <include>org.apache.commons:commons-lang</include>
+                            <include>commons-lang:commons-lang</include>
+                            <include>javax.persistence:persistence-api</include>
                         </includes>
                     </artifactSet>
                     <relocations>
