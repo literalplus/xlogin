@@ -41,10 +41,6 @@
             <groupId>com.google.gag</groupId>
             <artifactId>gag</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.avaje.ebeanorm</groupId>
-            <artifactId>avaje-ebeanorm</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -84,6 +80,14 @@
                             <shadedPattern>io.github.xxyy.xlogin.lib.common</shadedPattern>
                         </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                            <resource>AUTHORS</resource>
+                            <resource>LICENSE</resource>
+                            <resource>changelog.txt</resource>
+                            <resource>version.txt</resource>
+                        </transformer>
+                    </transformers>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
