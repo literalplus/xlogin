@@ -55,26 +55,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.avaje.ebeanorm</groupId>
-            <artifactId>avaje-ebeanorm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
-        </dependency>
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
@@ -99,13 +79,12 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>org.avaje.ebeanorm:avaje-ebeanorm</include>
+                            <!--<include>org.avaje:ebean</include>-->
                             <include>com.mchange:*</include>
-                            <include>org.slf4j:slf4j-api</include>
-                            <include>org.avaje.ebeanorm:avaje-ebeanorm-agent</include>
-                            <include>joda-time:joda-time</include>
-                            <include>javax.validation:validation-api</include>
-                            <include>javax.transaction:jta</include>
+                            <!--<include>org.slf4j:slf4j-api</include>-->
+                            <!--<include>org.avaje.ebeanorm:avaje-ebeanorm-agent</include>-->
+                            <!--<include>javax.validation:validation-api</include>-->
+                            <!--<include>javax.transaction:jta</include>-->
                             <include>mysql:mysql-connector-java</include>
                         </includes>
                     </artifactSet>

@@ -49,6 +49,10 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -75,6 +79,7 @@
                             <include>org.apache.commons:commons-lang3</include>
                             <include>commons-lang:commons-lang</include>
                             <include>javax.persistence:persistence-api</include>
+                            <include>joda-time:joda-time</include>
                         </includes>
                     </artifactSet>
                     <relocations>

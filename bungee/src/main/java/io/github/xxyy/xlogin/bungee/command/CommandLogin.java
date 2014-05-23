@@ -3,14 +3,9 @@ package io.github.xxyy.xlogin.bungee.command;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.ips.FailedLoginAttempt;
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Handles the /login command.
@@ -66,21 +61,21 @@ public class CommandLogin extends Command {
         plugin.teleportToLastLocation(plr);
 
 
-        //Failed login attempts
-        List<FailedLoginAttempt> attempts = EbeanManager.getEbean().find(FailedLoginAttempt.class)
-                .where().eq("user", plr)
-                .findList();
-
-        if(attempts.size() > 0) {
-            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().failedLoginAttemptsFound, attempts.size()));
-
-            for(FailedLoginAttempt attempt : attempts) {
-                plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().failedLoginAttemptItem,
-                        new Date(attempt.getTimestamp().getTime()), attempt.getIp()
-                        ));
-
-                EbeanManager.getEbean().delete(attempt);
-            }
-        }
+//        //Failed login attempts
+//        List<FailedLoginAttempt> attempts = EbeanManager.getEbean().find(FailedLoginAttempt.class)
+//                .where().eq("user", authedPlayer)
+//                .findList();
+//
+//        if(attempts.size() > 0) {
+//            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().failedLoginAttemptsFound, attempts.size()));
+//
+//            for(FailedLoginAttempt attempt : attempts) {
+//                plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().failedLoginAttemptItem,
+//                        new Date(attempt.getTimestamp().getTime()), attempt.getIp()
+//                        ));
+//
+//                EbeanManager.getEbean().delete(attempt);
+//            }
+//        }
     }
 }

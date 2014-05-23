@@ -24,6 +24,18 @@ public class MainListener implements Listener {
         if (evt.getSender() instanceof ProxiedPlayer) {
             ProxiedPlayer plr = (ProxiedPlayer) evt.getSender();
 
+            if(evt.getMessage().startsWith("/login")
+                    || evt.getMessage().startsWith("/register")) {
+                return;
+            }
+
+            if(!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+                evt.setCancelled(true);
+
+                plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
+                return;
+            }
+
             if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
                 evt.setCancelled(true);
 

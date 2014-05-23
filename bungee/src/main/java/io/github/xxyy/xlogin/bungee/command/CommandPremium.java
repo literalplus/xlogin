@@ -5,6 +5,7 @@ import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -78,6 +79,8 @@ public class CommandPremium extends Command {
         authedPlayer.setSessionsEnabled(false);
 
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().accountMarkedPremium));
+
+        AuthedPlayerFactory.save(authedPlayer);
 
         plr.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().accountMarkedPremium)); //Kick player to ensure that it works
     }

@@ -1,31 +1,35 @@
 package io.github.xxyy.xlogin.bungee;
 
+import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectable;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.version.PluginVersion;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaHelper;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaListener;
-import io.github.xxyy.xlogin.bungee.command.CommandLogin;
+import io.github.xxyy.xlogin.bungee.command.*;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.common.Const;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.Callback;
-import net.md_5.bungee.api.config.ConfigurationAdapter;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.conf.Configuration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main class interfacing with the BungeeCord plugin API.
@@ -70,7 +74,7 @@ public class XLoginPlugin extends Plugin {
         this.authtopiaHelper = new AuthtopiaHelper(this);
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            EbeanManager.initialise(getConnectableFromConfig());
+            PreferencesHolder.sql = new SafeSql(getConnectableFromConfig());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -79,8 +83,24 @@ public class XLoginPlugin extends Plugin {
         this.getProxy().getPluginManager().registerListener(this, new AuthtopiaListener(this));
         this.getProxy().getPluginManager().registerListener(this, new MainListener(this));
         this.getProxy().getPluginManager().registerCommand(this, new CommandLogin(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandChangePassword(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandPremium(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandRegister(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandSessions(this));
         this.getProxy().registerChannel(API_CHANNEL_NAME);
         this.getProxy().registerChannel(AuthtopiaHelper.CHANNEL_NAME);
+        this.getProxy().getScheduler().schedule(this, new Runnable() {
+            @Override
+            public void run() {
+                ipOnlinePlayers.clear();
+
+                for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
+                    String ipString = plr.getAddress().getAddress().toString();
+                    Integer onlinePlayers = ipOnlinePlayers.get(ipString);
+                    ipOnlinePlayers.put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
+                }
+            }
+        }, 5L, 5L, TimeUnit.MINUTES);
 
         //Register auth callback
         registerAuthCallback();
@@ -89,13 +109,13 @@ public class XLoginPlugin extends Plugin {
     }
 
     public SqlConnectable getConnectableFromConfig() {
-        ConfigurationAdapter config = this.getProxy().getConfigurationAdapter();
-        String databaseName = config.getString("mysql.database", "bungee");
+        Configuration configurationAdapter = ((BungeeCord) this.getProxy()).getConfig();
+        String databaseName = "bungeecord";
         return SqlConnectables.fromCredentials(
-                SqlConnectables.getHostString(config.getString("mysql.host", "localhost"), config.getInt("mysql.port", 3306), databaseName),
+                SqlConnectables.getHostString(databaseName, "jdbc:mysql://212.224.126.96/"),
                 databaseName,
-                config.getString("mysql.user", "root"),
-                config.getString("mysql.passwd", "")
+                "bungeecord",
+                "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps" //FIXME fuck
         );
     }
 
@@ -138,6 +158,11 @@ public class XLoginPlugin extends Plugin {
             @Override
             public void done(AuthedPlayer authedPlayer, Throwable throwable) {
                 ProxiedPlayer plr = XLoginPlugin.this.getProxy().getPlayer(authedPlayer.getName()); //TODO lookup by UUID
+
+                if(plr == null) {
+                    System.out.println("wowe no player 4 name "+authedPlayer.getName());
+                    return;
+                }
 
                 try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 

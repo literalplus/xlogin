@@ -3,6 +3,7 @@ package io.github.xxyy.xlogin.bungee.command;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -62,6 +63,8 @@ public class CommandSessions extends Command {
             }
 
             authedPlayer.setSessionsEnabled(newState);
+
+            AuthedPlayerFactory.save(authedPlayer);
         }
 
         if (authedPlayer.isSessionsEnabled()) {

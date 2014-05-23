@@ -8,18 +8,22 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.ProfileRepository;
+import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.Const;
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -51,11 +55,11 @@ public class AuthtopiaHelper {
     public AuthtopiaHelper(final XLoginPlugin plugin) {
         this.plugin = plugin;
         ConfigurationAdapter config = plugin.getProxy().getConfigurationAdapter();
-        final String host = config.getString("mysql.host", "localhost");
-        final String user = config.getString("mysql.user", "root");
-        final String pass = config.getString("mysql.passwd", "");
-        final String db = config.getString("mysql.database", "bungeecord");
-        final int port = config.getInt("mysql.port", 3306);
+        final String host = "jdbc:mysql://212.224.126.96";
+        final String user = "bungeecord";
+        final String pass = "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps";
+        final String db = "bungeecord";
+        final int port = 3306;
         this.connect(host, port, user, pass, db, new FutureCallback<Boolean>() {
             @Override
             public void onSuccess(@NotNull Boolean result) {
@@ -95,8 +99,7 @@ public class AuthtopiaHelper {
         bada.writeUTF(plr.getUniqueId().toString());
 //        bada.writeBoolean(this.premiumPlayers.remove(uniqueId));
         bada.writeBoolean(authedPlayer.isAuthenticated()
-                && authedPlayer.getAuthenticationProvider()
-                .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM));
+                && AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider()));
         plr.getServer().sendData(CHANNEL_NAME, bada.toByteArray());
 
         if (authedPlayer.isAuthenticated()) {
@@ -113,29 +116,33 @@ public class AuthtopiaHelper {
      * @param callback Code to execute once the check is complete.
      */
     public void isSimulateCracked(final String name, FutureCallback<Boolean> callback) {
-        ListenableFuture<Boolean> submit = service.submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                PreparedStatement stmt = null;
-                Connection con = null;
-                ResultSet rs = null;
-                try {
-                    con = dataSource.getConnection();
-                    stmt = con.prepareStatement("SELECT name FROM auth_list WHERE name=?");
-                    stmt.setString(1, name);
-                    rs = stmt.executeQuery();
-                    return rs.next();
-                } catch (SQLException ex) {
-                    plugin.getLogger().log(Level.SEVERE, "Could not get entry: " + name, ex);
-                    return false;
-                } finally {
-                    tryClose(stmt);
-                    tryClose(rs);
-                    tryClose(con);
-                }
-            }
-        });
-        Futures.addCallback(submit, callback);
+//        ListenableFuture<Boolean> submit = service.submit(new Callable<Boolean>() {
+//            @Override
+//            public Boolean call() {
+////                PreparedStatement stmt = null;
+////                Connection con = null;
+////                ResultSet rs = null;
+//                try {
+////                    return EbeanManager.getEbean().createSqlQuery("SELECT name FROM auth_list WHERE name=?")
+////                            .setParameter(1, name)
+////                            .findUnique() != null;
+//
+//                } catch (SQLException ex) {
+//                    plugin.getLogger().log(Level.SEVERE, "Could not get entry: " + name, ex);
+//                    return false;
+//                } finally {
+//                    tryClose(stmt);
+//                    tryClose(rs);
+//                    tryClose(con);
+//                }
+//            }
+//        });
+//        Futures.addCallback(submit, callback);
+        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT name FROM auth_list WHERE name=?", name)) {
+            callback.onSuccess(qr.rs().next());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -198,7 +205,7 @@ public class AuthtopiaHelper {
 
         authedPlayer.setValid(false);
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
-        EbeanManager.getEbean().save(authedPlayer);
+        AuthedPlayerFactory.save(authedPlayer);
     }
 
     /**

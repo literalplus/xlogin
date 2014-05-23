@@ -1,9 +1,11 @@
 package io.github.xxyy.xlogin.bungee.authtopia;
 
+import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
-import io.github.xxyy.xlogin.common.sql.EbeanManager;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -12,6 +14,7 @@ import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.sql.SQLException;
 import java.text.MessageFormat;
 
 /**
@@ -57,7 +60,9 @@ public class AuthtopiaListener implements Listener {
         AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
                 .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
 
-
+        if(!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
+            authedPlayer.setPremium(true);
+        }
 
         if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
                 plugin.getAuthtopiaHelper().registerPremium(evt.getPlayer(), authedPlayer)) {
@@ -76,7 +81,7 @@ public class AuthtopiaListener implements Listener {
         //Make sure the user is in database
         if (!knownBefore) {
             //Save the user to database
-            EbeanManager.getEbean().save(authedPlayer);
+//            EbeanManager.getEbean().save(authedPlayer);
 
             if (authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
                     .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
@@ -85,6 +90,8 @@ public class AuthtopiaListener implements Listener {
                 XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
                 authedPlayer.setPremium(true);
             }
+
+            AuthedPlayerFactory.save(authedPlayer);
         } else {
             authedPlayer.authenticateSession();
         }
@@ -94,16 +101,20 @@ public class AuthtopiaListener implements Listener {
         String ipString = evt.getPlayer().getAddress().getAddress().toString();
         IpAddress ipAddress = IpAddress.fromIpString(ipString);
         Integer maxUsers = ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();
+        int count = 0;
 
-        int count = EbeanManager.getEbean().createSqlQuery("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
-                " WHERE user_lastip = ? AND uuid != ?")
-                .setParameter(1, ipString)
-                .setParameter(2, evt.getPlayer().getUniqueId())
-                .findUnique().getInteger("cnt");
+        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
+                " WHERE user_lastip = ? AND uuid != ?", ipString, evt.getPlayer().getUniqueId())) {
+            if(qr.rs().next()) {
+                count = qr.rs().getInt("cnt");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         if(count >= maxUsers) {
             evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
-                    plugin.getMessages().ipAccountLimitedReached, maxUsers
+                    plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
                     ));
             return;
         }
@@ -111,7 +122,7 @@ public class AuthtopiaListener implements Listener {
         Integer onlinePlayers = plugin.getIpOnlinePlayers().get(ipString);
         if(onlinePlayers != null && onlinePlayers >= maxUsers) {
             evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
-                    plugin.getMessages().ipAccountLimitedReached, maxUsers
+                    plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
             ));
             return;
         }
@@ -128,8 +139,6 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onDisconnect(final PlayerDisconnectEvent evt) {
-        plugin.getAuthtopiaHelper().unregisterPremium(evt.getPlayer());
-
         String ipString = evt.getPlayer().getAddress().getAddress().toString();
         Integer onlinePlayers = plugin.getIpOnlinePlayers().get(ipString);
         if(onlinePlayers != null) {
@@ -139,5 +148,8 @@ public class AuthtopiaListener implements Listener {
                 plugin.getIpOnlinePlayers().put(ipString, onlinePlayers - 1);
             }
         }
+
+        plugin.getAuthtopiaHelper().unregisterPremium(evt.getPlayer());
+
     }
 }
