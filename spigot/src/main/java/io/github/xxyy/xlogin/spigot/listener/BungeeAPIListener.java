@@ -52,6 +52,7 @@ public class BungeeAPIListener implements PluginMessageListener {
 
                     AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(uuid, plr.getName());
                     authedPlayer.setAuthenticationProvider(authProvider);
+                    authedPlayer.setAuthenticated(true);
 
 
                     XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
