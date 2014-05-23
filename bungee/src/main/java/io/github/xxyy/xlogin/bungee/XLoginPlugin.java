@@ -18,7 +18,6 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -94,7 +93,7 @@ public class XLoginPlugin extends Plugin {
             public void run() {
                 ipOnlinePlayers.clear();
 
-                for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
+                for (ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
                     String ipString = plr.getAddress().getAddress().toString();
                     Integer onlinePlayers = ipOnlinePlayers.get(ipString);
                     ipOnlinePlayers.put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
@@ -103,7 +102,6 @@ public class XLoginPlugin extends Plugin {
         }, 5L, 5L, TimeUnit.MINUTES);
 
         //Register auth callback
-        registerAuthCallback();
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }
@@ -153,33 +151,22 @@ public class XLoginPlugin extends Plugin {
         }
     }
 
-    private void registerAuthCallback() {
-        AUTHED_PLAYER_REGISTRY.setAuthenticationCallback(new Callback<AuthedPlayer>() {
-            @Override
-            public void done(AuthedPlayer authedPlayer, Throwable throwable) {
-                ProxiedPlayer plr = XLoginPlugin.this.getProxy().getPlayer(authedPlayer.getName()); //TODO lookup by UUID
+    public void sendAuthNotification(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
 
-                if(plr == null) {
-                    System.out.println("wowe no player 4 name "+authedPlayer.getName());
-                    return;
-                }
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
-                try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-
-                    try (DataOutputStream dos = new DataOutputStream(bos)) {
-                        dos.writeUTF("auth");
-                        dos.writeUTF(plr.getUniqueId().toString());
-                        dos.writeInt(authedPlayer.getAuthenticationProvider().ordinal());
-                    } catch (IOException ignore) {
-                        //go home BungeeCord, you have drunk
-                    }
-
-                    plr.getServer().sendData(API_CHANNEL_NAME, bos.toByteArray());
-
-                } catch (IOException ignore) {
-                    //oke what you're gonna do tho
-                }
+            try (DataOutputStream dos = new DataOutputStream(bos)) {
+                dos.writeUTF("auth");
+                dos.writeUTF(plr.getUniqueId().toString());
+                dos.writeInt(authedPlayer.getAuthenticationProvider().ordinal());
+            } catch (IOException ignore) {
+                //go home BungeeCord, you have drunk
             }
-        });
+
+            plr.getServer().sendData(API_CHANNEL_NAME, bos.toByteArray());
+
+        } catch (IOException ignore) {
+            //oke what you're gonna do tho
+        }
     }
 }

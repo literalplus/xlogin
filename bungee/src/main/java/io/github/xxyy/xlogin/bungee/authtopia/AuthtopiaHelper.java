@@ -97,12 +97,13 @@ public class AuthtopiaHelper {
 
         ByteArrayDataOutput bada = ByteStreams.newDataOutput();
         bada.writeUTF(plr.getUniqueId().toString());
-//        bada.writeBoolean(this.premiumPlayers.remove(uniqueId));
         bada.writeBoolean(authedPlayer.isAuthenticated()
                 && AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider()));
         plr.getServer().sendData(CHANNEL_NAME, bada.toByteArray());
 
+
         if (authedPlayer.isAuthenticated()) {
+            plugin.sendAuthNotification(plr, authedPlayer);
             plugin.teleportToLastLocation(plr);
         }
     }
@@ -138,7 +139,7 @@ public class AuthtopiaHelper {
 //            }
 //        });
 //        Futures.addCallback(submit, callback);
-        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT name FROM auth_list WHERE name=?", name)) {
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT name FROM auth_list WHERE name=?", name)) {
             callback.onSuccess(qr.rs().next());
         } catch (SQLException e) {
             e.printStackTrace();

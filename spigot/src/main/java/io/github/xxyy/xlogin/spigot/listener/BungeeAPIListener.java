@@ -56,6 +56,7 @@ public class BungeeAPIListener implements PluginMessageListener {
 
 
                     XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+                    XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(uuid, true);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());

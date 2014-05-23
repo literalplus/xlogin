@@ -53,6 +53,7 @@ public class CommandLogin extends Command {
         }
 
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+        plugin.sendAuthNotification(plr, authedPlayer);
 
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
