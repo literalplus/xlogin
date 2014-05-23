@@ -192,6 +192,9 @@ public class AuthtopiaHelper {
     public boolean registerPremium(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
         if (authedPlayer.authenticatePremium()) {
             XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+
+            plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: "+plr.getUniqueId());
+
             return true;
         }
 
@@ -207,6 +210,7 @@ public class AuthtopiaHelper {
         authedPlayer.setValid(false);
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
         AuthedPlayerFactory.save(authedPlayer);
+        plugin.getLogger().info("Premium player " + plr.getName() + " disconnected.");
     }
 
     /**

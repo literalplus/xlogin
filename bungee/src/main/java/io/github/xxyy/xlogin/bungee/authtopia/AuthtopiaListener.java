@@ -147,6 +147,7 @@ public class AuthtopiaListener implements Listener {
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
+
     }
 
 
