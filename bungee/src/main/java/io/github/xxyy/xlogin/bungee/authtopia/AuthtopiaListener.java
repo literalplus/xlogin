@@ -7,7 +7,6 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -56,59 +55,63 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
-        checkIp(evt);
+        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
+            public void run() {
+                checkIp(evt);
 
-        boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
-                .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+                boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
+                AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
+                        .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
 
-        if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
-            authedPlayer.setPremium(true);
-        }
+                if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
+                    authedPlayer.setPremium(true);
+                }
 
-        boolean authed = false;
+                boolean authed = false;
 
-        if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
-                plugin.getAuthtopiaHelper().registerPremium(evt.getPlayer(), authedPlayer)) {
+                if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
+                        plugin.getAuthtopiaHelper().registerPremium(evt.getPlayer(), authedPlayer)) {
 
-            evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
-            authed = true;
-        } else { //  v^ Inform player if they are premium
-            evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
+                    evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
+                    authed = true;
+                } else { //  v^ Inform player if they are premium
+                    evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
 
-            if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
-                    !authedPlayer.isDisabledPremiumMessage()) {
-                evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAvailable));
+                    if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
+                            !authedPlayer.isDisabledPremiumMessage()) {
+                        evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAvailable));
+                    }
+                }
+
+
+                //Make sure the user is in database
+                if (!knownBefore) {
+                    if (authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
+                            .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
+
+                        plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
+                        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
+                        authedPlayer.setPremium(true);
+                        fakeRegister(evt.getPlayer());
+                    }
+
+                    AuthedPlayerFactory.save(authedPlayer);
+                } else if (!authed) {
+                    authedPlayer.authenticateSession();
+                } else {
+                    fakeRegister(evt.getPlayer());
+                }
             }
-        }
-
-
-        //Make sure the user is in database
-        if (!knownBefore) {
-            if (authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
-                    .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
-
-                plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
-                XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
-                authedPlayer.setPremium(true);
-                fakeRegister(evt.getPlayer());
-            }
-
-            AuthedPlayerFactory.save(authedPlayer);
-        } else if (!authed) {
-            authedPlayer.authenticateSession();
-        } else {
-            fakeRegister(evt.getPlayer());
-        }
+        });
     }
 
     private void fakeRegister(final ProxiedPlayer plr) {
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, new Runnable() {
-            @Override
-            public void run() {
-                plugin.sendAPIMessage(plr, "register");
-            }
-        });
+//        ProxyServer.getInstance().getScheduler().runAsync(plugin, new Runnable() {
+//            @Override
+//            public void run() {
+        plugin.sendAPIMessage(plr, "register");
+//            }
+//        });
     }
 
     private void checkIp(PostLoginEvent evt) {

@@ -3,7 +3,6 @@ version: ${project.version}
 description: Login thing. Spigot side of things. Premium detection.
 main: io.github.xxyy.xlogin.spigot.XLoginPlugin
 author: xxyy98 (Philipp Nowak)
-load: STARTUP
 database: false
 website: http://xxyy.github.io/
 prefix: xLo
