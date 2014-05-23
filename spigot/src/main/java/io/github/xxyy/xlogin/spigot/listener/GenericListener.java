@@ -16,8 +16,10 @@ import org.bukkit.event.player.*;
 public class GenericListener implements Listener {
     private final String notLoggedInMessage;
     private final String notRegisteredMessage;
+    private final XLoginPlugin plugin;
 
     public GenericListener(XLoginPlugin plugin) {
+        this.plugin = plugin;
         notLoggedInMessage = plugin.getConfig().getString("messages.notloggedin");
         notRegisteredMessage = plugin.getConfig().getString("messages.notregistered");
     }
@@ -102,5 +104,7 @@ public class GenericListener implements Listener {
         evt.setJoinMessage(null); //TODO configurable
 
         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
+
+        evt.getPlayer().teleport(this.plugin.getSpawnLocation());
     }
 }

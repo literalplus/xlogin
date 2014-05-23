@@ -64,10 +64,13 @@ public class AuthtopiaListener implements Listener {
             authedPlayer.setPremium(true);
         }
 
+        boolean authed = false;
+
         if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
                 plugin.getAuthtopiaHelper().registerPremium(evt.getPlayer(), authedPlayer)) {
 
             evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
+            authed = true;
         } else { //  v^ Inform player if they are premium
             evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
 
@@ -80,20 +83,20 @@ public class AuthtopiaListener implements Listener {
 
         //Make sure the user is in database
         if (!knownBefore) {
-            //Save the user to database
-//            EbeanManager.getEbean().save(authedPlayer);
-
             if (authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
                     .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
                 plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
                 XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
                 authedPlayer.setPremium(true);
+                plugin.sendAPIMessage(evt.getPlayer(), "register");
             }
 
             AuthedPlayerFactory.save(authedPlayer);
-        } else {
+        } else if (!authed) {
             authedPlayer.authenticateSession();
+        } else {
+            plugin.sendAPIMessage(evt.getPlayer(), "register");
         }
     }
 
