@@ -156,13 +156,13 @@ public class XLoginPlugin extends JavaPlugin {
     public void saveLocation(Player plr) {
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
 
-        if (authedPlayer != null) {
+//        if (authedPlayer != null) {
             authedPlayer.setLastLogoutBlockX(plr.getLocation().getBlockX());
             authedPlayer.setLastLogoutBlockY(plr.getLocation().getBlockY());
             authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
             authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
 
             AuthedPlayerFactory.save(authedPlayer);
-        }
+//        }
     }
 }
