@@ -6,6 +6,7 @@ import io.github.xxyy.common.util.LocationHelper;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
@@ -160,6 +161,8 @@ public class XLoginPlugin extends JavaPlugin {
             authedPlayer.setLastLogoutBlockY(plr.getLocation().getBlockY());
             authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
             authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
+
+            AuthedPlayerFactory.save(authedPlayer);
         }
     }
 }

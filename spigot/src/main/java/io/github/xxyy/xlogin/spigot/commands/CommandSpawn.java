@@ -45,7 +45,9 @@ public class CommandSpawn implements CommandExecutor {
                 public void run() {
                     String denyMsg = null;
 
-                    if(plr.getLocation() != oldLoc) {
+                    if(plr.getLocation().getBlockX() != oldLoc.getBlockX() ||
+                            plr.getLocation().getBlockY() != oldLoc.getBlockY() ||
+                            plr.getLocation().getBlockZ() != oldLoc.getBlockZ()) {
                         denyMsg = "tpdmove";
                     } else if (plr.getHealth() != oldHealth) {
                         denyMsg = "tpdhit";
