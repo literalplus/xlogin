@@ -34,6 +34,7 @@ public class GenericListener implements Listener {
 
         AuthedPlayerFactory.remove(plr.getUniqueId());
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(evt.getPlayer().getUniqueId());
     }
 
     public void onKick(final PlayerKickEvent evt) {
@@ -41,6 +42,7 @@ public class GenericListener implements Listener {
 
         AuthedPlayerFactory.remove(evt.getPlayer().getUniqueId());
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

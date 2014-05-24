@@ -103,6 +103,7 @@ public class AuthedPlayerRepository {
     public void forget(UUID uuid) {
         updateKnown(uuid, null);
         this.knownPlayers.remove(uuid);
+        AuthedPlayerFactory.remove(uuid);
     }
 
     public void updateKnown(UUID uuid, Boolean knownState) {

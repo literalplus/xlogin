@@ -41,7 +41,6 @@ public class AuthtopiaHelper {
     public static final ProfileRepository PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
     private ComboPooledDataSource dataSource = null;
     private ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
-    private List<UUID> premiumPlayers = new ArrayList<>();
     private XLoginPlugin plugin;
 
     /**
@@ -215,7 +214,7 @@ public class AuthtopiaHelper {
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(plr.getUniqueId());
 //        AuthedPlayerFactory.save(authedPlayer);
-        plugin.getLogger().info("Premium player " + plr.getName() + " disconnected.");
+        plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }
 
     /**
