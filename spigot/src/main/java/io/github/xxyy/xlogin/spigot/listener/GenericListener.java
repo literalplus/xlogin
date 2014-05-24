@@ -36,6 +36,13 @@ public class GenericListener implements Listener {
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
     }
 
+    public void onKick(final PlayerKickEvent evt) {
+        plugin.saveLocation(evt.getPlayer());
+
+        AuthedPlayerFactory.remove(evt.getPlayer().getUniqueId());
+        XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
+    }
+
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent e) {
         checkLoginAndMsg(e, e.getPlayer());
