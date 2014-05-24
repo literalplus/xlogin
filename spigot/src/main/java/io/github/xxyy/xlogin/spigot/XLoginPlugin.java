@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Represents the main interface of the xLogin plugin for Spigot.
@@ -48,7 +49,7 @@ public class XLoginPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for(Player plr : Bukkit.getOnlinePlayers()) {
+        for (Player plr : Bukkit.getOnlinePlayers()) {
             saveLocation(plr);
         }
     }
@@ -72,7 +73,7 @@ public class XLoginPlugin extends JavaPlugin {
         //Init config
         initConfig();
 
-        if(Bukkit.getOnlinePlayers().length > 0) {
+        if (Bukkit.getOnlinePlayers().length > 0) {
             sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
             GenericListener.skip = true;
         }
@@ -101,10 +102,10 @@ public class XLoginPlugin extends JavaPlugin {
             spawnLocation = LocationHelper.fromDetailedConfiguration(this.getConfig().getConfigurationSection("spawn"));
         } catch (IllegalArgumentException e) {
             spawnLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
-            getLogger().warning("Unable to get spawn location! Using default spawn! Details: "+e.getMessage());
+            getLogger().warning("Unable to get spawn location! Using default spawn! Details: " + e.getMessage());
         }
 
-        if(spawnLocation == null) {
+        if (spawnLocation == null) {
             getLogger().warning("Couldn't load spawn.");
             spawnLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
         }
@@ -123,11 +124,11 @@ public class XLoginPlugin extends JavaPlugin {
         int z = authedPlayer.getLastLogoutBlockZ();
         String worldName = authedPlayer.getLastWorldName();
 
-        if(x == 0 || y == 0 || z == 0) {
+        if (x == 0 || y == 0 || z == 0) {
             plr.teleport(spawnLocation);
         } else {
             World world = getServer().getWorld(authedPlayer.getLastWorldName());
-            if(world == null) {
+            if (world == null) {
                 world = spawnLocation.getWorld();
             }
 
@@ -155,14 +156,23 @@ public class XLoginPlugin extends JavaPlugin {
 
     public void saveLocation(Player plr) {
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        final UUID uuid = plr.getUniqueId();
+        final Location location = plr.getLocation();
 
-//        if (authedPlayer != null) {
-            authedPlayer.setLastLogoutBlockX(plr.getLocation().getBlockX());
-            authedPlayer.setLastLogoutBlockY(plr.getLocation().getBlockY());
-            authedPlayer.setLastLogoutBlockZ(plr.getLocation().getBlockZ());
-            authedPlayer.setLastWorldName(plr.getLocation().getWorld().getName());
+        authedPlayer.setLastLogoutBlockX(location.getBlockX());
+        authedPlayer.setLastLogoutBlockY(location.getBlockY());
+        authedPlayer.setLastLogoutBlockZ(location.getBlockZ());
+        authedPlayer.setLastWorldName(location.getWorld().getName());
 
-            AuthedPlayerFactory.save(authedPlayer);
+        AuthedPlayerFactory.save(authedPlayer);
+
+        this.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET x=?,y=?,z=?,world=? WHERE uuid=?",
+                        location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid);
+            }
+        }, 20L);
 //        }
     }
 }
