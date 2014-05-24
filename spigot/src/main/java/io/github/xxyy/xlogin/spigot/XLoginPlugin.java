@@ -95,6 +95,10 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().addDefault("messages.tpdmove", "§cDu hast dich bewegt!");
         this.getConfig().addDefault("messages.tpdhit", "§cDu hast Schaden genommen!");
         this.getConfig().addDefault("messages.tpdair", "§cTrockne dich zuerst ab, bevor zu zum Spawn gehst ;)");
+        this.getConfig().addDefault("sql.user", "bungeecord");
+        this.getConfig().addDefault("sql.db", "bungeecord");
+        this.getConfig().addDefault("sql.password", "");
+        this.getConfig().addDefault("sql.host", "jdbc://mysql:localhost:3306/bungeecord");
         this.saveConfig();
 
         try {
@@ -154,20 +158,11 @@ public class XLoginPlugin extends JavaPlugin {
     }
 
     public void saveLocation(Player plr) {
-        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
-        final UUID uuid = plr.getUniqueId();
-        final Location location = plr.getLocation();
+        UUID uuid = plr.getUniqueId();
+        Location location = plr.getLocation();
 
-        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET x=?,y=?,z=?,world=? WHERE uuid=?",
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid);
-
-        this.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET x=?,y=?,z=?,world=? WHERE uuid=?",
-                        location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid);
-            }
-        }, 20L);
-//        }
+        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString());
+        getLogger().info("Saved location for " + uuid);
     }
 }
