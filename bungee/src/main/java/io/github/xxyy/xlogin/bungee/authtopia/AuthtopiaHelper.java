@@ -213,6 +213,7 @@ public class AuthtopiaHelper {
 
         authedPlayer.setValid(false);
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
+        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(plr.getUniqueId());
 //        AuthedPlayerFactory.save(authedPlayer);
         plugin.getLogger().info("Premium player " + plr.getName() + " disconnected.");
     }

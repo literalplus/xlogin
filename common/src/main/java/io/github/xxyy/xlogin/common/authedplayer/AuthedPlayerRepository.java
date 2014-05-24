@@ -100,6 +100,11 @@ public class AuthedPlayerRepository {
         this.knownPlayers.clear();
     }
 
+    public void forget(UUID uuid) {
+        updateKnown(uuid, null);
+        this.knownPlayers.remove(uuid);
+    }
+
     public void updateKnown(UUID uuid, Boolean knownState) {
         if (knownState == null) {
             this.knownPlayers.remove(uuid);

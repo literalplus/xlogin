@@ -58,6 +58,7 @@ public class AuthtopiaListener implements Listener {
         AuthedPlayer cachedPlayer = AuthedPlayerFactory.getCache(evt.getPlayer().getUniqueId());
         if(cachedPlayer != null) {
             cachedPlayer.setValid(false);
+            XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forceGetPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
         }
 
         final boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
