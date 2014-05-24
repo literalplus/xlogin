@@ -128,7 +128,7 @@ public class AuthtopiaListener implements Listener {
 
                 XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), null);
             }
-        }, 500, TimeUnit.MILLISECONDS);
+        }, 250, TimeUnit.MILLISECONDS);
     }
 
     private void checkIp(PostLoginEvent evt) {

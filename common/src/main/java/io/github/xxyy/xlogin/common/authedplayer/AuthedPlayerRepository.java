@@ -77,6 +77,25 @@ public class AuthedPlayerRepository {
         return aplr;
     }
 
+    /**
+     * Fetches a player from database or creates it if there is no such player.
+     * Overrides local cache.
+     *
+     * @param uuid UUID of the player to get
+     * @param name Name of the player to get
+     * @return An AuthedPLayer instance corresponding to the arguments
+     */
+    public AuthedPlayer forceGetPlayer(@NonNull UUID uuid, @NonNull String name) {
+        AuthedPlayer aplr = AuthedPlayerFactory.forceGet(uuid, name);
+
+        if (!aplr.getName().equals(name)) {
+            aplr.setName(name);
+            AuthedPlayerFactory.save(aplr);
+        }
+
+        return aplr;
+    }
+
     public void clear() {
         this.knownPlayers.clear();
     }

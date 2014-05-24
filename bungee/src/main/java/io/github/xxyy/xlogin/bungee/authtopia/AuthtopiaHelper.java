@@ -14,7 +14,6 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -214,7 +213,7 @@ public class AuthtopiaHelper {
 
         authedPlayer.setValid(false);
         XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
-        AuthedPlayerFactory.save(authedPlayer);
+//        AuthedPlayerFactory.save(authedPlayer);
         plugin.getLogger().info("Premium player " + plr.getName() + " disconnected.");
     }
 

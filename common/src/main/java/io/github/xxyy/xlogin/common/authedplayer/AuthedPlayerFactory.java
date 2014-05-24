@@ -25,6 +25,10 @@ public final class AuthedPlayerFactory {
             return players.get(uuid);
         }
 
+        return forceGet(uuid, username);
+    }
+
+    public static AuthedPlayer forceGet(UUID uuid, String username) {
         try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid = ?", uuid.toString())
                 .assertHasResultSet()) {
             ResultSet rs = qr.rs();
