@@ -6,7 +6,6 @@ import io.github.xxyy.common.util.LocationHelper;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
@@ -159,12 +158,8 @@ public class XLoginPlugin extends JavaPlugin {
         final UUID uuid = plr.getUniqueId();
         final Location location = plr.getLocation();
 
-        authedPlayer.setLastLogoutBlockX(location.getBlockX());
-        authedPlayer.setLastLogoutBlockY(location.getBlockY());
-        authedPlayer.setLastLogoutBlockZ(location.getBlockZ());
-        authedPlayer.setLastWorldName(location.getWorld().getName());
-
-        AuthedPlayerFactory.save(authedPlayer);
+        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME+" SET x=?,y=?,z=?,world=? WHERE uuid=?",
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid);
 
         this.getServer().getScheduler().runTaskLaterAsynchronously(this, new Runnable() {
             @Override
