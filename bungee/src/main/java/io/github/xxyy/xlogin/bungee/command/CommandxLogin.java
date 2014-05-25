@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 
 /**
@@ -41,6 +42,8 @@ public class CommandxLogin extends Command {
                 XLoginPlugin.AUTHED_PLAYER_REPOSITORY.clear();
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
+                sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
+                return;
             default:
                 sendAll(sender, HELP_COMPONENTS);
         }
