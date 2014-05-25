@@ -101,19 +101,23 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().addDefault("sql.host", "jdbc://mysql:localhost:3306/bungeecord");
         this.saveConfig();
 
+        spawnLocation = null;
         try {
-            spawnLocation = LocationHelper.fromDetailedConfiguration(this.getConfig().getConfigurationSection("spawn"));
+            updateSpawnLocation(LocationHelper.fromDetailedConfiguration(this.getConfig().getConfigurationSection("spawn")));
         } catch (IllegalArgumentException e) {
-            spawnLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
             getLogger().warning("Unable to get spawn location! Using default spawn! Details: " + e.getMessage());
         }
 
         if (spawnLocation == null) {
             getLogger().warning("Couldn't load spawn.");
-            spawnLocation = Bukkit.getWorlds().get(0).getSpawnLocation();
+            updateSpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation());
         }
 
         spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
+    }
+
+    public void updateSpawnLocation(Location location) {
+        this.spawnLocation = location;
 
         SpawnLocationHolder.setSpawn(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ(),
                 spawnLocation.getPitch(), spawnLocation.getYaw(), spawnLocation.getWorld().getName());
@@ -164,5 +168,16 @@ public class XLoginPlugin extends JavaPlugin {
         PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
                 location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString());
         getLogger().info("Saved location for " + uuid);
+    }
+
+    public void setSpawn(Location location) {
+        updateSpawnLocation(location);
+
+        this.getConfig().set("spawn.x", location.getBlockX());
+        this.getConfig().set("spawn.y", location.getBlockY());
+        this.getConfig().set("spawn.z", location.getBlockZ());
+        this.getConfig().set("spawn.pitch", location.getPitch());
+        this.getConfig().set("spawn.yaw", location.getYaw());
+        this.getConfig().set("spawn.world", location.getWorld().getName());
     }
 }

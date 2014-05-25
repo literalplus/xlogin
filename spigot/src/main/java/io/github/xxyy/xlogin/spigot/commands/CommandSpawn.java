@@ -22,18 +22,34 @@ public class CommandSpawn implements CommandExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
-        if(args.length > 0 && args[0].equalsIgnoreCase("help")) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("help")) {
             return false;
         }
 
-        if(!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage("Dieser Befehl kann nur von Spielern verwendet werden!");
             return true;
         }
 
         final Player plr = (Player) sender;
 
-        if(plr.hasPermission("xlogin.notpdelay")){
+        if (args[0].equalsIgnoreCase("set")) {
+            if (plr.hasPermission("xlogin.admin")) {
+                if (args.length < 2 || !args[1].equalsIgnoreCase("sicher")) {
+                    plr.sendMessage("§4Sicher? /spawn set sicher");
+                    return true;
+                } else {
+                    plugin.setSpawn(plr.getLocation());
+                    plr.sendMessage("§6Neuer Spawn: Deine Position (" + plr.getLocation() + ")");
+                    return true;
+                }
+            } else {
+                plr.sendMessage("§4403 Permishun is denie §7(dis is rhyme if u pronounce number german lole)");
+                return true;
+            }
+        }
+
+        if (plr.hasPermission("xlogin.notpdelay")) {
             completeTp(plr);
         } else {
             plr.sendMessage(plugin.getConfig().getString("messages.spawndelay"));
@@ -45,7 +61,7 @@ public class CommandSpawn implements CommandExecutor {
                 public void run() {
                     String denyMsg = null;
 
-                    if(plr.getLocation().getBlockX() != oldLoc.getBlockX() ||
+                    if (plr.getLocation().getBlockX() != oldLoc.getBlockX() ||
                             plr.getLocation().getBlockY() != oldLoc.getBlockY() ||
                             plr.getLocation().getBlockZ() != oldLoc.getBlockZ()) {
                         denyMsg = "tpdmove";
@@ -55,8 +71,8 @@ public class CommandSpawn implements CommandExecutor {
                         denyMsg = "tpdair";
                     }
 
-                    if(denyMsg != null) {
-                        plr.sendMessage(plugin.getConfig().getString("messages."+denyMsg));
+                    if (denyMsg != null) {
+                        plr.sendMessage(plugin.getConfig().getString("messages." + denyMsg));
                         return;
                     }
 
