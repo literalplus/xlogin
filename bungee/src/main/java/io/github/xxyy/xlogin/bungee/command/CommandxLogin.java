@@ -30,8 +30,8 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("/xlogin [help|reload|cpw|premium] ").color(ChatColor.GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlogin reload ").color(ChatColor.GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create()
-            new ComponentBuilder("/xlogin cpw [Name] [New password] ").color(ChatColor.GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create()
+            new ComponentBuilder("/xlogin reload ").color(ChatColor.GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlogin cpw [Name] [New password] ").color(ChatColor.GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlogin premium [Name] ").color(ChatColor.GOLD).append("Marks an account as premium. (Also changes UUID!!)").color(ChatColor.GRAY).create()
     };
 
