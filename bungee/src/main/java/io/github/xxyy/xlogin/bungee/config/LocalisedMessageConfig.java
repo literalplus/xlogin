@@ -51,10 +51,13 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String accountAlreadyPremium = "Dein Account ist bereits als Premium markiert! =)";
     public String accountMarkedPremium  = "Dein Account wurde als Premium markiert! Probiere es gleich aus! ;)";
     public String premiumWarning        = "§cACHTUNG! Wenn du fortfährst, kannst du dich nicht mehr gecrackt einloggen! " +
+            "Es werden vermutlich deinen Spielerdaten wie Inventare, Ränge, etc verloren gehen, also" +
+            "überlege diesen Schritt genau und spreche dies mit dem Team ab, wenn du deine Sachen" +
+            "behalten möchtest. " +
             "Wenn die Sessionserver nicht verfügbar sind, wirst du auch nicht reinkommen." +
             " Bitte überlege diesen Schritt genau und f&uuml;hre ihn wirklich NUR durch," +
             " wenn DU &ldiesen Account bei &lminecraft.net gekauft hast! §cDu wurdest gewarnt!\n" +
-            "    §cFortfahren (auf eigene Gefahr): &l/premium sicher";
+            "    §4Fortfahren (auf eigene Gefahr): &l/premium sicher ";
 
     @Comment("param1: IP address the user joined with param2: max users allowed for that IP")
     public String ipAccountLimitedReached = "Für deine IP {0} gibt es bereits mehr als {1} Accounts!";
@@ -63,6 +66,9 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String passwordsDontMatch = "Die Passwörter stimmen nicht überein!";
     public String passwordTooShort   = "Bitte verwende ein Passwort mit mehr als 4 Zeichen!";
     public String passwordInsecure   = "Bitte verwende ein sichereres Passwort! :)";
+
+    public String passwordChangeAdmin = "Dein Passwort wurde von {0} geändert. Bitte kontaktiere diese Person.";
+    public String premiumAdmin        = "{0} hat deinen Account als Premium markiert!";
 
     public String wrongPassword   = "Falsches Passwort! :(";
     public String sessionsEngaged = "Du musst dich für eine Zeit nicht mehr einloggen, da du Sitzungen aktiviert hast! Verwende §6/sessions off§f, um dies abzuschalten.";
