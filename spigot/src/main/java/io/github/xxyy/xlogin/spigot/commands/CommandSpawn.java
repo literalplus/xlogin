@@ -33,7 +33,7 @@ public class CommandSpawn implements CommandExecutor {
 
         final Player plr = (Player) sender;
 
-        if (args[0].equalsIgnoreCase("set")) {
+        if (args.length > 0 && args[0].equalsIgnoreCase("set")) {
             if (plr.hasPermission("xlogin.admin")) {
                 if (args.length < 2 || !args[1].equalsIgnoreCase("sicher")) {
                     plr.sendMessage("§4Sicher? /spawn set sicher");
