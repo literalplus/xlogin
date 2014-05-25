@@ -29,11 +29,14 @@ public class IpAddressFactory {
                 return ipAddress;
             } else {
                 PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO mt_main.xlogin_ips SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
-                IpAddress ipAddress = new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp(), true);
-                return ipAddress;
+                return new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp(), true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void clear() {
+        cache.clear();
     }
 }

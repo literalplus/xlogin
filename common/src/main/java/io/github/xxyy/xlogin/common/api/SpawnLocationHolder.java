@@ -1,5 +1,8 @@
 package io.github.xxyy.xlogin.common.api;
 
+import com.google.gag.annotation.remark.ObligatoryQuote;
+import com.google.gag.enumeration.Source;
+
 /**
  * Holds the xLogin spawn location.
  * Implementation chosen for licensing purposes.
@@ -18,6 +21,7 @@ public final class SpawnLocationHolder {
     private SpawnLocationHolder() {
     }
 
+    @ObligatoryQuote(quote = "Brave New World", source = Source.OTHER)
     public static void setSpawn(int newX, int newY, int newZ, float newPitch, float newYaw, String braveNewWorld) {
         x = newX;
         y = newY;

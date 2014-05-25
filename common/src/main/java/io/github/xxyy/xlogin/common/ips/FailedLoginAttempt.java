@@ -13,7 +13,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = FailedLoginAttempt.TABLE_NAME)
-public class FailedLoginAttempt {
+public class FailedLoginAttempt { //FIXME
     public static final String TABLE_NAME = "xlogin_login_attempts";
 
     @Id

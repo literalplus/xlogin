@@ -65,4 +65,8 @@ public final class AuthedPlayerFactory {
     public static void remove(UUID uuid) {
         players.remove(uuid);
     }
+
+    public static void clear() {
+        players.clear();
+    }
 }

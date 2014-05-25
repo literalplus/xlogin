@@ -46,7 +46,7 @@ public class XLoginPlugin extends Plugin {
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(); //TODO clear every 5m or so
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
     @Getter
-    private final Map<String, Integer> ipOnlinePlayers = new HashMap<>();
+    private Map<String, Integer> ipOnlinePlayers = new HashMap<>();
     @Getter
     private LocalisedMessageConfig messages;
 
@@ -86,6 +86,7 @@ public class XLoginPlugin extends Plugin {
         this.getProxy().getPluginManager().registerCommand(this, new CommandPremium(this));
         this.getProxy().getPluginManager().registerCommand(this, new CommandRegister(this));
         this.getProxy().getPluginManager().registerCommand(this, new CommandSessions(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandxLogin(this));
         this.getProxy().registerChannel(API_CHANNEL_NAME);
         this.getProxy().registerChannel(AuthtopiaHelper.CHANNEL_NAME);
         this.getProxy().getScheduler().schedule(this, new Runnable() {
@@ -168,5 +169,25 @@ public class XLoginPlugin extends Plugin {
         } catch (IOException ignore) {
             //oke what you're gonna do tho
         }
+    }
+
+    public void resetIpOnlinePlayers() {
+        Map<String, Integer> newMap = new HashMap<>(getProxy().getPlayers().size());
+
+        for(ProxiedPlayer plr : getProxy().getPlayers()) {
+            registerOnlineIp(plr);
+        }
+
+        this.ipOnlinePlayers = newMap;
+    }
+
+    public void registerOnlineIp(ProxiedPlayer plr) {
+        String ipString = plr.getAddress().getAddress().toString();
+        Integer onlinePlayers = getIpOnlinePlayers().get(ipString);
+        registerOnlineIp(ipString, onlinePlayers);
+    }
+
+    public void registerOnlineIp(String ipString, Integer onlinePlayers) {
+        getIpOnlinePlayers().put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
     }
 }

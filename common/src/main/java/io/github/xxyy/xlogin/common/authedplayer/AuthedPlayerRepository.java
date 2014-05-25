@@ -98,6 +98,7 @@ public class AuthedPlayerRepository {
 
     public void clear() {
         this.knownPlayers.clear();
+        AuthedPlayerFactory.clear();
     }
 
     public void forget(UUID uuid) {

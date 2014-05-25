@@ -162,7 +162,7 @@ public class AuthtopiaListener implements Listener {
             return;
         }
 
-        plugin.getIpOnlinePlayers().put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
+        plugin.registerOnlineIp(ipString, onlinePlayers);
     }
 
 

@@ -6,6 +6,7 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -68,8 +69,11 @@ public class CommandChangePassword extends Command {
         authedPlayer.setSalt(salt);
         authedPlayer.setPassword(PasswordHelper.encrypt(args[1], salt));
 
-        plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().passwordChanged));
+        BaseComponent[] successBaseComponents = plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().passwordChanged);
+        plr.sendMessage(successBaseComponents);
 
         AuthedPlayerFactory.save(authedPlayer);
+
+        plr.disconnect(successBaseComponents);
     }
 }
