@@ -3,10 +3,12 @@ package io.github.xxyy.xlogin.bungee.command;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
+import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -15,6 +17,10 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Handles administrative commands.
@@ -29,10 +35,10 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(ChatColor.GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
-            new ComponentBuilder("/xlogin [help|reload|cpw|premium] ").color(ChatColor.GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlogin reload ").color(ChatColor.GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlogin cpw [Name] [New password] ").color(ChatColor.GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlogin premium [Name] ").color(ChatColor.GOLD).append("Marks an account as premium. (Also changes UUID!!)").color(ChatColor.GRAY).create()
+            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(ChatColor.GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo reload ").color(ChatColor.GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo cpw [Name] [New password] ").color(ChatColor.GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo free [IP|Tail des Namens|UUID] ").color(ChatColor.GOLD).append("Adds slots to all IPs associated with asscounts that match given criteria.").color(ChatColor.GRAY).create(),
     };
 
     public CommandxLogin(XLoginPlugin plugin) {
@@ -100,8 +106,38 @@ public class CommandxLogin extends Command {
                     sender.sendMessage(new ComponentBuilder("Der Account von ").color(ChatColor.GOLD)
                             .append(String.format("%s {UUID=%s}", args[1], authedPlayer.getUuid())).color(ChatColor.YELLOW)
                             .append(" wurde als Premium markiert.").color(ChatColor.GOLD).create());
-                    return;
                 }
+                return;
+            case "free":
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                } else {
+                    int amount = 4;
+
+                    if (args.length > 2 && org.apache.commons.lang3.StringUtils.isNumeric(args[2])) {
+                        amount = Integer.parseInt(args[2]);
+                    }
+
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+                    Set<String> freedIps = new HashSet<>();
+                    for (AuthedPlayer authedPlayer : matches) {
+                        if (!freedIps.contains(authedPlayer.getLastIp())) {
+                            IpAddress ip = IpAddressFactory.get(authedPlayer.getLastIp());
+                            ip.setMaxUsers(amount);
+                            IpAddressFactory.save(ip);
+                            freedIps.add(authedPlayer.getLastIp());
+                        }
+                    }
+
+                    sender.sendMessage(new ComponentBuilder("Folgenden IPs wurden ").color(ChatColor.GOLD)
+                            .append(String.valueOf(amount)).color(ChatColor.YELLOW)
+                            .append(" Slots zugewiesen: ").color(ChatColor.GOLD)
+                            .append(CommandHelper.CSCollection(freedIps)).color(ChatColor.YELLOW)
+                            .append(". Zugehörige Benutzer: ").color(ChatColor.GOLD)
+                            .append(CommandHelper.CSCollectionShort(Arrays.asList(matches)))
+                            .create());
+                }
+                return;
             default:
                 sendAll(sender, HELP_COMPONENTS);
         }

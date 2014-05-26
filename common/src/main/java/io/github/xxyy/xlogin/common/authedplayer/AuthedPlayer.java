@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import io.github.xxyy.common.util.ToShortStringable;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
 import lombok.NonNull;
@@ -16,39 +17,23 @@ import java.sql.Timestamp;
 //@Entity
 //@Table(name = AuthedPlayer.AUTH_DATA_TABLE_NAME)
 //TODO common interface w/ PlayerWrapper
-public class AuthedPlayer {
+public class AuthedPlayer implements ToShortStringable {
     public static final String AUTH_DATA_TABLE_NAME = "mt_main.xlogin_data";
 
     @NonNull
-//    @Id
-//    @Column(unique = true, nullable = false, length = 36)
     private String uuid;
     @NonNull
-//    @Column(unique = true, nullable = false, length = 16, name = "username")
     private String name;
     private String password; //Yes, encrypted...
     private String salt;
-//    @Column(name = "user_lastip", length = 50)
     private String lastIp;
-//    @OneToMany(targetEntity = IpAddress.class, fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<IpAddress> ips;
-//    @OneToMany(targetEntity = FailedLoginAttempt.class, fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<FailedLoginAttempt> loginAttempts;
-    //Whether the user has OPTED IN to be considered as premium. This does not mean that they don't own a premium account.
     private boolean premium;
-//    @Column(name = "ign_p_msg")
     private boolean disabledPremiumMessage;
-//    @Column(name = "reg_date")
     private Timestamp registrationDate;
-//    @Column(name = "x")
     private int lastLogoutBlockX;
-//    @Column(name = "y")
     private int lastLogoutBlockY;
-//    @Column(name = "z")
     private int lastLogoutBlockZ;
-//    @Column(name = "world")
     private String lastWorldName;
-//    @Column(name = "sessions_enabled")
     private boolean sessionsEnabled;
 
     @Transient
@@ -60,7 +45,6 @@ public class AuthedPlayer {
     public AuthedPlayer() {
     }
 
-//    @java.beans.ConstructorProperties({"uuid", "name", "password", "salt", "lastIp", "ips", "loginAttempts", "premium", "disabledPremiumMessage", "registrationDate", "lastLogoutBlockX", "lastLogoutBlockY", "lastLogoutBlockZ", "lastWorldName", "sessionsEnabled", "valid", "authenticationProvider", "authenticated"})
     public AuthedPlayer(String uuid, String name, String password, String salt, String lastIp,
                         boolean premium, boolean disabledPremiumMessage, Timestamp registrationDate,
                         int lastLogoutBlockX, int lastLogoutBlockY, int lastLogoutBlockZ, String lastWorldName,
@@ -137,8 +121,6 @@ public class AuthedPlayer {
 
         this.authenticationProvider = AuthenticationProvider.XLOGIN_SQL;
         this.authenticated = true;
-
-//        EbeanManager.getEbean().save(this);
 
         AuthedPlayerFactory.save(this);
 
@@ -294,9 +276,13 @@ public class AuthedPlayer {
     }
 
     public String toString() {
-        return "io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer(uuid=" + this.getUuid() +
-                ", name=" + this.getName() + ", password=" + this.getPassword() +
-                ", salt=" + this.getSalt() + ", lastIp=" + this.getLastIp() + ", premium=" + this.isPremium() + ", disabledPremiumMessage=" + this.isDisabledPremiumMessage() + ", registrationDate=" + this.getRegistrationDate() + ", lastLogoutBlockX=" + this.getLastLogoutBlockX() + ", lastLogoutBlockY=" + this.getLastLogoutBlockY() + ", lastLogoutBlockZ=" + this.getLastLogoutBlockZ() + ", lastWorldName=" + this.getLastWorldName() + ", sessionsEnabled=" + this.isSessionsEnabled() + ", valid=" + this.isValid() + ", authenticationProvider=" + this.getAuthenticationProvider() + ", authenticated=" + this.isAuthenticated() + ")";
+        return "AuthedPlayer(uuid=" + this.getUuid() +
+                ", name=" + this.getName() + ", lastIp=" + this.getLastIp() + ", premium=" + this.isPremium() +
+                ", disabledPremiumMessage=" + this.isDisabledPremiumMessage() + ", registrationDate=" + this.getRegistrationDate() +
+                ", lastLogoutBlockX=" + this.getLastLogoutBlockX() + ", lastLogoutBlockY=" + this.getLastLogoutBlockY() +
+                ", lastLogoutBlockZ=" + this.getLastLogoutBlockZ() + ", lastWorldName=" + this.getLastWorldName() +
+                ", sessionsEnabled=" + this.isSessionsEnabled() + ", valid=" + this.isValid() +
+                ", authenticationProvider=" + this.getAuthenticationProvider() + ", authenticated=" + this.isAuthenticated() + ")";
     }
 
     public void setUuid(String uuid) {
@@ -318,6 +304,11 @@ public class AuthedPlayer {
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
     } //TODO used by recv msg
+
+    @Override
+    public String toShortString() {
+        return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";
+    }
 
     public enum AuthenticationProvider {
         MINECRAFT_PREMIUM, XLOGIN_SQL, XLOGIN_SESSION
