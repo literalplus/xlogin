@@ -16,24 +16,34 @@ public class IpAddressFactory {
     private static final Map<String, IpAddress> cache = new HashMap<>();
 
     public static IpAddress get(String ipString) {
-        if(cache.containsKey(ipString)) {
+        if (cache.containsKey(ipString)) {
             return cache.get(ipString);
         }
 
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM mt_main.xlogin_ips WHERE ip=?", ipString).assertHasResultSet()) {
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM " + IpAddress.TABLE_NAME + " WHERE ip=?", ipString).assertHasResultSet()) {
             ResultSet rs = qr.rs();
 
-            if(rs.next()) {
+            if (rs.next()) {
                 IpAddress ipAddress = new IpAddress(ipString, rs.getInt("maxusers"), rs.getBoolean("sessions_on"));
                 cache.put(ipString, ipAddress);
                 return ipAddress;
             } else {
-                PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO mt_main.xlogin_ips SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
+                PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO " + IpAddress.TABLE_NAME + " SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
                 return new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp(), true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void save(IpAddress toSave) {
+        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=?,sessions_on=? WHERE ip=?",
+                toSave.getMaxUsers(), toSave.isSessionsEnabled(), toSave.getIp());
+        cache.put(toSave.getIp(), toSave);
+    }
+
+    public static void removeFromCache(String ipString) {
+        cache.remove(ipString);
     }
 
     public static void clear() {
