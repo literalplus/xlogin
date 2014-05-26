@@ -1,12 +1,15 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,6 +21,43 @@ public final class AuthedPlayerFactory {
 
     public static AuthedPlayer getCache(UUID uuid) {
         return players.get(uuid);
+    }
+
+    /**
+     * Gets AuthedPlayers.
+     *
+     * @param input Either an UUID, part of a name to match all players having that part in their name or an
+     *              IP, starting with /.
+     * @return All AuthedPlayer that match given criteria.
+     */
+    public static AuthedPlayer[] getByCriteria(String input) {
+        String query = "SELECT uuid,username,password,salt,user_lastip,premium,ign_p_msg,reg_date,x,y,z,world,sessions_enabled FROM " +
+                AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE ";
+
+        if (input.startsWith("/")) {
+            query += "user_lastip=?";
+        } else if (UtilUUID.isValidUUID(input)) {
+            query += "uuid=?";
+        } else {
+            query += "username LIKE CONCAT(\"%\", ?, \"%\")";
+        }
+
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult(query, input).assertHasResultSet()) {
+            ResultSet rs = qr.rs();
+            List<AuthedPlayer> rtrn = new ArrayList<>();
+            while (rs.next()) {
+                AuthedPlayer authedPlayer = new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
+                        rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
+                        rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
+                        rs.getBoolean("sessions_enabled"));
+                players.put(UUID.fromString(authedPlayer.getUuid()), authedPlayer);
+                rtrn.add(authedPlayer);
+            }
+
+            return rtrn.toArray(new AuthedPlayer[rtrn.size()]);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static AuthedPlayer get(UUID uuid, String username) {
