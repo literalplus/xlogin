@@ -36,10 +36,12 @@ public final class AuthedPlayerFactory {
 
         if (input.startsWith("/")) {
             query += "user_lastip=?";
+        } else if (input.startsWith("%")) {
+            query += "username LIKE CONCAT(\"%\", ?, \"%\")";
         } else if (UtilUUID.isValidUUID(input)) {
             query += "uuid=?";
         } else {
-            query += "username LIKE CONCAT(\"%\", ?, \"%\")";
+            query += "username=?";
         }
 
         try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult(query, input).assertHasResultSet()) {

@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static net.md_5.bungee.api.ChatColor.*;
+
 /**
  * Handles administrative commands.
  *
@@ -32,17 +34,18 @@ public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
     private final XLoginPlugin plugin;
     private static final BaseComponent[][] HELP_COMPONENTS = {
-            new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(ChatColor.GOLD).create(),
+            new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
-            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(ChatColor.GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo reload ").color(ChatColor.GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo cpw [Name] [New password] ").color(ChatColor.GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo free [IP|Tail des Namens|UUID] ").color(ChatColor.GOLD).append("Adds slots to all IPs associated with asscounts that match given criteria.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo reload ").color(GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo cpw [Name] [New password] ").color(GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo free [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with asscounts that match given criteria.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo user [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
     };
 
     public CommandxLogin(XLoginPlugin plugin) {
-        super("xlogin", null, "xlo");
+        super("xlogin", "xlogin.admin", "xlo");
         this.plugin = plugin;
     }
 
@@ -74,9 +77,9 @@ public class CommandxLogin extends Command {
                         player.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().passwordChangeAdmin, sender.getName()));
                     }
 
-                    sender.sendMessage(new ComponentBuilder("Das Passwort von ").color(ChatColor.GOLD)
+                    sender.sendMessage(new ComponentBuilder("Das Passwort von ").color(GOLD)
                             .append(args[1]).color(ChatColor.YELLOW)
-                            .append(" wurde geändert.").color(ChatColor.GOLD).create());
+                            .append(" wurde geändert.").color(GOLD).create());
                 }
                 return;
             case "premium":
@@ -85,7 +88,7 @@ public class CommandxLogin extends Command {
                 } else {
                     Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
                     if (profiles.length == 0 || profiles[0].getDemo()) {
-                        sender.sendMessage(new ComponentBuilder("Für diesen Spieler wurde kein Premium-Account gefunden.").color(ChatColor.GOLD).create());
+                        sender.sendMessage(new ComponentBuilder("Für diesen Spieler wurde kein Premium-Account gefunden.").color(GOLD).create());
                         return;
                     } else if (profiles.length > 1) {
                         sender.sendMessage(new ComponentBuilder("Für diesen Namen gibt es mehrere Accounts. Das ist ein Problem.").color(ChatColor.RED).create());
@@ -103,9 +106,9 @@ public class CommandxLogin extends Command {
                         player.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAdmin, sender.getName()));
                     }
 
-                    sender.sendMessage(new ComponentBuilder("Der Account von ").color(ChatColor.GOLD)
+                    sender.sendMessage(new ComponentBuilder("Der Account von ").color(GOLD)
                             .append(String.format("%s {UUID=%s}", args[1], authedPlayer.getUuid())).color(ChatColor.YELLOW)
-                            .append(" wurde als Premium markiert.").color(ChatColor.GOLD).create());
+                            .append(" wurde als Premium markiert.").color(GOLD).create());
                 }
                 return;
             case "free":
@@ -129,13 +132,33 @@ public class CommandxLogin extends Command {
                         }
                     }
 
-                    sender.sendMessage(new ComponentBuilder("Folgenden IPs wurden ").color(ChatColor.GOLD)
+                    sender.sendMessage(new ComponentBuilder("Folgenden IPs wurden ").color(GOLD)
                             .append(String.valueOf(amount)).color(ChatColor.YELLOW)
-                            .append(" Slots zugewiesen: ").color(ChatColor.GOLD)
+                            .append(" Slots zugewiesen: ").color(GOLD)
                             .append(CommandHelper.CSCollection(freedIps)).color(ChatColor.YELLOW)
-                            .append(". Zugehörige Benutzer: ").color(ChatColor.GOLD)
+                            .append(". Zugehörige Benutzer: ").color(GOLD)
                             .append(CommandHelper.CSCollectionShort(Arrays.asList(matches)))
                             .create());
+                }
+                return;
+            case "user":
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                } else {
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+
+                    for (AuthedPlayer match : matches) {
+                        sender.sendMessage(new ComponentBuilder("Name: ").color(GOLD)
+                                .append(match.getName()).color(ChatColor.YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("UUID: ").color(GOLD)
+                                .append(match.getUuid()).color(YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("Premium? ").color(GOLD)
+                                .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED).create());
+                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
+                                .append(match.getLastIp()).color(YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("Authentifiziert: ").color(GOLD)
+                                .append(String.valueOf(match.getAuthenticationProvider())).color(YELLOW).create());
+                    }
                 }
                 return;
             default:
