@@ -16,6 +16,10 @@ public class IpAddressFactory {
     private static final Map<String, IpAddress> cache = new HashMap<>();
 
     public static IpAddress get(String ipString) {
+        if(ipString == null) {
+            return null;
+        }
+
         if (cache.containsKey(ipString)) {
             return cache.get(ipString);
         }
@@ -37,6 +41,10 @@ public class IpAddressFactory {
     }
 
     public static void save(IpAddress toSave) {
+        if(toSave == null) {
+            return;
+        }
+
         PreferencesHolder.sql.safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=?,sessions_on=? WHERE ip=?",
                 toSave.getMaxUsers(), toSave.isSessionsEnabled(), toSave.getIp());
         cache.put(toSave.getIp(), toSave);

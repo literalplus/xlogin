@@ -31,6 +31,10 @@ public final class AuthedPlayerFactory {
      * @return All AuthedPlayer that match given criteria.
      */
     public static AuthedPlayer[] getByCriteria(String input) {
+        if(input == null) {
+            return new AuthedPlayer[0];
+        }
+
         String query = "SELECT uuid,username,password,salt,user_lastip,premium,ign_p_msg,reg_date,x,y,z,world,sessions_enabled FROM " +
                 AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE ";
 
@@ -100,6 +104,10 @@ public final class AuthedPlayerFactory {
      * @param ap player to save
      */
     public static void save(AuthedPlayer ap) {
+        if(ap == null) {
+            return;
+        }
+
         PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
                         "sessions_enabled=? WHERE uuid=?",
@@ -113,6 +121,10 @@ public final class AuthedPlayerFactory {
      * @param ap player
      */
     public static void delete(AuthedPlayer ap) {
+        if(ap == null) {
+            return;
+        }
+
         PreferencesHolder.sql.safelyExecuteUpdate("DELETE FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid=?",
                 ap.getUuid());
         remove(UUID.fromString(ap.getUuid()));
