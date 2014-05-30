@@ -96,6 +96,7 @@ public final class AuthedPlayerFactory {
 
     /**
      * Saves everything from an authed player <b>but the location</b>.
+     *
      * @param ap player to save
      */
     public static void save(AuthedPlayer ap) {
@@ -105,6 +106,16 @@ public final class AuthedPlayerFactory {
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
                 ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid()
         );
+    }
+
+    /**
+     * Deletes a player from db
+     * @param ap player
+     */
+    public static void delete(AuthedPlayer ap) {
+        PreferencesHolder.sql.safelyExecuteUpdate("DELETE FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid=?",
+                ap.getUuid());
+        remove(UUID.fromString(ap.getUuid()));
     }
 
     public static void remove(UUID uuid) {

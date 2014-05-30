@@ -44,21 +44,6 @@ public class AuthedPlayerRepository {
         return rtrn;
     }
 
-//    /**
-//     * Fetches a player from the database.
-//     * Will not create new data if no object was found.
-//     *
-//     * @param uuid Unique Id of the player to find
-//     * @return An object representing the player or {@code null} if there is no such player.
-//     */
-//    public AuthedPlayer fetchPlayer(@NonNull UUID uuid) {
-////        return EbeanManager.getEbean().find(AuthedPlayer.class)
-////                .where()
-////                .eq("uuid", uuid.toString())
-////                .findUnique();
-//        return AuthedPlayerFactory.get(uuid)
-//    }
-
     /**
      * Fetches a player from database or creates it if there is no such player.
      *
@@ -75,6 +60,11 @@ public class AuthedPlayerRepository {
         }
 
         return aplr;
+    }
+
+    public void deletePlayer(@NonNull AuthedPlayer ap) {
+        AuthedPlayerFactory.delete(ap);
+        forget(UUID.fromString(ap.getUuid()));
     }
 
     /**
