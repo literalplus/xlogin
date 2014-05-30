@@ -42,6 +42,7 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("/xlo cpw [Name] [New password] ").color(GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo free [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with asscounts that match given criteria.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo user [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R]").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
     };
 
     public CommandxLogin(XLoginPlugin plugin) {
@@ -122,6 +123,12 @@ public class CommandxLogin extends Command {
                     }
 
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+
+                    if (matches.length == 0) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
+                        return;
+                    }
+
                     Set<String> freedIps = new HashSet<>();
                     for (AuthedPlayer authedPlayer : matches) {
                         if (!freedIps.contains(authedPlayer.getLastIp())) {
@@ -147,6 +154,11 @@ public class CommandxLogin extends Command {
                 } else {
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
 
+                    if (matches.length == 0) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
+                        return;
+                    }
+
                     for (AuthedPlayer match : matches) {
                         sender.sendMessage(new ComponentBuilder("Name: ").color(GOLD)
                                 .append(match.getName()).color(ChatColor.YELLOW).create());
@@ -154,10 +166,41 @@ public class CommandxLogin extends Command {
                                 .append(match.getUuid()).color(YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("Premium? ").color(GOLD)
                                 .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED).create());
-                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
-                                .append(match.getLastIp()).color(YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("Authentifiziert: ").color(GOLD)
                                 .append(String.valueOf(match.getAuthenticationProvider())).color(YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
+                                .append(match.getLastIp()).color(YELLOW).create());
+                        IpAddress ip = IpAddressFactory.get(match.getLastIp());
+                        sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
+                                .append(ip == null ? null : String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("IP-Sessions: ").color(GOLD)
+                                .append(ip == null ? null : String.valueOf(ip.isSessionsEnabled()))
+                                .color(ip == null ? GRAY : ip.isSessionsEnabled() ? GREEN : RED).create()); //red/green if non-null, gray if null
+                    }
+                }
+                return;
+            case "unregister":
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                } else {
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+
+                    if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurden mehr als ein Spiler gefunden. " +
+                                "Bitte verwende -R am Ende, um mehrere User zu löschen. Gefundene User: ").color(GOLD)
+                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
+                        return;
+                    }
+
+                    if (matches.length == 0) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
+                        return;
+                    }
+
+                    for (AuthedPlayer match : matches) {
+                        sender.sendMessage(new ComponentBuilder("Permanently deleted this player: ").color(RED)
+                                .append(String.valueOf(match)).color(DARK_RED).create());
+                        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.deletePlayer(match);
                     }
                 }
                 return;
