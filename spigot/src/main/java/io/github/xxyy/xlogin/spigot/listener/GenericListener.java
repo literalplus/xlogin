@@ -37,6 +37,7 @@ public class GenericListener implements Listener {
         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(evt.getPlayer().getUniqueId());
     }
 
+    @EventHandler(ignoreCancelled = true)
     public void onKick(final PlayerKickEvent evt) {
         plugin.saveLocation(evt.getPlayer());
 

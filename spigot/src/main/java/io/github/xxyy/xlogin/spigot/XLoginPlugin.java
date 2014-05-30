@@ -129,7 +129,6 @@ public class XLoginPlugin extends JavaPlugin {
         int x = authedPlayer.getLastLogoutBlockX();
         int y = authedPlayer.getLastLogoutBlockY();
         int z = authedPlayer.getLastLogoutBlockZ();
-        String worldName = authedPlayer.getLastWorldName();
 
         if (x == 0 || y == 0 || z == 0) {
             plr.teleport(spawnLocation);

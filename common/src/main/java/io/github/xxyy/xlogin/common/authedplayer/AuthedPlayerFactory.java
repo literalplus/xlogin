@@ -94,13 +94,16 @@ public final class AuthedPlayerFactory {
         }
     }
 
+    /**
+     * Saves everything from an authed player <b>but the location</b>.
+     * @param ap player to save
+     */
     public static void save(AuthedPlayer ap) {
         PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
-                        "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?,x=?,y=?,z=?," +
-                        "world=?,sessions_enabled=? WHERE uuid=?",
+                        "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
+                        "sessions_enabled=? WHERE uuid=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
-                ap.isDisabledPremiumMessage(), ap.getLastLogoutBlockX(), ap.getLastLogoutBlockY(),
-                ap.getLastLogoutBlockZ(), ap.getLastWorldName(), ap.isSessionsEnabled(), ap.getUuid()
+                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid()
         );
     }
 
