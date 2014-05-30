@@ -9,11 +9,6 @@ prefix: xLo
 loadbefore: [MinoTopiaCore, McSystem]
 
 commands:
-  xlos:
-    description: Manages the xLogin Spigot compat plugin.
-    aliases: [xlogins, xlogin_spigot]
-    permission: xlogin.manage
-    permission-message: Du darfst das n...um...Dieser Befehl existiert nicht.
   spawn:
     description: Teleports players to the spawn
     aliases: [sporn, spawnpunkt, espawn]
