@@ -47,7 +47,14 @@ public class IpAddress {
         this.sessionsEnabled = sessionsEnabled;
     }
 
-
+    /**
+     * Makes this object adapt the properties of the argument.
+     * @param other Object to source properties from.
+     */
+    public void adaptToProperties(IpAddress other) {
+        this.maxUsers = other.getMaxUsers();
+        this.sessionsEnabled = other.isSessionsEnabled();
+    }
 
     public boolean equals(Object o) {
         if (o == this) return true;

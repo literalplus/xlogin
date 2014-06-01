@@ -2,29 +2,25 @@ package io.github.xxyy.xlogin.common.ips;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 /**
  * Represents a session.
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 22.5.14
  */
-@Entity @Table(name = "xlogin_sessions")
+//@Entity @Table(name = "xlogin_sessions")
 public class Session {
     private int id;
 
-    @Column(name = "user_id")
+//    @Column(name = "user_id")
     private AuthedPlayer user; //TODO untested
 
     private IpAddress ip;
 
-    @Column(name = "expiry_time")
+//    @Column(name = "expiry_time")
     private int expiryTime;
 
-    @java.beans.ConstructorProperties({"id", "user", "ip", "expiryTime"})
+//    @java.beans.ConstructorProperties({"id", "user", "ip", "expiryTime"})
     public Session(int id, AuthedPlayer user, IpAddress ip, int expiryTime) {
         this.id = id;
         this.user = user;

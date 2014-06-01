@@ -2,6 +2,8 @@ package io.github.xxyy.xlogin.common.authedplayer;
 
 import io.github.xxyy.common.util.ToShortStringable;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
+import io.github.xxyy.xlogin.common.ips.IpAddress;
+import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
 import lombok.NonNull;
 
@@ -138,9 +140,16 @@ public class AuthedPlayer implements ToShortStringable {
         return false;
     }
 
-    public void setLastIp(String newIp) {
-        if (newIp == null || !newIp.equals(getLastIp())) {
-            this.lastIp = newIp;
+    public void setLastIp(String newIpString) {
+        if (newIpString == null || !newIpString.equals(getLastIp())) {
+            String oldIpString = this.lastIp;
+            this.lastIp = newIpString;
+            if (IpAddressFactory.exists(newIpString)) {
+                IpAddress oldIp = IpAddress.fromIpString(this.lastIp);
+                IpAddress newIp = IpAddress.fromIpString(newIpString);
+                newIp.adaptToProperties(oldIp);
+                IpAddressFactory.save(newIp);
+            }
         }
     }
 

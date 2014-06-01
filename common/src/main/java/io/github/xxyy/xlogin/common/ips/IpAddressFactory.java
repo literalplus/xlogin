@@ -50,6 +50,15 @@ public class IpAddressFactory {
         cache.put(toSave.getIp(), toSave);
     }
 
+    public static boolean exists(String ipString) {
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + IpAddress.TABLE_NAME + " " +
+                "WHERE ip=?", ipString).assertHasResultSet()) {
+            return qr.rs().next() && qr.rs().getInt("cnt") > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void removeFromCache(String ipString) {
         cache.remove(ipString);
     }
