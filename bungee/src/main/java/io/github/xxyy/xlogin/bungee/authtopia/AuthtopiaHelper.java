@@ -119,30 +119,8 @@ public class AuthtopiaHelper {
      * @param callback Code to execute once the check is complete.
      */
     public void isSimulateCracked(final String name, FutureCallback<Boolean> callback) {
-//        ListenableFuture<Boolean> submit = service.submit(new Callable<Boolean>() {
-//            @Override
-//            public Boolean call() {
-////                PreparedStatement stmt = null;
-////                Connection con = null;
-////                ResultSet rs = null;
-//                try {
-////                    return EbeanManager.getEbean().createSqlQuery("SELECT name FROM auth_list WHERE name=?")
-////                            .setParameter(1, name)
-////                            .findUnique() != null;
-//
-//                } catch (SQLException ex) {
-//                    plugin.getLogger().log(Level.SEVERE, "Could not get entry: " + name, ex);
-//                    return false;
-//                } finally {
-//                    tryClose(stmt);
-//                    tryClose(rs);
-//                    tryClose(con);
-//                }
-//            }
-//        });
-//        Futures.addCallback(submit, callback);
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT name FROM auth_list WHERE name=?", name)) {
-            callback.onSuccess(qr.rs().next());
+        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
+            callback.onSuccess(qr.rs().next() && qr.rs().getInt("cnt") > 0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
