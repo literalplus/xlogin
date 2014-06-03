@@ -110,7 +110,7 @@ public class XLoginPlugin extends Plugin {
         ConfigurationAdapter config = this.getProxy().getConfigurationAdapter();
         String databaseName = config.getString("mysql.database", "bungeecord");
         return SqlConnectables.fromCredentials(
-                SqlConnectables.getHostString(databaseName, config.getString("mysql.host", "jdbc:mysql://localhost:3306/")),
+                SqlConnectables.getHostString(databaseName, config.getString("mysql.hostname", "jdbc:mysql://localhost:3306/")),
                 databaseName,
                 config.getString("mysql.user", "bungeecord"),
                 config.getString("mysql.password", "")
