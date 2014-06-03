@@ -120,7 +120,7 @@ public class AuthtopiaHelper {
      */
     public void isSimulateCracked(final String name, FutureCallback<Boolean> callback) {
         try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
-            callback.onSuccess(qr.rs().next() && qr.rs().getInt("cnt") > 0);
+            callback.onSuccess(!(qr.rs().next() && qr.rs().getInt("cnt") > 0));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -134,9 +134,9 @@ public class AuthtopiaHelper {
 
         FutureCallback<Boolean> sqlQueryCallback = new FutureCallback<Boolean>() {
             @Override
-            public void onSuccess(@NotNull final Boolean sqlResult) {
+            public void onSuccess(@NotNull final Boolean simulateCracked) {
                 Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
-                boolean onlineMode = false;
+                boolean onlineMode = simulateCracked;
 
                 if (profiles.length == 1 && !profiles[0].getDemo()) {
                     onlineMode = true;
