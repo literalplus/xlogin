@@ -15,7 +15,6 @@ import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -52,35 +52,30 @@ public class AuthtopiaHelper {
      */
     public AuthtopiaHelper(final XLoginPlugin plugin) {
         this.plugin = plugin;
-        ConfigurationAdapter config = plugin.getProxy().getConfigurationAdapter();
-        final String host = "jdbc:mysql://212.224.126.96";
-        final String user = "bungeecord";
-        final String pass = "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps";
-        final String db = "bungeecord";
-        final int port = 3306;
-        this.connect(host, port, user, pass, db, new FutureCallback<Boolean>() {
-            @Override
-            public void onSuccess(@NotNull Boolean result) {
-                if (result) {
-                    plugin.getLogger().info("[Authtopia|SQL] Successfully connected to MySQL");
-                    AuthtopiaHelper.this.createTables();
-                } else {
-                    plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
-                            {
-                                    host, port, db
-                            });
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Throwable thrwbl) {
-                thrwbl.printStackTrace();
-                plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
-                        {
-                                host, port, db
-                        });
-            }
-        });
+//        ConfigurationAdapter config = plugin.getProxy().getConfigurationAdapter();
+//        this.connect(host, port, user, pass, db, new FutureCallback<Boolean>() {
+//            @Override
+//            public void onSuccess(@NotNull Boolean result) {
+//                if (result) {
+//                    plugin.getLogger().info("[Authtopia|SQL] Successfully connected to MySQL");
+//                    AuthtopiaHelper.this.createTables();
+//                } else {
+//                    plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
+//                            {
+//                                    host, port, db
+//                            });
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NotNull Throwable thrwbl) {
+//                thrwbl.printStackTrace();
+//                plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
+//                        {
+//                                host, port, db
+//                        });
+//            }
+//        });
         plugin.getProxy().registerChannel(CHANNEL_NAME);
         plugin.getLogger().log(Level.INFO, "[Authopia] Loaded BungeeCord hook.");
     }
