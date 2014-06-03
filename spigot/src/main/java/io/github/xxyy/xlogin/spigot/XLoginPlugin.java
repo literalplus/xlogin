@@ -66,7 +66,7 @@ public class XLoginPlugin extends JavaPlugin {
 
         String dbName = getConfig().getString("sql.db");
         PreferencesHolder.sql = new SafeSql(SqlConnectables.fromCredentials(
-                SqlConnectables.getHostString(dbName, getConfig().getString("host")),
+                SqlConnectables.getHostString(dbName, getConfig().getString("sql.host")),
                 dbName,
                 getConfig().getString("sql.user"),
                 getConfig().getString("sql.password")));
