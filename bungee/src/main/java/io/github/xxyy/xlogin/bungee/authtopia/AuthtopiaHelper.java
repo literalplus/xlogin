@@ -129,20 +129,22 @@ public class AuthtopiaHelper {
 
         FutureCallback<Boolean> sqlQueryCallback = new FutureCallback<Boolean>() {
             @Override
-            public void onSuccess(@NotNull final Boolean simulateCracked) {
-                Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
-                boolean onlineMode = simulateCracked;
+            public void onSuccess(@NotNull final Boolean queryMojang) {
+                boolean onlineMode = queryMojang; //auth_list cracked override
+                if (queryMojang) {
+                    Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
 
-                if (profiles.length == 1 && !profiles[0].getDemo()) {
-                    onlineMode = true;
-                } else if (profiles.length != 0) {
-                    plugin.getLogger().info(String.format("Encountered multiple profiles for username %s: %s!",
-                            evt.getConnection().getName(),
-                            CommandHelper.CSCollection(Arrays.asList(profiles))));
+                    if (profiles.length == 1 && !profiles[0].getDemo()) {
+                        onlineMode = true;
+                    } else if (profiles.length != 0) {
+                        plugin.getLogger().info(String.format("Encountered multiple profiles for username %s: %s!",
+                                evt.getConnection().getName(),
+                                CommandHelper.CSCollection(Arrays.asList(profiles))));
+                    }
                 }
 
                 evt.getConnection().setOnlineMode(onlineMode);
-                plugin.getLogger().info(evt.getConnection().getName()+":premium="+evt.getConnection().isOnlineMode());
+                plugin.getLogger().info(evt.getConnection().getName() + ":premium=" + evt.getConnection().isOnlineMode());
 
                 evt.completeIntent(plugin);
             }
@@ -169,7 +171,7 @@ public class AuthtopiaHelper {
         if (authedPlayer.authenticatePremium()) {
             XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
 
-            plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: "+plr.getUniqueId());
+            plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());
 
             return true;
         }
