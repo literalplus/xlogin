@@ -64,10 +64,12 @@ public class XLoginPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
         getCommand("spawn").setExecutor(new CommandSpawn(this));
 
-        //Register the database we stole from Bukkit with our common lib
-//        EbeanManager.setEbean(getDatabase());
-        PreferencesHolder.sql = new SafeSql(SqlConnectables.fromCredentials("jdbc:mysql://localhost:3306/mt_main", "mt_main",
-                "bungeecord", "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps"));
+        String dbName = getConfig().getString("sql.db");
+        PreferencesHolder.sql = new SafeSql(SqlConnectables.fromCredentials(
+                SqlConnectables.getHostString(dbName, getConfig().getString("host")),
+                dbName,
+                getConfig().getString("sql.user"),
+                getConfig().getString("sql.password")));
 
         //Init config
         initConfig();
@@ -98,7 +100,7 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().addDefault("sql.user", "bungeecord");
         this.getConfig().addDefault("sql.db", "bungeecord");
         this.getConfig().addDefault("sql.password", "");
-        this.getConfig().addDefault("sql.host", "jdbc://mysql:localhost:3306/bungeecord");
+        this.getConfig().addDefault("sql.host", "jdbc:mysql://localhost:3306/bungeecord");
         this.saveConfig();
 
         spawnLocation = null;

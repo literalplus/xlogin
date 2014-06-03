@@ -17,11 +17,10 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.conf.Configuration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -108,13 +107,13 @@ public class XLoginPlugin extends Plugin {
     }
 
     public SqlConnectable getConnectableFromConfig() {
-        Configuration configurationAdapter = ((BungeeCord) this.getProxy()).getConfig();
-        String databaseName = "bungeecord";
+        ConfigurationAdapter config = this.getProxy().getConfigurationAdapter();
+        String databaseName = config.getString("database", "bungeecord");
         return SqlConnectables.fromCredentials(
-                SqlConnectables.getHostString(databaseName, "jdbc:mysql://212.224.126.96/"),
+                SqlConnectables.getHostString(databaseName, config.getString("host", "jdbc:mysql://localhost:3306/")),
                 databaseName,
-                "bungeecord",
-                "coH6eZjndMsZhXWggff4jLICQDuLEx1dJYp3ahOjmLrSJiWpaqXo8abnaneKahfRj1jaI5ZU787Le8sfwvBm2DvjAqAGV8Lez1Ps" //FIXME fuck
+                config.getString("user", "bungeecord"),
+                config.getString("password", "")
         );
     }
 
