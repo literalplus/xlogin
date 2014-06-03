@@ -38,11 +38,6 @@
                 <version>${bungeecord.version}-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>net.md-5</groupId>
-                <artifactId>bungeecord-proxy</artifactId>
-                <version>${bungeecord.version}-SNAPSHOT</version>
-            </dependency>
-            <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
                 <version>${minecraft.version}-${bukkit.release}-SNAPSHOT</version>

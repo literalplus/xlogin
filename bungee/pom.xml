@@ -39,10 +39,6 @@
             <artifactId>netty-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.gag</groupId>
             <artifactId>gag</artifactId>
         </dependency>
