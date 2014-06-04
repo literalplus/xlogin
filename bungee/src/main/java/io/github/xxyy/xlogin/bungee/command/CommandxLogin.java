@@ -6,6 +6,7 @@ import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
@@ -37,12 +38,13 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
-            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(GOLD).append("Administrationsbefehl von xLogin.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(GOLD).append("Swiss Army Knife for xLogin :)").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo reload ").color(GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo cpw [Name] [New password] ").color(GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo free [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with asscounts that match given criteria.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo user [/IP|%Teil des Namens|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo free [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with accounts that match given criteria.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo user [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R]").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo forcecrack [Name]").color(GOLD).append("Adds a user to the `force cracked` list so that they can join with a cracked session on a premium account. Note that this changes the UUID and will remove ranks, inventories and similar.").color(ChatColor.GRAY).create(),
     };
 
     public CommandxLogin(XLoginPlugin plugin) {
@@ -220,7 +222,17 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "forcecrack":
-
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                } else {
+                    PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO auth_list SET name=? ON DUPLICATE KEY UPDATE name=?", args[1], args[1]);
+                    boolean premium = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]).length == 1;
+                    sender.sendMessage(new ComponentBuilder("Der Spieler ").color(GOLD)
+                            .append(args[1]).color(YELLOW)
+                            .append(" wird nun immer als Cracked erkannt. Der Account ist ").color(GOLD)
+                            .append(premium ? "bei " : "nicht bei ").color(premium ? GREEN : RED)
+                            .append(" Mojang gekauft.").color(GOLD).create());
+                }
                 return;
             default:
                 sendAll(sender, HELP_COMPONENTS);
