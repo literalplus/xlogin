@@ -1,7 +1,5 @@
 package io.github.xxyy.xlogin.common.ips;
 
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-
 /**
  * Represents a session.
  *
@@ -13,7 +11,7 @@ public class Session {
     private int id;
 
 //    @Column(name = "user_id")
-    private AuthedPlayer user; //TODO untested
+    private String uuid; //TODO untested
 
     private IpAddress ip;
 
@@ -21,9 +19,9 @@ public class Session {
     private int expiryTime;
 
 //    @java.beans.ConstructorProperties({"id", "user", "ip", "expiryTime"})
-    public Session(int id, AuthedPlayer user, IpAddress ip, int expiryTime) {
+    public Session(int id, String uuid, IpAddress ip, int expiryTime) {
         this.id = id;
-        this.user = user;
+        this.uuid = uuid;
         this.ip = ip;
         this.expiryTime = expiryTime;
     }
@@ -35,8 +33,8 @@ public class Session {
         return this.id;
     }
 
-    public AuthedPlayer getUser() {
-        return this.user;
+    public String getUuid() {
+        return this.uuid;
     }
 
     public IpAddress getIp() {
@@ -51,8 +49,8 @@ public class Session {
         this.id = id;
     }
 
-    public void setUser(AuthedPlayer user) {
-        this.user = user;
+    public void setUser(String uuid) {
+        this.uuid = uuid;
     }
 
     public void setIp(IpAddress ip) {
@@ -64,7 +62,7 @@ public class Session {
     }
 
     public String toString() {
-        return "io.github.xxyy.xlogin.common.ips.Session(id=" + this.id + ", user=" + this.user + ", ip=" + this.ip + ", expiryTime=" + this.expiryTime + ")";
+        return "io.github.xxyy.xlogin.common.ips.Session(id=" + this.id + ", user=" + this.uuid + ", ip=" + this.ip + ", expiryTime=" + this.expiryTime + ")";
     }
 
     public boolean equals(Object o) {

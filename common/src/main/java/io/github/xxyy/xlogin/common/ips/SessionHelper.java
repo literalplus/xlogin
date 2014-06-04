@@ -26,7 +26,7 @@ public final class SessionHelper {
         try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM mt_main.xlogin_sessions WHERE user=?", authedPlayer.getUuid()).assertHasResultSet()) {
             ResultSet rs = qr.rs();
             if(rs.next()) {
-                session = new Session(rs.getInt("id"), authedPlayer, IpAddressFactory.get(rs.getString("ip")), rs.getInt("expiry_time"));
+                session = new Session(rs.getInt("id"), rs.getString("user"), IpAddressFactory.get(rs.getString("ip")), rs.getInt("expiry_time"));
             } else {
                 return false;
             }
@@ -34,7 +34,10 @@ public final class SessionHelper {
             throw new RuntimeException(e);
         }
 
-        boolean isValid = authedPlayer.isSessionsEnabled() && session.getIp().getIp().equals(authedPlayer.getLastIp()) && (System.currentTimeMillis() / 1000L) < session.getExpiryTime();
+        boolean isValid = authedPlayer.isSessionsEnabled() &&
+                session.getIp().getIp().equals(authedPlayer.getLastIp()) &&
+                (System.currentTimeMillis() / 1000L) < session.getExpiryTime() &&
+                session.getUuid().equals(authedPlayer.getUuid());
 
         if(!isValid) {
             PreferencesHolder.sql.safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=?", session.getId());
