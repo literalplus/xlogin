@@ -34,16 +34,16 @@ public final class SessionHelper {
             throw new RuntimeException(e);
         }
 
-        boolean isValid = authedPlayer.isSessionsEnabled() &&
+        boolean valid = authedPlayer.isSessionsEnabled() &&
                 session.getIp().getIp().equals(authedPlayer.getLastIp()) &&
                 (System.currentTimeMillis() / 1000L) < session.getExpiryTime() &&
                 session.getUuid().equals(authedPlayer.getUuid());
 
-        if(!isValid) {
+        if(!valid) {
             PreferencesHolder.sql.safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=?", session.getId());
         }
 
-        return isValid;
+        return valid;
     }
 
     public static boolean start(AuthedPlayer authedPlayer) {
