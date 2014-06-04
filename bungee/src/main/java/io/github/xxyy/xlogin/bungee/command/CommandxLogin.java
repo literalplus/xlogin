@@ -124,28 +124,43 @@ public class CommandxLogin extends Command {
 
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
 
-                    if (matches.length == 0) {
+                    boolean doMatchCheck = !args[1].startsWith("/");
+
+                    if (matches.length == 0 && !doMatchCheck) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
                         return;
                     }
 
-                    Set<String> freedIps = new HashSet<>();
-                    for (AuthedPlayer authedPlayer : matches) {
-                        if (!freedIps.contains(authedPlayer.getLastIp())) {
-                            IpAddress ip = IpAddressFactory.get(authedPlayer.getLastIp());
-                            ip.setMaxUsers(amount);
-                            IpAddressFactory.save(ip);
-                            freedIps.add(authedPlayer.getLastIp());
+                    if (doMatchCheck) {
+                        Set<String> freedIps = new HashSet<>();
+                        for (AuthedPlayer authedPlayer : matches) {
+                            if (!freedIps.contains(authedPlayer.getLastIp())) {
+                                if (authedPlayer.getLastIp() == null) {
+                                    sender.sendMessage(new ComponentBuilder("Für folgenden Spieler gibt es keine letzte IP: ").color(GOLD)
+                                            .append(authedPlayer.toShortString()).color(YELLOW).create());
+                                } else {
+                                    IpAddressFactory.free(authedPlayer.getLastIp(), amount);
+                                    freedIps.add(authedPlayer.getLastIp());
+                                }
+                            }
                         }
+
+                        sender.sendMessage(new ComponentBuilder("Folgenden IPs wurden ").color(GOLD)
+                                .append(String.valueOf(amount)).color(ChatColor.YELLOW)
+                                .append(" Slots zugewiesen: ").color(GOLD)
+                                .append(CommandHelper.CSCollection(freedIps)).color(ChatColor.YELLOW)
+                                .append(". Zugehörige Benutzer: ").color(GOLD)
+                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches)))
+                                .create());
+                    } else {
+                        IpAddressFactory.free(args[1], amount);
+                        sender.sendMessage(new ComponentBuilder("Der IP ").color(GOLD)
+                                .append(args[1]).color(YELLOW)
+                                .append(" wurden ").color(GOLD)
+                                .append(String.valueOf(amount)).color(YELLOW)
+                                .append(" Slots zugewiesen. Keine zugehörigen Benutzer gefunden.").color(GOLD).create());
                     }
 
-                    sender.sendMessage(new ComponentBuilder("Folgenden IPs wurden ").color(GOLD)
-                            .append(String.valueOf(amount)).color(ChatColor.YELLOW)
-                            .append(" Slots zugewiesen: ").color(GOLD)
-                            .append(CommandHelper.CSCollection(freedIps)).color(ChatColor.YELLOW)
-                            .append(". Zugehörige Benutzer: ").color(GOLD)
-                            .append(CommandHelper.CSCollectionShort(Arrays.asList(matches)))
-                            .create());
                 }
                 return;
             case "user":
@@ -186,7 +201,7 @@ public class CommandxLogin extends Command {
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
 
                     if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))) {
-                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurden mehr als ein Spiler gefunden. " +
+                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurden mehr als ein Spieler gefunden. " +
                                 "Bitte verwende -R am Ende, um mehrere User zu löschen. Gefundene User: ").color(GOLD)
                                 .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
                         return;
@@ -203,6 +218,9 @@ public class CommandxLogin extends Command {
                         XLoginPlugin.AUTHED_PLAYER_REPOSITORY.deletePlayer(match);
                     }
                 }
+                return;
+            case "forcecrack":
+
                 return;
             default:
                 sendAll(sender, HELP_COMPONENTS);

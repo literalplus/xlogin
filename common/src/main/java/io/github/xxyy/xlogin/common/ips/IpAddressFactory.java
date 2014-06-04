@@ -59,6 +59,12 @@ public class IpAddressFactory {
         }
     }
 
+    public static void free(String ipString, int newSlotAmount) {
+        IpAddress ip = get(ipString);
+        ip.setMaxUsers(newSlotAmount);
+        save(ip);
+    }
+
     public static void removeFromCache(String ipString) {
         cache.remove(ipString);
     }
