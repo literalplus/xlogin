@@ -130,7 +130,7 @@ public class AuthtopiaHelper {
         FutureCallback<Boolean> sqlQueryCallback = new FutureCallback<Boolean>() {
             @Override
             public void onSuccess(@NotNull final Boolean queryMojang) {
-                boolean onlineMode = queryMojang; //auth_list cracked override
+                boolean onlineMode = false; //auth_list cracked override
                 if (queryMojang) {
                     Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
 
@@ -141,6 +141,8 @@ public class AuthtopiaHelper {
                                 evt.getConnection().getName(),
                                 CommandHelper.CSCollection(Arrays.asList(profiles))));
                     }
+                } else {
+                    onlineMode = false;
                 }
 
                 evt.getConnection().setOnlineMode(onlineMode);
