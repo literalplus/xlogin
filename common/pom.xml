@@ -11,6 +11,19 @@
 
     <artifactId>xlogin-common</artifactId>
 
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://sminotopia.de/ci/job/bungee~xlogin/</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <downloadUrl>http://minotopia.de/ci/job/bungee~xlogin</downloadUrl>
+        <repository>
+            <id>xxyy-artifactory</id>
+            <url>http://server.nowak-at.net/repo/xxyy-private/</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
