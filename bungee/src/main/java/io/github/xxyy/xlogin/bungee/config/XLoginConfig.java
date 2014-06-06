@@ -50,6 +50,6 @@ public class XLoginConfig extends Config {
         CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
 
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
-        PreferencesHolder.setSessionExpriyTime(sessionExpiryTime);
+        PreferencesHolder.setSessionExpiryTime(sessionExpiryTime);
     }
 }

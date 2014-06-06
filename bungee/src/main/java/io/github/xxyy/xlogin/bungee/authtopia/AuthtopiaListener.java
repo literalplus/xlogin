@@ -58,10 +58,10 @@ public class AuthtopiaListener implements Listener {
         AuthedPlayer cachedPlayer = AuthedPlayerFactory.getCache(evt.getPlayer().getUniqueId());
         if(cachedPlayer != null) {
             cachedPlayer.setValid(false);
-            XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forceGetPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+            plugin.getRepository().forceGetPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
         }
 
-        final boolean knownBefore = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
+        final boolean knownBefore = plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             public void run() {
                 if (plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
@@ -74,7 +74,7 @@ public class AuthtopiaListener implements Listener {
                 AuthedPlayer authedPlayer = null;
 
                 if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
-                    authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
+                    authedPlayer = plugin.getRepository()
                             .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
                     authedPlayer.setValid(true);
                 }
@@ -107,7 +107,7 @@ public class AuthtopiaListener implements Listener {
                             .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
-                        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), true);
+                        plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), true);
                         authedPlayer.setPremium(true);
 
                         if(evt.getPlayer().getServer() != null) {
@@ -118,7 +118,7 @@ public class AuthtopiaListener implements Listener {
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
                     if(authedPlayer.authenticateSession()){
-                        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+                        plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                     }
                 }
@@ -127,7 +127,7 @@ public class AuthtopiaListener implements Listener {
                     plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
                 }
 
-                XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), null);
+                plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), null);
             }
         }, 250, TimeUnit.MILLISECONDS);
     }
@@ -138,7 +138,7 @@ public class AuthtopiaListener implements Listener {
         Integer maxUsers = ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();
         int count = 0;
 
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE user_lastip = ? AND uuid != ?", ipString, evt.getPlayer().getUniqueId())) {
             if (qr.rs().next()) {
                 count = qr.rs().getInt("cnt");
@@ -168,8 +168,8 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(evt.getPlayer().getUniqueId(), null);
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId());
+        plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), null);
+        plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
 
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
     }

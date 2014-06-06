@@ -61,7 +61,7 @@ public class CommandxLogin extends Command {
 
         switch (args[0].toLowerCase()) {
             case "reload":
-                XLoginPlugin.AUTHED_PLAYER_REPOSITORY.clear();
+                plugin.getRepository().clear();
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
@@ -217,7 +217,7 @@ public class CommandxLogin extends Command {
                     for (AuthedPlayer match : matches) {
                         sender.sendMessage(new ComponentBuilder("Permanently deleted this player: ").color(RED)
                                 .append(String.valueOf(match)).color(DARK_RED).create());
-                        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.deletePlayer(match);
+                        plugin.getRepository().deletePlayer(match);
                     }
                 }
                 return;
@@ -225,7 +225,7 @@ public class CommandxLogin extends Command {
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
-                    PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO auth_list SET name=? ON DUPLICATE KEY UPDATE name=?", args[1], args[1]);
+                    PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO auth_list SET name=? ON DUPLICATE KEY UPDATE name=?", args[1], args[1]);
                     boolean premium = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]).length == 1;
                     sender.sendMessage(new ComponentBuilder("Der Spieler ").color(GOLD)
                             .append(args[1]).color(YELLOW)

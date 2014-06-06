@@ -23,7 +23,7 @@ public final class SessionHelper {
 //                .findUnique();
         Session session;
 
-        try(QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM mt_main.xlogin_sessions WHERE user=?", authedPlayer.getUuid()).assertHasResultSet()) {
+        try(QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM mt_main.xlogin_sessions WHERE user=?", authedPlayer.getUuid()).assertHasResultSet()) {
             ResultSet rs = qr.rs();
             if(rs.next()) {
                 session = new Session(rs.getInt("id"), rs.getString("user"), IpAddressFactory.get(rs.getString("ip")), rs.getInt("expiry_time"));
@@ -40,7 +40,7 @@ public final class SessionHelper {
                 session.getUuid().equals(authedPlayer.getUuid());
 
         if(!valid) {
-            PreferencesHolder.sql.safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=?", session.getId());
+            PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=?", session.getId());
         }
 
         return valid;
@@ -51,8 +51,8 @@ public final class SessionHelper {
             return false;
         }
 
-        PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO mt_main.xlogin_sessions SET user=?,ip=?,expiry_time=?",
-                authedPlayer.getUuid(), authedPlayer.getLastIp(), (System.currentTimeMillis() / 1000L) + PreferencesHolder.getSessionExpriyTime());
+        PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO mt_main.xlogin_sessions SET user=?,ip=?,expiry_time=?",
+                authedPlayer.getUuid(), authedPlayer.getLastIp(), (System.currentTimeMillis() / 1000L) + PreferencesHolder.getSessionExpiryTime());
 
         return true;
     }

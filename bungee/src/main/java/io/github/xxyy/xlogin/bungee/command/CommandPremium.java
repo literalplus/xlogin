@@ -43,12 +43,12 @@ public class CommandPremium extends Command {
                 //TODO /premium off
             }
 
-        if(!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+        if(!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
             return;
         }
 
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
 
         if(authedPlayer.isPremium()) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().accountAlreadyPremium));

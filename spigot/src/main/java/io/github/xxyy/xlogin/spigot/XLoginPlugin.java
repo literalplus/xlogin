@@ -4,6 +4,7 @@ import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
@@ -29,22 +30,12 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 22.5.14
  */
-public class XLoginPlugin extends JavaPlugin {
+public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry();
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
     public static final String API_CHANNEL_NAME = "xLo-BungeeAPI";
     @Getter
     private Location spawnLocation;
-
-//    @Override
-//    public List<Class<?>> getDatabaseClasses() {
-//        List<Class<?>> list = new ArrayList<>();
-//        list.add(IpAddress.class);
-//        list.add(AuthedPlayer.class);
-//        list.add(Session.class);
-//        list.add(FailedLoginAttempt.class);
-//        return list;
-//    }
 
     @Override
     public void onDisable() {
@@ -65,11 +56,11 @@ public class XLoginPlugin extends JavaPlugin {
         getCommand("spawn").setExecutor(new CommandSpawn(this));
 
         String dbName = getConfig().getString("sql.db");
-        PreferencesHolder.sql = new SafeSql(SqlConnectables.fromCredentials(
+        PreferencesHolder.setSql(new SafeSql(SqlConnectables.fromCredentials(
                 SqlConnectables.getHostString(dbName, getConfig().getString("sql.host")),
                 dbName,
                 getConfig().getString("sql.user"),
-                getConfig().getString("sql.password")));
+                getConfig().getString("sql.password"))));
 
         //Init config
         initConfig();
@@ -166,7 +157,7 @@ public class XLoginPlugin extends JavaPlugin {
         UUID uuid = plr.getUniqueId();
         Location location = plr.getLocation();
 
-        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
+        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
                 location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString());
         getLogger().info("Saved location for " + uuid);
     }
@@ -180,5 +171,15 @@ public class XLoginPlugin extends JavaPlugin {
         this.getConfig().set("spawn.pitch", location.getPitch());
         this.getConfig().set("spawn.yaw", location.getYaw());
         this.getConfig().set("spawn.world", location.getWorld().getName());
+    }
+
+    @Override
+    public AuthedPlayerRepository getRepository() {
+        return AUTHED_PLAYER_REPOSITORY;
+    }
+
+    @Override
+    public AuthedPlayerRegistry getRegistry() {
+        return AUTHED_PLAYER_REGISTRY;
     }
 }

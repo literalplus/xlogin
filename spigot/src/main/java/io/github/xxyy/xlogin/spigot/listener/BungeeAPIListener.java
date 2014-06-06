@@ -50,18 +50,18 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forceGetPlayer(uuid, plr.getName());
+                    AuthedPlayer authedPlayer = plugin.getRepository().forceGetPlayer(uuid, plr.getName());
                     authedPlayer.setAuthenticationProvider(authProvider);
                     authedPlayer.setAuthenticated(true);
 
 
-                    XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
-                    XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(uuid, true);
+                    plugin.getRegistry().registerAuthentication(authedPlayer);
+                    plugin.getRepository().updateKnown(uuid, true);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
 
-                    XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(uuid, true);
+                    plugin.getRepository().updateKnown(uuid, true);
 
                     Player plr = Bukkit.getPlayer(uuid);
 
@@ -71,7 +71,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forceGetPlayer(uuid, plr.getName());
+                    plugin.getRepository().forceGetPlayer(uuid, plr.getName());
                 } else if(command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
                 } else {

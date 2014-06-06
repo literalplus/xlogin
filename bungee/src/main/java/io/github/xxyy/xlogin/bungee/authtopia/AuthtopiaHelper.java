@@ -86,7 +86,7 @@ public class AuthtopiaHelper {
      * @param plr Player to publish the results from
      */
     public void publishResult(final ProxiedPlayer plr) {
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
 
         ByteArrayDataOutput bada = ByteStreams.newDataOutput();
         bada.writeUTF(plr.getUniqueId().toString());
@@ -114,7 +114,7 @@ public class AuthtopiaHelper {
      * @param callback Code to execute once the check is complete.
      */
     public void isSimulateCracked(final String name, FutureCallback<Boolean> callback) {
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
             callback.onSuccess(!(qr.rs().next() && qr.rs().getInt("cnt") > 0));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -171,7 +171,7 @@ public class AuthtopiaHelper {
      */
     public boolean registerPremium(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
         if (authedPlayer.authenticatePremium()) {
-            XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+            plugin.getRegistry().registerAuthentication(authedPlayer);
 
             plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());
 
@@ -184,12 +184,12 @@ public class AuthtopiaHelper {
     public void unregisterPremium(ProxiedPlayer plr) {
 //        this.premiumPlayers.remove(plr.getUniqueId());
 
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY
+        AuthedPlayer authedPlayer = plugin.getRepository()
                 .getPlayer(plr.getUniqueId(), plr.getName());
 
         authedPlayer.setValid(false);
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(plr.getUniqueId());
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(plr.getUniqueId());
+        plugin.getRegistry().remove(plr.getUniqueId());
+        plugin.getRepository().forget(plr.getUniqueId());
 //        AuthedPlayerFactory.save(authedPlayer);
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }

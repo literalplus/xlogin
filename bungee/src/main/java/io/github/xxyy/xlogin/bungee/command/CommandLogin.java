@@ -30,12 +30,12 @@ public class CommandLogin extends Command {
 
         ProxiedPlayer plr = (ProxiedPlayer) sender;
 
-        if(!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+        if(!plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
             return;
         }
 
-        if(XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+        if(plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().alreadyLoggedIn));
             return;
         }
@@ -45,7 +45,7 @@ public class CommandLogin extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
 
         authedPlayer.setValid(true);
 
@@ -55,7 +55,7 @@ public class CommandLogin extends Command {
             return; //TODO: Only allow 5 tries, then tempban IP for 5m
         }
 
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+        plugin.getRegistry().registerAuthentication(authedPlayer);
         plugin.sendAuthNotification(plr, authedPlayer);
 
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));

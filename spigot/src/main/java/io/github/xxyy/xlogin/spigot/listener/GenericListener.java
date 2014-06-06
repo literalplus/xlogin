@@ -33,8 +33,8 @@ public class GenericListener implements Listener {
         evt.setQuitMessage(null);
 
         AuthedPlayerFactory.remove(plr.getUniqueId());
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(evt.getPlayer().getUniqueId());
+        plugin.getRegistry().remove(evt.getPlayer().getUniqueId());
+        plugin.getRepository().forget(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -42,8 +42,8 @@ public class GenericListener implements Listener {
         plugin.saveLocation(evt.getPlayer());
 
         AuthedPlayerFactory.remove(evt.getPlayer().getUniqueId());
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.remove(evt.getPlayer().getUniqueId());
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.forget(evt.getPlayer().getUniqueId());
+        plugin.getRegistry().remove(evt.getPlayer().getUniqueId());
+        plugin.getRepository().forget(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -68,7 +68,7 @@ public class GenericListener implements Listener {
         }
 
         Player plr = evt.getPlayer();
-        if (!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+        if (!plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
             if (((evt.getTo().getX() != evt.getFrom().getX()) || (evt.getTo().getZ() != evt.getFrom().getZ()))) {
                 plr.sendMessage(this.notRegisteredMessage); //Only message when actually moving - microopt
                 evt.setTo(evt.getFrom());
@@ -77,7 +77,7 @@ public class GenericListener implements Listener {
             return;
         }
 
-        if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+        if (!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             if (((evt.getTo().getX() != evt.getFrom().getX()) || (evt.getTo().getZ() != evt.getFrom().getZ())) || (evt.getTo().getY() != evt.getFrom().getY())) {
                 plr.sendMessage(this.notLoggedInMessage);
                 evt.setTo(evt.getFrom());
@@ -101,14 +101,14 @@ public class GenericListener implements Listener {
             return;
         }
 
-        if (!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+        if (!plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
             plr.sendMessage(this.notRegisteredMessage);
 
             e.setCancelled(true);
             return;
         }
 
-        if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+        if (!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             plr.sendMessage(this.notLoggedInMessage);
 
             e.setCancelled(true);
@@ -120,7 +120,7 @@ public class GenericListener implements Listener {
     public void onJoin(PlayerJoinEvent evt) {
         evt.setJoinMessage(null); //TODO configurable
 
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
+        plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
 
         evt.getPlayer().teleport(plugin.getSpawnLocation());
     }

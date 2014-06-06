@@ -36,11 +36,11 @@ public class MainListener implements Listener {
                 return;
             }
 
-            if (!XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+            if (!plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
                 evt.setCancelled(true);
 
                 plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
-            } else if (!XLoginPlugin.AUTHED_PLAYER_REGISTRY.isAuthenticated(plr.getUniqueId())) {
+            } else if (!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
                 evt.setCancelled(true);
 
                 plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
@@ -60,7 +60,7 @@ public class MainListener implements Listener {
                         ProxiedPlayer finalPlr = null;
 
                         for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
-                            AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+                            AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
 
                             if (authedPlayer.isAuthenticated()) {
                                 plugin.sendAuthNotification(plr, authedPlayer);

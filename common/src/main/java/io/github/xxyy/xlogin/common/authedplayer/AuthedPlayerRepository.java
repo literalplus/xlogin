@@ -33,7 +33,7 @@ public class AuthedPlayerRepository {
         }
         boolean rtrn = false;
 
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE (premium = 1 OR password IS NOT NULL) AND uuid=?", uuid.toString()).assertHasResultSet()) {
             rtrn = qr.rs().next() && qr.rs().getInt(1) > 0;
         } catch (SQLException e) {

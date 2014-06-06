@@ -32,7 +32,7 @@ public class CommandRegister extends Command {
 
         ProxiedPlayer plr = (ProxiedPlayer) sender;
 
-        if(XLoginPlugin.AUTHED_PLAYER_REPOSITORY.isPlayerKnown(plr.getUniqueId())) {
+        if(plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().alreadyRegistered));
             return;
         }
@@ -57,7 +57,7 @@ public class CommandRegister extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = XLoginPlugin.AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
 
         String salt = PasswordHelper.generateSalt();
 
@@ -68,11 +68,11 @@ public class CommandRegister extends Command {
 
         Validate.isTrue(authedPlayer.authenticatePassword(args[0], plr.getAddress().getAddress().toString()), "Setting password failed for registration!");
 
-        XLoginPlugin.AUTHED_PLAYER_REGISTRY.registerAuthentication(authedPlayer);
+        plugin.getRegistry().registerAuthentication(authedPlayer);
         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, plr.getName()));
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
-        XLoginPlugin.AUTHED_PLAYER_REPOSITORY.updateKnown(plr.getUniqueId(), true);
+        plugin.getRepository().updateKnown(plr.getUniqueId(), true);
 
         AuthedPlayerFactory.save(authedPlayer);
         plugin.notifyRegister(plr);

@@ -24,7 +24,7 @@ public class IpAddressFactory {
             return cache.get(ipString);
         }
 
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT * FROM " + IpAddress.TABLE_NAME + " WHERE ip=?", ipString).assertHasResultSet()) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + IpAddress.TABLE_NAME + " WHERE ip=?", ipString).assertHasResultSet()) {
             ResultSet rs = qr.rs();
 
             if (rs.next()) {
@@ -32,7 +32,7 @@ public class IpAddressFactory {
                 cache.put(ipString, ipAddress);
                 return ipAddress;
             } else {
-                PreferencesHolder.sql.safelyExecuteUpdate("INSERT INTO " + IpAddress.TABLE_NAME + " SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
+                PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + IpAddress.TABLE_NAME + " SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
                 return new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp(), true);
             }
         } catch (SQLException e) {
@@ -45,13 +45,13 @@ public class IpAddressFactory {
             return;
         }
 
-        PreferencesHolder.sql.safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=?,sessions_on=? WHERE ip=?",
+        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=?,sessions_on=? WHERE ip=?",
                 toSave.getMaxUsers(), toSave.isSessionsEnabled(), toSave.getIp());
         cache.put(toSave.getIp(), toSave);
     }
 
     public static boolean exists(String ipString) {
-        try (QueryResult qr = PreferencesHolder.sql.executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + IpAddress.TABLE_NAME + " " +
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + IpAddress.TABLE_NAME + " " +
                 "WHERE ip=?", ipString).assertHasResultSet()) {
             return qr.rs().next() && qr.rs().getInt("cnt") > 0;
         } catch (SQLException e) {

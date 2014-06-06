@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.common;
 
 import io.github.xxyy.common.sql.SafeSql;
+import io.github.xxyy.xlogin.common.api.ApiConsumer;
 
 /**
  * Holds some server-specific preferences used by the common library.
@@ -11,8 +12,9 @@ import io.github.xxyy.common.sql.SafeSql;
  */
 public final class PreferencesHolder {
     private static int maxUsersPerIp;
-    private static int sessionExpriyTime;
-    public static SafeSql sql;
+    private static int sessionExpiryTime;
+    private static ApiConsumer consumer;
+    private static SafeSql sql;
 
     private PreferencesHolder() {
     }
@@ -21,15 +23,31 @@ public final class PreferencesHolder {
         return PreferencesHolder.maxUsersPerIp;
     }
 
-    public static int getSessionExpriyTime() {
-        return PreferencesHolder.sessionExpriyTime;
+    public static int getSessionExpiryTime() {
+        return PreferencesHolder.sessionExpiryTime;
     }
 
     public static void setMaxUsersPerIp(int maxUsersPerIp) {
         PreferencesHolder.maxUsersPerIp = maxUsersPerIp;
     }
 
-    public static void setSessionExpriyTime(int sessionExpriyTime) {
-        PreferencesHolder.sessionExpriyTime = sessionExpriyTime;
+    public static void setSessionExpiryTime(int sessionExpiryTime) {
+        PreferencesHolder.sessionExpiryTime = sessionExpiryTime;
+    }
+
+    public static ApiConsumer getConsumer() {
+        return consumer;
+    }
+
+    public static void setConsumer(ApiConsumer consumer) {
+        PreferencesHolder.consumer = consumer;
+    }
+
+    public static SafeSql getSql() {
+        return sql;
+    }
+
+    public static void setSql(SafeSql sql) {
+        PreferencesHolder.sql = sql;
     }
 }

@@ -12,6 +12,7 @@ import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
@@ -35,7 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 10.5.14
  */
-public class XLoginPlugin extends Plugin {
+public class XLoginPlugin extends Plugin implements ApiConsumer {
     public static final String PLUGIN_VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
     @Getter
@@ -72,7 +73,7 @@ public class XLoginPlugin extends Plugin {
         this.authtopiaHelper = new AuthtopiaHelper(this);
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            PreferencesHolder.sql = new SafeSql(getConnectableFromConfig());
+            PreferencesHolder.setSql(new SafeSql(getConnectableFromConfig()));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -188,5 +189,15 @@ public class XLoginPlugin extends Plugin {
 
     public void registerOnlineIp(String ipString, Integer onlinePlayers) {
         getIpOnlinePlayers().put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
+    }
+
+    @Override
+    public AuthedPlayerRepository getRepository() {
+        return AUTHED_PLAYER_REPOSITORY;
+    }
+
+    @Override
+    public AuthedPlayerRegistry getRegistry() {
+        return AUTHED_PLAYER_REGISTRY;
     }
 }
