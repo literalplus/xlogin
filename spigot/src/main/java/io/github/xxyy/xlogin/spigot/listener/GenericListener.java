@@ -85,11 +85,6 @@ public class GenericListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onChat(final AsyncPlayerChatEvent evt) {
-        checkLoginAndMsg(evt, evt.getPlayer());
-    }
-
     @EventHandler
     public void onDmg(EntityDamageEvent e) {
         if (e.getEntityType() != EntityType.PLAYER) return;
