@@ -69,6 +69,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
             GenericListener.skip = true;
         }
+
+        PreferencesHolder.setConsumer(this);
     }
 
     public void initConfig() {

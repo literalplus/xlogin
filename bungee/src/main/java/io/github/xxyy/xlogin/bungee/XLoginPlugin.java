@@ -102,7 +102,7 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
             }
         }, 5L, 5L, TimeUnit.MINUTES);
 
-        //Register auth callback
+        PreferencesHolder.setConsumer(this);
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }
