@@ -11,7 +11,7 @@ loadbefore: [MinoTopiaCore, McSystem]
 commands:
   spawn:
     description: Teleports players to the spawn
-    aliases: [sporn, spawnpunkt, espawn,xXspawnXx]
+    aliases: [sporn, spawnpunkt, espawn, xXspawnXx]
     permission: xlogin.spawn
     usage: "/<command> - Teleportiert dich zum Spawn."
 
