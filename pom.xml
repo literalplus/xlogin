@@ -16,6 +16,19 @@
         <module>bootstrap</module>
     </modules>
 
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://sminotopia.de/ci/job/bungee~xlogin/</url>
+    </ciManagement>
+
+    <distributionManagement>
+        <downloadUrl>http://minotopia.de/ci/job/bungee~xlogin</downloadUrl>
+        <repository>
+            <id>xxyy-artifactory</id>
+            <url>http://server.nowak-at.net/repo/xxyy-private/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <minecraft.version>1.7.9</minecraft.version>
         <bukkit.release>R0.1</bukkit.release>
