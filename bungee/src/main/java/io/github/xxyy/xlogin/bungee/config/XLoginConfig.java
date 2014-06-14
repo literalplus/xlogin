@@ -4,10 +4,7 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import lombok.Getter;
 import lombok.Setter;
-import net.cubespace.Yamler.Config.Comment;
-import net.cubespace.Yamler.Config.Comments;
-import net.cubespace.Yamler.Config.Config;
-import net.cubespace.Yamler.Config.Path;
+import net.cubespace.Yamler.Config.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -48,8 +45,12 @@ public class XLoginConfig extends Config {
                 "xLogin is not free software and may not be used without explicit written permission",
                 "from the author, which you can contact at devnull@nowak-at.net."};
         CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
+    }
 
+    @Override
+    public void init(File file) throws InvalidConfigurationException {
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
         PreferencesHolder.setSessionExpiryTime(sessionExpiryTime);
+        super.init(file);
     }
 }
