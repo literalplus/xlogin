@@ -5,6 +5,7 @@ import io.github.xxyy.xlogin.common.PreferencesHolder;
 import lombok.Getter;
 import lombok.Setter;
 import net.cubespace.Yamler.Config.*;
+import net.md_5.bungee.api.ProxyServer;
 
 import java.io.File;
 import java.util.Arrays;
@@ -52,5 +53,6 @@ public class XLoginConfig extends Config {
         super.init(file);
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
         PreferencesHolder.setSessionExpiryTime(sessionExpiryTime);
+        ProxyServer.getInstance().getLogger().info("[xLogin] Loaded general config with maxUsers="+maxUsers);
     }
 }
