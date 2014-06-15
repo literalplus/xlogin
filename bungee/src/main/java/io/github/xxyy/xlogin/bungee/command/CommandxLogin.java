@@ -64,6 +64,7 @@ public class CommandxLogin extends Command {
                 plugin.getRepository().clear();
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
+                plugin.reloadConfig();
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
                 return;
             case "cpw":

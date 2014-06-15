@@ -53,21 +53,7 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
     @Override
     public void onEnable() {
         //Initialise configuration file
-        try {
-            this.config = new XLoginConfig(this);
-            this.config.init();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-            getLogger().info("Could not load configuration file. Please double-check your YAML syntax with http://yaml-online-parser.appspot.com/.");
-        }
-
-        try {
-            this.messages = new LocalisedMessageConfig(this);
-            this.messages.init();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-            getLogger().info("Could not load messages file. Please double-check your YAML syntax with http://yaml-online-parser.appspot.com/.");
-        }
+        reloadConfig();
 
         //Establish database connection
         this.authtopiaHelper = new AuthtopiaHelper(this);
@@ -105,6 +91,24 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
         PreferencesHolder.setConsumer(this);
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
+    }
+
+    public void reloadConfig() {
+        try {
+            this.config = new XLoginConfig(this);
+            this.config.init();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+            getLogger().info("Could not load configuration file. Please double-check your YAML syntax with http://yaml-online-parser.appspot.com/.");
+        }
+
+        try {
+            this.messages = new LocalisedMessageConfig(this);
+            this.messages.init();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+            getLogger().info("Could not load messages file. Please double-check your YAML syntax with http://yaml-online-parser.appspot.com/.");
+        }
     }
 
     public SqlConnectable getConnectableFromConfig() {
