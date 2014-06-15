@@ -50,12 +50,7 @@ public class XLoginConfig extends Config {
 
     @Override
     public void init() throws InvalidConfigurationException {
-        init(CONFIG_FILE);
-    }
-
-    @Override
-    public void init(File file) throws InvalidConfigurationException {
-        super.init(file);
+        super.init();
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
         PreferencesHolder.setSessionExpiryTime(sessionExpiryTime);
         ProxyServer.getInstance().getLogger().info("[xLogin] Loaded general config with maxUsers="+maxUsers);

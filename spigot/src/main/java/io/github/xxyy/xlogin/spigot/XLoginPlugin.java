@@ -48,13 +48,16 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public void onEnable() {
         //Register Bukkit stuffs
         BungeeAPIListener apiListener = new BungeeAPIListener(this);
-
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, API_CHANNEL_NAME);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "xLo-BungeeAPI", apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
         getCommand("spawn").setExecutor(new CommandSpawn(this));
 
+        //Init config
+        initConfig();
+
+        //Init database connection
         String dbName = getConfig().getString("sql.db");
         PreferencesHolder.setSql(new SafeSql(SqlConnectables.fromCredentials(
                 SqlConnectables.getHostString(dbName, getConfig().getString("sql.host")),
@@ -62,8 +65,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
                 getConfig().getString("sql.user"),
                 getConfig().getString("sql.password"))));
 
-        //Init config
-        initConfig();
 
         if (Bukkit.getOnlinePlayers().length > 0) {
             sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
