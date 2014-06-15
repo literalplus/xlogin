@@ -49,6 +49,11 @@ public class XLoginConfig extends Config {
     }
 
     @Override
+    public void init() throws InvalidConfigurationException {
+        init(CONFIG_FILE);
+    }
+
+    @Override
     public void init(File file) throws InvalidConfigurationException {
         super.init(file);
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
