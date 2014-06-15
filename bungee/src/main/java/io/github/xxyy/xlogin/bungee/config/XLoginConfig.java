@@ -35,9 +35,9 @@ public class XLoginConfig extends Config {
     @Path("session-expriy-time")
     private int sessionExpiryTime = 43_200;
 
-    @Comment("Maximum amount of users per IP address. Default is 1.")
+    @Comment("Maximum amount of users per IP address. Default is 4.")
     @Path("max-users-per-ip")
-    private int maxUsers = 1;
+    private int maxUsers = 4;
 
     public XLoginConfig(XLoginPlugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
@@ -49,8 +49,8 @@ public class XLoginConfig extends Config {
 
     @Override
     public void init(File file) throws InvalidConfigurationException {
+        super.init(file);
         PreferencesHolder.setMaxUsersPerIp(maxUsers);
         PreferencesHolder.setSessionExpiryTime(sessionExpiryTime);
-        super.init(file);
     }
 }
