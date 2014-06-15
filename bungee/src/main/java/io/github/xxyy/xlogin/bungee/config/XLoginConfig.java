@@ -32,7 +32,7 @@ public class XLoginConfig extends Config {
     private List<String> blockedNames = Arrays.asList("chris301234", "hivemc", "kanney");
 
     @Comment("Session expiry time, in seconds. Default is 43200, which is 12 hours.")
-    @Path("session-expriy-time")
+    @Path("session-expiry-time")
     private int sessionExpiryTime = 43_200;
 
     @Comment("Maximum amount of users per IP address. Default is 4.")
