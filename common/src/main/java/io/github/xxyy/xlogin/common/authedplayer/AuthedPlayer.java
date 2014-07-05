@@ -129,8 +129,8 @@ public class AuthedPlayer implements ToShortStringable {
         return true;
     }
 
-    public boolean authenticateSession() {
-        if(SessionHelper.hasValidSession(this)) {
+    public boolean authenticateSession(IpAddress ipAddress) {
+        if(SessionHelper.hasValidSession(this, ipAddress)) {
             this.authenticationProvider = AuthenticationProvider.XLOGIN_SESSION;
             this.authenticated = true;
 

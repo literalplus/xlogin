@@ -17,7 +17,7 @@ public final class SessionHelper {
     private SessionHelper() {
     }
 
-    public static boolean hasValidSession(AuthedPlayer authedPlayer) {
+    public static boolean hasValidSession(AuthedPlayer authedPlayer, IpAddress address) {
 //        Session session = EbeanManager.getEbean().find(Session.class)
 //                .where().eq("user", authedPlayer.getUuid())
 //                .findUnique();

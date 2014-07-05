@@ -69,7 +69,11 @@ public class AuthtopiaListener implements Listener {
                     return;
                 }
 
-                checkIp(evt);
+                IpAddress ipAddress = checkIp(evt);
+
+                if(ipAddress == null) {
+                    return; //Can't use that IP
+                }
 
                 AuthedPlayer authedPlayer = null;
 
@@ -117,7 +121,7 @@ public class AuthtopiaListener implements Listener {
 
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
-                    if(authedPlayer.authenticateSession()){
+                    if(authedPlayer.authenticateSession(ipAddress)){
                         plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                     }
@@ -132,7 +136,7 @@ public class AuthtopiaListener implements Listener {
         }, 250, TimeUnit.MILLISECONDS);
     }
 
-    private void checkIp(PostLoginEvent evt) {
+    private IpAddress checkIp(PostLoginEvent evt) {
         String ipString = evt.getPlayer().getAddress().getAddress().toString();
         IpAddress ipAddress = IpAddress.fromIpString(ipString);
         Integer maxUsers = ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();
@@ -151,7 +155,7 @@ public class AuthtopiaListener implements Listener {
             evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
                     plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
             ));
-            return;
+            return null;
         }
 
         Integer onlinePlayers = plugin.getIpOnlinePlayers().get(ipString);
@@ -159,10 +163,12 @@ public class AuthtopiaListener implements Listener {
             evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
                     plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
             ));
-            return;
+            return null;
         }
 
         plugin.registerOnlineIp(ipString, onlinePlayers);
+
+        return ipAddress;
     }
 
 
