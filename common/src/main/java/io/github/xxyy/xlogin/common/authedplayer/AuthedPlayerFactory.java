@@ -7,17 +7,14 @@ import io.github.xxyy.xlogin.common.PreferencesHolder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.5.14
  */
 public final class AuthedPlayerFactory {
-    private static final HashMap<UUID, AuthedPlayer> players = new HashMap<>();
+    private static final Map<UUID, AuthedPlayer> players = new HashMap<>();
 
     public static AuthedPlayer getCache(UUID uuid) {
         return players.get(uuid);
@@ -72,6 +69,19 @@ public final class AuthedPlayerFactory {
         }
 
         return forceGet(uuid, username);
+    }
+
+    public static UUID getIdByName(String username) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
+                " WHERE username = ? ORDER BY premium DESC", username).assertHasResultSet()) {
+            if(qr.rs().next()) {
+                return UUID.fromString(qr.rs().getString("uuid"));
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+
+        return null;
     }
 
     public static AuthedPlayer forceGet(UUID uuid, String username) {

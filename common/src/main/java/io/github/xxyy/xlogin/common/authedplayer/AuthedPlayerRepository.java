@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import lombok.NonNull;
@@ -31,7 +32,7 @@ public class AuthedPlayerRepository {
         if (knownPlayers.containsKey(uuid)) {
             return knownPlayers.get(uuid);
         }
-        boolean rtrn = false;
+        boolean rtrn;
 
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE (premium = 1 OR password IS NOT NULL) AND uuid=?", uuid.toString()).assertHasResultSet()) {
@@ -60,6 +61,20 @@ public class AuthedPlayerRepository {
         }
 
         return aplr;
+    }
+
+    /**
+     * Gets a UUID that matches given name. If there are multiple entries for that name,
+     * premium ones (There can only be one) are preferred.
+     * If all returned names are cracked, a random one is returned. (This applies to very few database entries)
+     * @param input {Name of the player to get. Casing is ignored.} or {a valid UUID String}
+     * @return UUID of the matched player, as used by xLogin or NULL if no UUID is recorded for that name.
+     */
+    public UUID getUniqueId(@NonNull String input) {
+        if(UtilUUID.isValidUUID(input)) {
+            return UtilUUID.getFromString(input); //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
+        }
+        return AuthedPlayerFactory.getIdByName(input);
     }
 
     public void deletePlayer(@NonNull AuthedPlayer ap) {
