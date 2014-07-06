@@ -49,7 +49,7 @@ public class AuthedPlayerRepository {
      *
      * @param uuid UUID of the player to get
      * @param name Name of the player to get
-     * @return An AuthedPLayer instance corresponding to the arguments
+     * @return An AuthedPlayer instance corresponding to the arguments
      */
     public AuthedPlayer getPlayer(@NonNull UUID uuid, @NonNull String name) {
         AuthedPlayer aplr = AuthedPlayerFactory.get(uuid, name);
