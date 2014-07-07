@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import com.google.common.collect.ImmutableList;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
@@ -71,17 +72,54 @@ public final class AuthedPlayerFactory {
         return forceGet(uuid, username);
     }
 
-    public static UUID getIdByName(String username) {
-        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
+    public static List<XLoginProfile> getProfilesByName(String username) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid, username, premium FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE username = ? ORDER BY premium DESC", username).assertHasResultSet()) {
-            if(qr.rs().next()) {
-                return UUID.fromString(qr.rs().getString("uuid"));
+            return getProfilesFromResultSet(qr.rs());
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static XLoginProfile getProfile(UUID uuid) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid, username, premium FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
+                " WHERE uuid = ? ORDER BY premium DESC", uuid.toString()).assertHasResultSet()) {
+            List<XLoginProfile> profiles = getProfilesFromResultSet(qr.rs());
+
+            if(profiles.isEmpty()) {
+                return null;
+            } else if(profiles.size() == 1) {
+                return profiles.get(0);
+            } else {
+                throw new IllegalStateException("Multiple profile found for UUID "+uuid+"!");
             }
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
+    }
 
-        return null;
+    private static List<XLoginProfile> getProfilesFromResultSet(ResultSet rs) throws SQLException {
+        ImmutableList.Builder<XLoginProfile> builder = null;
+
+        while(rs.next()) {
+            XLoginProfile profile = new XLoginProfile(
+                    rs.getString("username"),
+                    UUID.fromString(rs.getString("uuid")),
+                    rs.getBoolean("premium")
+            );
+
+            if(profile.isPremium()) {
+                return ImmutableList.of(profile);
+            } else {
+                if(builder == null) {
+                    builder = ImmutableList.builder();
+                }
+
+                builder.add(profile);
+            }
+        }
+
+        return builder == null ? ImmutableList.<XLoginProfile>of() : builder.build();
     }
 
     public static AuthedPlayer forceGet(UUID uuid, String username) {

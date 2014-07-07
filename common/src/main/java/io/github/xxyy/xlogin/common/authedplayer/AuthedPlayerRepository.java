@@ -1,12 +1,14 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import com.google.common.collect.ImmutableList;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class AuthedPlayerRepository {
      * @param uuid Unique Id of the player to find
      * @return Whether that UUID is mapped to a player in the database.
      */
-    public boolean isPlayerKnown(@NonNull UUID uuid) {
+    public boolean isPlayerKnown(@NotNull UUID uuid) {
         if (knownPlayers.containsKey(uuid)) {
             return knownPlayers.get(uuid);
         }
@@ -52,7 +54,7 @@ public class AuthedPlayerRepository {
      * @param name Name of the player to get
      * @return An AuthedPlayer instance corresponding to the arguments
      */
-    public AuthedPlayer getPlayer(@NonNull UUID uuid, @NonNull String name) {
+    public AuthedPlayer getPlayer(@NotNull UUID uuid, @NotNull String name) {
         AuthedPlayer aplr = AuthedPlayerFactory.get(uuid, name);
 
         if (!aplr.getName().equals(name)) {
@@ -64,20 +66,32 @@ public class AuthedPlayerRepository {
     }
 
     /**
-     * Gets a UUID that matches given name. If there are multiple entries for that name,
-     * premium ones (There can only be one) are preferred.
-     * If all returned names are cracked, a random one is returned. (This applies to very few database entries)
+     * Gets profiles that match the given criteria. Premium players are returned first.
+     *
      * @param input {Name of the player to get. Casing is ignored.} or {a valid UUID String}
-     * @return UUID of the matched player, as used by xLogin or NULL if no UUID is recorded for that name.
+     * @return List of known profiles for that criteria.
      */
-    public UUID getUniqueId(@NonNull String input) {
+    @NotNull
+    public List<XLoginProfile> getProfiles(@NotNull String input) {
         if(UtilUUID.isValidUUID(input)) {
-            return UtilUUID.getFromString(input); //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
+            //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
+            return ImmutableList.of(AuthedPlayerFactory.getProfile(UtilUUID.getFromString(input)));
         }
-        return AuthedPlayerFactory.getIdByName(input);
+
+        return AuthedPlayerFactory.getProfilesByName(input);
     }
 
-    public void deletePlayer(@NonNull AuthedPlayer ap) {
+    /**
+     * Gets the profile for the given UUID.
+     *
+     * @param uuid UUID of the profile to get
+     * @return Profile info for requested UUID or NULL if there's no such profile.
+     */
+    public XLoginProfile getProfile(@NotNull UUID uuid) {
+        return AuthedPlayerFactory.getProfile(uuid);
+    }
+
+    public void deletePlayer(@NotNull AuthedPlayer ap) {
         AuthedPlayerFactory.delete(ap);
         forget(UUID.fromString(ap.getUuid()));
     }
@@ -90,7 +104,7 @@ public class AuthedPlayerRepository {
      * @param name Name of the player to get
      * @return An AuthedPLayer instance corresponding to the arguments
      */
-    public AuthedPlayer forceGetPlayer(@NonNull UUID uuid, @NonNull String name) {
+    public AuthedPlayer forceGetPlayer(@NotNull UUID uuid, @NotNull String name) {
         AuthedPlayer aplr = AuthedPlayerFactory.forceGet(uuid, name);
 
         if (!aplr.getName().equals(name)) {
