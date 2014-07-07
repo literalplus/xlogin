@@ -46,10 +46,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
@@ -77,7 +73,6 @@
                             <include>io.github.xxyy:common</include>
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
-                            <include>commons-lang:commons-lang</include>
                             <include>javax.persistence:persistence-api</include>
                             <include>joda-time:joda-time</include>
                         </includes>
