@@ -2,12 +2,13 @@ package io.github.xxyy.xlogin.common.authedplayer;
 
 import io.github.xxyy.common.util.ToShortStringable;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
+import io.github.xxyy.xlogin.common.api.XLoginProfile;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
-import lombok.NonNull;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Transient;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -20,18 +21,19 @@ import java.util.UUID;
 //@Entity
 //@Table(name = AuthedPlayer.AUTH_DATA_TABLE_NAME)
 //TODO common interface w/ PlayerWrapper
-public class AuthedPlayer implements ToShortStringable {
+public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
     public static final String AUTH_DATA_TABLE_NAME = "mt_main.xlogin_data";
 
-    @NonNull
     private String uuid;
-    @NonNull
+    private UUID uniqueId;
+
     private String name;
+    private boolean premium;
+    private boolean disabledPremiumMessage;
+
     private String password; //Yes, encrypted...
     private String salt;
     private String lastIp;
-    private boolean premium;
-    private boolean disabledPremiumMessage;
     private Timestamp registrationDate;
     private int lastLogoutBlockX;
     private int lastLogoutBlockY;
@@ -39,20 +41,16 @@ public class AuthedPlayer implements ToShortStringable {
     private String lastWorldName;
     private boolean sessionsEnabled;
 
-    @Transient
     private boolean valid = true;
-    @Transient
     private AuthenticationProvider authenticationProvider = null;
     private boolean authenticated = false;
 
-    public AuthedPlayer() {
-    }
-
-    public AuthedPlayer(String uuid, String name, String password, String salt, String lastIp,
+    protected AuthedPlayer(String uuid, String name, String password, String salt, String lastIp,
                         boolean premium, boolean disabledPremiumMessage, Timestamp registrationDate,
                         int lastLogoutBlockX, int lastLogoutBlockY, int lastLogoutBlockZ, String lastWorldName,
                         boolean sessionsEnabled) {
         this.uuid = uuid;
+        this.uniqueId = UUID.fromString(uuid);
         this.name = name;
         this.password = password;
         this.salt = salt;
@@ -153,12 +151,17 @@ public class AuthedPlayer implements ToShortStringable {
         }
     }
 
-    @NonNull
+    @NotNull
     public String getUuid() {
         return this.uuid;
     }
 
-    @NonNull
+    @NotNull @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
+
+    @NotNull @Override
     public String getName() {
         return this.name;
     }
@@ -171,6 +174,7 @@ public class AuthedPlayer implements ToShortStringable {
         return this.salt;
     }
 
+    @Override
     public String getLastIp() {
         return this.lastIp;
     }
@@ -183,7 +187,7 @@ public class AuthedPlayer implements ToShortStringable {
         return this.disabledPremiumMessage;
     }
 
-    public Timestamp getRegistrationDate() {
+    public Timestamp getRegistrationTimestamp() {
         return this.registrationDate;
     }
 
@@ -223,12 +227,19 @@ public class AuthedPlayer implements ToShortStringable {
         this.name = name;
     }
 
-    public void setDisabledPremiumMessage(boolean disabledPremiumMessage) {
-        this.disabledPremiumMessage = disabledPremiumMessage;
+    public void registerPassword(String password, String ip) {
+        String salt = PasswordHelper.generateSalt();
+
+        setSalt(salt);
+        setPassword(PasswordHelper.encrypt(password, salt));
+
+        setValid(true);
+
+        Validate.isTrue(authenticatePassword(password, ip), "Setting password failed for registration!");
     }
 
-    public void setRegistrationDate(Timestamp registrationDate) {
-        this.registrationDate = registrationDate;
+    public void setDisabledPremiumMessage(boolean disabledPremiumMessage) {
+        this.disabledPremiumMessage = disabledPremiumMessage;
     }
 
     public void setLastLogoutBlockX(int lastLogoutBlockX) {
@@ -287,15 +298,11 @@ public class AuthedPlayer implements ToShortStringable {
     public String toString() {
         return "AuthedPlayer(uuid=" + this.getUuid() +
                 ", name=" + this.getName() + ", lastIp=" + this.getLastIp() + ", premium=" + this.isPremium() +
-                ", disabledPremiumMessage=" + this.isDisabledPremiumMessage() + ", registrationDate=" + this.getRegistrationDate() +
+                ", disabledPremiumMessage=" + this.isDisabledPremiumMessage() + ", registrationDate=" + this.getRegistrationTimestamp() +
                 ", lastLogoutBlockX=" + this.getLastLogoutBlockX() + ", lastLogoutBlockY=" + this.getLastLogoutBlockY() +
                 ", lastLogoutBlockZ=" + this.getLastLogoutBlockZ() + ", lastWorldName=" + this.getLastWorldName() +
                 ", sessionsEnabled=" + this.isSessionsEnabled() + ", valid=" + this.isValid() +
                 ", authenticationProvider=" + this.getAuthenticationProvider() + ", authenticated=" + this.isAuthenticated() + ")";
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public void setPassword(String password) {
@@ -317,10 +324,6 @@ public class AuthedPlayer implements ToShortStringable {
     @Override
     public String toShortString() {
         return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";
-    }
-
-    public XLoginProfile toProfile() {
-        return new XLoginProfile(getName(), UUID.fromString(getUuid()), isPremium());
     }
 
     public enum AuthenticationProvider {

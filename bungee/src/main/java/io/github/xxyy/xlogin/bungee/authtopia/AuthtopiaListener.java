@@ -55,11 +55,7 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
-        AuthedPlayer cachedPlayer = AuthedPlayerFactory.getCache(evt.getPlayer().getUniqueId());
-        if (cachedPlayer != null) {
-            cachedPlayer.setValid(false);
-            plugin.getRepository().forceGetPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
-        }
+        plugin.getRepository().refreshPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
 
         final boolean knownBefore = plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
@@ -79,7 +75,7 @@ public class AuthtopiaListener implements Listener {
 
                 if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     authedPlayer = plugin.getRepository()
-                            .getPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+                            .getProfile(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
                     authedPlayer.setValid(true);
                 }
 
@@ -131,7 +127,7 @@ public class AuthtopiaListener implements Listener {
                         plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
                     }
 
-                    plugin.getRepository().updateProfile(authedPlayer.toProfile());
+                    plugin.getRepository().updateProfile(authedPlayer);
                 }
 
             }

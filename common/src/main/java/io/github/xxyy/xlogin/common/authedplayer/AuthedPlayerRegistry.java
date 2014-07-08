@@ -1,10 +1,10 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import net.md_5.bungee.api.Callback;
+import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 import org.apache.commons.lang3.Validate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -13,57 +13,50 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 11.5.14
  */
-public class AuthedPlayerRegistry {
-    private final Map<UUID, AuthedPlayer> authedPlayers = new HashMap<>();
-    private Callback<AuthedPlayer> authenticationCallback = null;
+public class AuthedPlayerRegistry implements XLoginRegistry {
+    private final AuthedPlayerRepository repository;
+    private final List<UUID> authedPlayers = new ArrayList<>();
 
+    public AuthedPlayerRegistry(AuthedPlayerRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
     public boolean isAuthenticated(UUID uuid){
-        AuthedPlayer authedPlayer = authedPlayers.get(uuid);
+        AuthedPlayer authedPlayer = repository.getProfile(uuid);
 
         if(authedPlayer == null) {
+            this.authedPlayers.remove(uuid);
             return false;
         }
 
         if(!authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
-            remove(uuid);
+            forget(uuid);
             return false;
         }
 
-        return true;
-    }
-
-    public AuthedPlayer.AuthenticationProvider getAuthenticationProvider(UUID uuid) {
-        if(!isAuthenticated(uuid)) {
-            return null;
-        }
-
-        return authedPlayers.get(uuid).getAuthenticationProvider();
+        return authedPlayers.contains(uuid);
     }
 
     public void registerAuthentication(AuthedPlayer authedPlayer){
         Validate.isTrue(authedPlayer.isAuthenticated(), "Tried to register non-authenticated player as authenticated!");
         Validate.isTrue(authedPlayer.isValid(), "Tried to register (literally) invalid player!");
 
-        authedPlayers.put(UUID.fromString(authedPlayer.getUuid()), authedPlayer);
-
-        if(authenticationCallback != null) {
-            authenticationCallback.done(authedPlayer, null);
-        }
+        authedPlayers.add(authedPlayer.getUniqueId());
     }
 
-    public AuthedPlayer remove(UUID uuid){
-        return authedPlayers.remove(uuid);
+    /**
+     * Forgets about the player represented by given UUID.
+     * This action only affects local cache and does not persist to database.
+     * This action, however, affects the associated {@link io.github.xxyy.xlogin.common.api.XLoginRepository}.
+     * @param uuid UUID of the player to forget about.
+     */
+    public void forget(UUID uuid){
+        authedPlayers.remove(uuid);
+        repository.forget(uuid);
     }
 
     public void clear() {
         authedPlayers.clear();
-    }
-
-    public Callback<AuthedPlayer> getAuthenticationCallback() {
-        return this.authenticationCallback;
-    }
-
-    public void setAuthenticationCallback(Callback<AuthedPlayer> authenticationCallback) {
-        this.authenticationCallback = authenticationCallback;
     }
 }

@@ -1,14 +1,12 @@
 package io.github.xxyy.xlogin.bungee.command;
 
 import io.github.xxyy.common.bungee.ChatHelper;
-import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import org.apache.commons.lang3.Validate;
 
 /**
  * Handles registering users.
@@ -57,22 +55,14 @@ public class CommandRegister extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
-
-        String salt = PasswordHelper.generateSalt();
-
-        authedPlayer.setSalt(salt);
-        authedPlayer.setPassword(PasswordHelper.encrypt(args[0], salt));
-
-        authedPlayer.setValid(true);
-
-        Validate.isTrue(authedPlayer.authenticatePassword(args[0], plr.getAddress().getAddress().toString()), "Setting password failed for registration!");
-
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
+        authedPlayer.registerPassword(args[0], plr.getAddress().getAddress().toString());
         plugin.getRegistry().registerAuthentication(authedPlayer);
+
         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, plr.getName()));
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
-        plugin.getRepository().updateProfile(authedPlayer.toProfile());
+        plugin.getRepository().updateProfile(authedPlayer);
 
         AuthedPlayerFactory.save(authedPlayer);
         plugin.notifyRegister(plr);

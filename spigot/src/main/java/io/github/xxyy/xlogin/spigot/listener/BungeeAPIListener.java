@@ -50,13 +50,12 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = plugin.getRepository().forceGetPlayer(uuid, plr.getName());
+                    AuthedPlayer authedPlayer = plugin.getRepository().refreshPlayer(uuid, plr.getName());
                     authedPlayer.setAuthenticationProvider(authProvider);
                     authedPlayer.setAuthenticated(true);
 
 
                     plugin.getRegistry().registerAuthentication(authedPlayer);
-                    plugin.getRepository().updateProfile(authedPlayer.toProfile());
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
@@ -68,8 +67,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = plugin.getRepository().forceGetPlayer(uuid, plr.getName());
-                    plugin.getRepository().updateProfile(authedPlayer.toProfile());
+                    AuthedPlayer authedPlayer = plugin.getRepository().refreshPlayer(uuid, plr.getName());
                 } else if(command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
                 } else {

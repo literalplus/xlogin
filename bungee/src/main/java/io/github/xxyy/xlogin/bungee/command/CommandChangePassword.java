@@ -37,7 +37,7 @@ public class CommandChangePassword extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         if (args.length < 3 || args[0].equalsIgnoreCase("help")) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().commandCpwUsage));

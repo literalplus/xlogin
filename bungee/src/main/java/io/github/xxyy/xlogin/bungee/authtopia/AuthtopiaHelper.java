@@ -86,7 +86,7 @@ public class AuthtopiaHelper {
      * @param plr Player to publish the results from
      */
     public void publishResult(final ProxiedPlayer plr) {
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         ByteArrayDataOutput bada = ByteStreams.newDataOutput();
         bada.writeUTF(plr.getUniqueId().toString());
@@ -185,12 +185,11 @@ public class AuthtopiaHelper {
 //        this.premiumPlayers.remove(plr.getUniqueId());
 
         AuthedPlayer authedPlayer = plugin.getRepository()
-                .getPlayer(plr.getUniqueId(), plr.getName());
+                .getProfile(plr.getUniqueId(), plr.getName());
 
         authedPlayer.setValid(false);
-        plugin.getRegistry().remove(plr.getUniqueId());
-        plugin.getRepository().forgetProfile(authedPlayer.toProfile());
-//        AuthedPlayerFactory.save(authedPlayer);
+        plugin.getRegistry().forget(plr.getUniqueId());
+        plugin.getRepository().forgetProfile(authedPlayer);
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }
 

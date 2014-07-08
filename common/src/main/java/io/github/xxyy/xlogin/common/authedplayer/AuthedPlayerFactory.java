@@ -8,18 +8,17 @@ import io.github.xxyy.xlogin.common.PreferencesHolder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
+ * Creates instances of {@link AuthedPlayer}.
+ *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.5.14
  */
 public final class AuthedPlayerFactory {
-    private static final Map<UUID, AuthedPlayer> players = new HashMap<>();
-
-    public static AuthedPlayer getCache(UUID uuid) {
-        return players.get(uuid);
-    }
 
     /**
      * Gets AuthedPlayers.
@@ -29,7 +28,7 @@ public final class AuthedPlayerFactory {
      * @return All AuthedPlayer that match given criteria.
      */
     public static AuthedPlayer[] getByCriteria(String input) {
-        if(input == null) {
+        if (input == null) {
             return new AuthedPlayer[0];
         }
 
@@ -47,14 +46,9 @@ public final class AuthedPlayerFactory {
         }
 
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult(query, input).assertHasResultSet()) {
-            ResultSet rs = qr.rs();
             List<AuthedPlayer> rtrn = new ArrayList<>();
-            while (rs.next()) {
-                AuthedPlayer authedPlayer = new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
-                        rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
-                        rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
-                        rs.getBoolean("sessions_enabled"));
-                players.put(UUID.fromString(authedPlayer.getUuid()), authedPlayer);
+            while (qr.rs().next()) {
+                AuthedPlayer authedPlayer = getPlayerFromResultSet(qr.rs());
                 rtrn.add(authedPlayer);
             }
 
@@ -65,15 +59,11 @@ public final class AuthedPlayerFactory {
     }
 
     public static AuthedPlayer get(UUID uuid, String username) {
-        if (players.containsKey(uuid)) {
-            return players.get(uuid);
-        }
-
-        return forceGet(uuid, username);
+        return get(uuid, username, true);
     }
 
-    public static List<XLoginProfile> getProfilesByName(String username) {
-        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid, username, premium FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
+    public static List<AuthedPlayer> getProfilesByName(String username) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE username = ? ORDER BY premium DESC", username).assertHasResultSet()) {
             return getProfilesFromResultSet(qr.rs());
         } catch (SQLException e) {
@@ -81,69 +71,66 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    public static XLoginProfile getProfile(UUID uuid) {
-        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT uuid, username, premium FROM "+ AuthedPlayer.AUTH_DATA_TABLE_NAME +
+    public static AuthedPlayer getProfile(UUID uuid) {
+        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE uuid = ? ORDER BY premium DESC", uuid.toString()).assertHasResultSet()) {
-            List<XLoginProfile> profiles = getProfilesFromResultSet(qr.rs());
+            List<AuthedPlayer> profiles = getProfilesFromResultSet(qr.rs());
 
-            if(profiles.isEmpty()) {
+            if (profiles.isEmpty()) {
                 return null;
-            } else if(profiles.size() == 1) {
+            } else if (profiles.size() == 1) {
                 return profiles.get(0);
             } else {
-                throw new IllegalStateException("Multiple profile found for UUID "+uuid+"!");
+                throw new IllegalStateException("Multiple profile found for UUID " + uuid + "!");
             }
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static List<XLoginProfile> getProfilesFromResultSet(ResultSet rs) throws SQLException {
-        ImmutableList.Builder<XLoginProfile> builder = null;
+    private static List<AuthedPlayer> getProfilesFromResultSet(ResultSet rs) throws SQLException {
+        ImmutableList.Builder<AuthedPlayer> builder = null;
 
-        while(rs.next()) {
-            XLoginProfile profile = new XLoginProfile(
-                    rs.getString("username"),
-                    UUID.fromString(rs.getString("uuid")),
-                    rs.getBoolean("premium")
-            );
+        while (rs.next()) {
+            AuthedPlayer authedPlayer = getPlayerFromResultSet(rs);
 
-            if(profile.isPremium()) {
-                return ImmutableList.of(profile);
+            if (authedPlayer.isPremium()) {
+                return ImmutableList.of(authedPlayer);
             } else {
-                if(builder == null) {
+                if (builder == null) {
                     builder = ImmutableList.builder();
                 }
 
-                builder.add(profile);
+                builder.add(authedPlayer);
             }
         }
 
-        return builder == null ? ImmutableList.<XLoginProfile>of() : builder.build();
+        return builder == null ? ImmutableList.<AuthedPlayer>of() : builder.build();
     }
 
-    public static AuthedPlayer forceGet(UUID uuid, String username) {
+    private static AuthedPlayer getPlayerFromResultSet(ResultSet rs) throws SQLException {
+        return new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
+                rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
+                rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
+                rs.getBoolean("sessions_enabled"));
+    }
+
+    public static AuthedPlayer get(UUID uuid, String username, boolean create) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid = ?", uuid.toString())
                 .assertHasResultSet()) {
-            ResultSet rs = qr.rs();
-            if (rs.next()) {
-                AuthedPlayer authedPlayer = new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
-                        rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
-                        rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
-                        rs.getBoolean("sessions_enabled"));
-                players.put(uuid, authedPlayer);
-                return authedPlayer;
-            } else {
+            if (qr.rs().next()) {
+                return getPlayerFromResultSet(qr.rs());
+            } else if (create) {
                 PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "uuid=?, username=?", uuid.toString(), username);
-                AuthedPlayer authedPlayer = new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()),
+                return new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()),
                         0, 0, 0, null, true);
-                players.put(uuid, authedPlayer);
-                return authedPlayer;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        return null;
     }
 
     /**
@@ -152,7 +139,7 @@ public final class AuthedPlayerFactory {
      * @param ap player to save
      */
     public static void save(AuthedPlayer ap) {
-        if(ap == null) {
+        if (ap == null) {
             return;
         }
 
@@ -166,23 +153,15 @@ public final class AuthedPlayerFactory {
 
     /**
      * Deletes a player from db
+     *
      * @param ap player
      */
     public static void delete(AuthedPlayer ap) {
-        if(ap == null) {
+        if (ap == null) {
             return;
         }
 
         PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid=?",
                 ap.getUuid());
-        remove(UUID.fromString(ap.getUuid()));
-    }
-
-    public static void remove(UUID uuid) {
-        players.remove(uuid);
-    }
-
-    public static void clear() {
-        players.clear();
     }
 }

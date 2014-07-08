@@ -35,7 +35,7 @@ public class CommandSessions extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("help")) {

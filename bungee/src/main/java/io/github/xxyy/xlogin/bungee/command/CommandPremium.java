@@ -48,7 +48,7 @@ public class CommandPremium extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         if(authedPlayer.isPremium()) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().accountAlreadyPremium));

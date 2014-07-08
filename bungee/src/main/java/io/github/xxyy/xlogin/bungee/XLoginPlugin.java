@@ -43,8 +43,8 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
     private XLoginConfig config;
     @Getter
     private AuthtopiaHelper authtopiaHelper;
-    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(); //TODO clear every 5m or so
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY); //TODO clear every 5m or so
     @Getter
     private Map<String, Integer> ipOnlinePlayers = new HashMap<>();
     @Getter

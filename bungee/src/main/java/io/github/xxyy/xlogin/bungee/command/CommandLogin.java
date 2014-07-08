@@ -45,7 +45,7 @@ public class CommandLogin extends Command {
             return;
         }
 
-        AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         authedPlayer.setValid(true);
 

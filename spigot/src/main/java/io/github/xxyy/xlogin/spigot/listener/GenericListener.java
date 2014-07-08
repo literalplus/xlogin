@@ -1,6 +1,5 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -32,18 +31,14 @@ public class GenericListener implements Listener {
 
         evt.setQuitMessage(null);
 
-        AuthedPlayerFactory.remove(plr.getUniqueId());
-        plugin.getRegistry().remove(evt.getPlayer().getUniqueId());
-        plugin.getRepository().forget(evt.getPlayer().getUniqueId());
+        plugin.getRegistry().forget(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onKick(final PlayerKickEvent evt) {
         plugin.saveLocation(evt.getPlayer());
 
-        AuthedPlayerFactory.remove(evt.getPlayer().getUniqueId());
-        plugin.getRegistry().remove(evt.getPlayer().getUniqueId());
-        plugin.getRepository().forget(evt.getPlayer().getUniqueId());
+        plugin.getRegistry().forget(evt.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.HIGH)

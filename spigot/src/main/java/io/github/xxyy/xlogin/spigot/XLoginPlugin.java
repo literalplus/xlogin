@@ -31,8 +31,8 @@ import java.util.UUID;
  * @since 22.5.14
  */
 public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
-    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry();
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
     public static final String API_CHANNEL_NAME = "xLo-BungeeAPI";
     @Getter
     private Location spawnLocation;
@@ -120,7 +120,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void teleportToLastLocation(Player plr) {
-        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getPlayer(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId(), plr.getName());
 
         int x = authedPlayer.getLastLogoutBlockX();
         int y = authedPlayer.getLastLogoutBlockY();

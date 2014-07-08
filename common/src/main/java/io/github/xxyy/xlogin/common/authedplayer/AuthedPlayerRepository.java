@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.api.XLoginRepository;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,18 +24,12 @@ import java.util.UUID;
  * @since 15.5.14
  */
 @SuppressWarnings("UnusedDeclaration") //API declarations are not used by xLogin internally
-public class AuthedPlayerRepository {
+public class AuthedPlayerRepository implements XLoginRepository {
     private Map<UUID, Boolean> knownPlayers = new HashMap<>();
-    private Map<String, List<XLoginProfile>> nameProfilesCache = new CaseInsensitiveMap<>();
-    private Map<UUID, XLoginProfile> idProfileCache = new HashMap<>();
+    private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
+    private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
 
-    /**
-     * Checks whether a player specified by a given UUID is known to the database.
-     * Will make a query, so make sure to execute this async wherever possible.
-     *
-     * @param uuid Unique Id of the player to find
-     * @return Whether that UUID is mapped to a player in the database.
-     */
+    @Override
     public boolean isPlayerKnown(@NotNull UUID uuid) {
         if (knownPlayers.containsKey(uuid)) {
             return knownPlayers.get(uuid);
@@ -59,28 +54,25 @@ public class AuthedPlayerRepository {
      * @param name Name of the player to get
      * @return An AuthedPlayer instance corresponding to the arguments
      */
-    public AuthedPlayer getPlayer(@NotNull UUID uuid, @NotNull String name) {
-        AuthedPlayer aplr = AuthedPlayerFactory.get(uuid, name);
+    public AuthedPlayer getProfile(@NotNull UUID uuid, @NotNull String name) {
+        AuthedPlayer authedPlayer = idProfileCache.get(uuid);
 
-        if (!aplr.getName().equals(name)) {
-            aplr.setName(name);
-            AuthedPlayerFactory.save(aplr);
+        if (authedPlayer == null) {
+            authedPlayer = AuthedPlayerFactory.get(uuid, name);
+
+            if (!authedPlayer.getName().equals(name)) {
+                authedPlayer.setName(name);
+                AuthedPlayerFactory.save(authedPlayer);
+            }
         }
 
-        return aplr;
+        return authedPlayer;
     }
 
-    /**
-     * Gets profiles that match the given user name. Premium players are returned first.
-     *
-     * @param name Name of the player to get. Casing is ignored.
-     * @return List of known profiles for that criteria.
-     *
-     * @see #getProfiles(String)
-     */
+    @Override
     @NotNull
-    public List<XLoginProfile> getProfilesByName(@NotNull String name) {
-        List<XLoginProfile> result = nameProfilesCache.get(name);
+    public List<AuthedPlayer> getProfilesByName(@NotNull String name) {
+        List<AuthedPlayer> result = nameProfilesCache.get(name);
 
         if (result == null) {
             result = AuthedPlayerFactory.getProfilesByName(name);
@@ -96,16 +88,10 @@ public class AuthedPlayerRepository {
         return result;
     }
 
-    /**
-     * Gets profiles that match the given criteria. Premium players are returned first.
-     * If you are certain that the input is not a UUID, use {@link #getProfilesByName(String)}
-     *
-     * @param input {Name of the player to get. Casing is ignored.} or {a valid UUID String}
-     * @return List of known profiles for that criteria.
-     */
+    @Override
     @NotNull
-    public List<XLoginProfile> getProfiles(@NotNull String input) {
-        List<XLoginProfile> result = nameProfilesCache.get(input);
+    public List<AuthedPlayer> getProfiles(@NotNull String input) {
+        List<AuthedPlayer> result = nameProfilesCache.get(input);
 
         if (result == null) {
             if (UtilUUID.isValidUUID(input)) {
@@ -120,14 +106,9 @@ public class AuthedPlayerRepository {
         return result;
     }
 
-    /**
-     * Gets the profile for the given UUID.
-     *
-     * @param uuid UUID of the profile to get
-     * @return Profile info for requested UUID or NULL if there's no such profile.
-     */
-    public XLoginProfile getProfile(@NotNull UUID uuid) {
-        XLoginProfile result = idProfileCache.get(uuid);
+    @Override
+    public AuthedPlayer getProfile(@NotNull UUID uuid) {
+        AuthedPlayer result = idProfileCache.get(uuid);
 
         if (result == null) {
             result = overrideProfile(uuid);
@@ -137,8 +118,8 @@ public class AuthedPlayerRepository {
     }
 
     //Gets a profile and overrides cache, if existent.
-    private XLoginProfile overrideProfile(UUID uuid) {
-        XLoginProfile result;
+    private AuthedPlayer overrideProfile(UUID uuid) {
+        AuthedPlayer result;
 
         result = AuthedPlayerFactory.getProfile(uuid);
         idProfileCache.put(uuid, result);
@@ -148,43 +129,54 @@ public class AuthedPlayerRepository {
 
     public void deletePlayer(@NotNull AuthedPlayer ap) {
         AuthedPlayerFactory.delete(ap);
-        forget(UUID.fromString(ap.getUuid()));
+        forget(ap.getUniqueId());
     }
 
     /**
-     * Fetches a player from database or creates it if there is no such player.
-     * Overrides local cache.
+     * Refreshes the information about a player.
      *
      * @param uuid UUID of the player to get
      * @param name Name of the player to get
-     * @return An AuthedPLayer instance corresponding to the arguments
+     * @return An AuthedPlayer instance corresponding to the arguments
      */
-    public AuthedPlayer forceGetPlayer(@NotNull UUID uuid, @NotNull String name) {
-        AuthedPlayer aplr = AuthedPlayerFactory.forceGet(uuid, name);
+    public AuthedPlayer refreshPlayer(@NotNull UUID uuid, @NotNull String name) {
+        AuthedPlayer oldPlayer = idProfileCache.get(uuid);
 
-        if (!aplr.getName().equals(name)) {
-            aplr.setName(name);
-            AuthedPlayerFactory.save(aplr);
+        if(oldPlayer != null) {
+            oldPlayer.setValid(false);
         }
 
-        return aplr;
+        AuthedPlayer refreshedPlayer = AuthedPlayerFactory.get(uuid, name);
+
+        if (!refreshedPlayer.getName().equals(name)) {
+            refreshedPlayer.setName(name);
+            AuthedPlayerFactory.save(refreshedPlayer);
+        }
+
+        updateProfile(refreshedPlayer);
+
+        return refreshedPlayer;
     }
 
     public void clear() {
         this.knownPlayers.clear();
         this.idProfileCache.clear();
         this.nameProfilesCache.clear();
-        AuthedPlayerFactory.clear();
     }
 
     public void forget(UUID uuid) {
-        this.knownPlayers.remove(uuid);
-        this.idProfileCache.remove(uuid);
-        AuthedPlayerFactory.remove(uuid);
+        AuthedPlayer authedPlayer = this.idProfileCache.get(uuid);
+
+        if (authedPlayer == null) {
+            this.knownPlayers.remove(uuid);
+        } else {
+            forgetProfile(authedPlayer);
+        }
     }
 
+    @Override
     public void refreshProfile(UUID uuid) {
-        XLoginProfile profile = overrideProfile(uuid);
+        AuthedPlayer profile = overrideProfile(uuid);
 
         if (profile == null) {
             this.idProfileCache.remove(uuid);
@@ -193,12 +185,13 @@ public class AuthedPlayerRepository {
         }
     }
 
-    public void forgetProfile(XLoginProfile profile) {
+    public void forgetProfile(AuthedPlayer profile) {
+        this.knownPlayers.remove(profile.getUniqueId());
         this.idProfileCache.remove(profile.getUniqueId());
         this.nameProfilesCache.remove(profile.getName());
     }
 
-    public void updateProfile(XLoginProfile profile) {
+    public void updateProfile(AuthedPlayer profile) {
         this.idProfileCache.put(profile.getUniqueId(), profile);
         //If we have a casing of the name, keep that to prevent inconsistencies
         this.nameProfilesCache.put(profile.getName(), Lists.newArrayList(profile));

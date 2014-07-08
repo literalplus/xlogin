@@ -60,7 +60,7 @@ public class MainListener implements Listener {
                         ProxiedPlayer finalPlr = null;
 
                         for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
-                            AuthedPlayer authedPlayer = plugin.getRepository().getPlayer(plr.getUniqueId(), plr.getName());
+                            AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
                             if (authedPlayer.isAuthenticated()) {
                                 plugin.sendAuthNotification(plr, authedPlayer);

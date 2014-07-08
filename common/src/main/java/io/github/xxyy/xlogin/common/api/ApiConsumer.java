@@ -1,8 +1,5 @@
 package io.github.xxyy.xlogin.common.api;
 
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
-
 /**
  * Represents a consumer of the API.
  *
@@ -13,10 +10,10 @@ public interface ApiConsumer {
     /**
      * @return the AuthedPlayer repository used by this consumer.
      */
-    AuthedPlayerRepository getRepository();
+    XLoginRepository getRepository();
 
     /**
      * @return the AuthedPlayer registry used by this consumer.
      */
-    AuthedPlayerRegistry getRegistry();
+    XLoginRegistry getRegistry();
 }

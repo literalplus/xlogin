@@ -71,7 +71,7 @@ public class CommandxLogin extends Command {
                 if (args.length < 3) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
-                    AuthedPlayer authedPlayer = AuthedPlayerFactory.get(UtilUUID.offlineUUID(args[1]), args[1]);
+                    AuthedPlayer authedPlayer = plugin.getRepository().getProfile(UtilUUID.offlineUUID(args[1]), args[1]);
                     authedPlayer.setSalt(PasswordHelper.generateSalt());
                     authedPlayer.setPassword(PasswordHelper.encrypt(args[2], authedPlayer.getSalt()));
                     AuthedPlayerFactory.save(authedPlayer);
@@ -99,7 +99,7 @@ public class CommandxLogin extends Command {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = AuthedPlayerFactory.get(UtilUUID.getFromString(profiles[0].getId()), args[1]);
+                    AuthedPlayer authedPlayer = plugin.getRepository().getProfile(UtilUUID.getFromString(profiles[0].getId()), args[1]);
                     authedPlayer.setPremium(true);
                     authedPlayer.setSalt(null);
                     authedPlayer.setPassword(null);
