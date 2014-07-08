@@ -189,7 +189,7 @@ public class AuthtopiaHelper {
 
         authedPlayer.setValid(false);
         plugin.getRegistry().remove(plr.getUniqueId());
-        plugin.getRepository().forget(plr.getUniqueId());
+        plugin.getRepository().forgetProfile(authedPlayer.toProfile());
 //        AuthedPlayerFactory.save(authedPlayer);
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }

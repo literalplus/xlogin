@@ -9,6 +9,7 @@ import lombok.NonNull;
 
 import javax.persistence.Transient;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Represents a player that is authenticated with xLogin.
@@ -142,7 +143,6 @@ public class AuthedPlayer implements ToShortStringable {
 
     public void setLastIp(String newIpString) {
         if (newIpString == null || !newIpString.equals(getLastIp())) {
-            String oldIpString = this.lastIp;
             this.lastIp = newIpString;
             if (IpAddressFactory.exists(newIpString)) {
                 IpAddress oldIp = IpAddress.fromIpString(this.lastIp);
@@ -259,7 +259,7 @@ public class AuthedPlayer implements ToShortStringable {
         if (o == this) return true;
         if (!(o instanceof AuthedPlayer)) return false;
         final AuthedPlayer other = (AuthedPlayer) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         final Object this$uuid = this.getUuid();
         final Object other$uuid = other.getUuid();
         if (this$uuid == null ? other$uuid != null : !this$uuid.equals(other$uuid)) return false;
@@ -317,6 +317,10 @@ public class AuthedPlayer implements ToShortStringable {
     @Override
     public String toShortString() {
         return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";
+    }
+
+    public XLoginProfile toProfile() {
+        return new XLoginProfile(getName(), UUID.fromString(getUuid()), isPremium());
     }
 
     public enum AuthenticationProvider {

@@ -56,7 +56,7 @@ public class AuthtopiaListener implements Listener {
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
         AuthedPlayer cachedPlayer = AuthedPlayerFactory.getCache(evt.getPlayer().getUniqueId());
-        if(cachedPlayer != null) {
+        if (cachedPlayer != null) {
             cachedPlayer.setValid(false);
             plugin.getRepository().forceGetPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
         }
@@ -71,7 +71,7 @@ public class AuthtopiaListener implements Listener {
 
                 IpAddress ipAddress = checkIp(evt);
 
-                if(ipAddress == null) {
+                if (ipAddress == null) {
                     return; //Can't use that IP
                 }
 
@@ -111,27 +111,29 @@ public class AuthtopiaListener implements Listener {
                             .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
-                        plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), true);
                         authedPlayer.setPremium(true);
 
-                        if(evt.getPlayer().getServer() != null) {
+                        if (evt.getPlayer().getServer() != null) {
                             plugin.notifyRegister(evt.getPlayer());
                         }
                     }
 
                     AuthedPlayerFactory.save(authedPlayer);
                 } else if (!authed) {
-                    if(authedPlayer.authenticateSession(ipAddress)){
+                    if (authedPlayer.authenticateSession(ipAddress)) {
                         plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                     }
                 }
 
-                if(evt.getPlayer().getServer() != null && authedPlayer != null) {
-                    plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
+                if (authedPlayer != null) {
+                    if (evt.getPlayer().getServer() != null) {
+                        plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
+                    }
+
+                    plugin.getRepository().updateProfile(authedPlayer.toProfile());
                 }
 
-                plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), null);
             }
         }, 250, TimeUnit.MILLISECONDS);
     }
@@ -174,8 +176,7 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
-        plugin.getRepository().updateKnown(evt.getPlayer().getUniqueId(), null);
-        plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
+        plugin.getRepository().refreshProfile(evt.getPlayer().getUniqueId());
 
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
     }

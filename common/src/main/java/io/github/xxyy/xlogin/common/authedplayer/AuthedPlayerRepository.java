@@ -1,9 +1,11 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -20,8 +22,11 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 15.5.14
  */
+@SuppressWarnings("UnusedDeclaration") //API declarations are not used by xLogin internally
 public class AuthedPlayerRepository {
     private Map<UUID, Boolean> knownPlayers = new HashMap<>();
+    private Map<String, List<XLoginProfile>> nameProfilesCache = new CaseInsensitiveMap<>();
+    private Map<UUID, XLoginProfile> idProfileCache = new HashMap<>();
 
     /**
      * Checks whether a player specified by a given UUID is known to the database.
@@ -73,12 +78,20 @@ public class AuthedPlayerRepository {
      */
     @NotNull
     public List<XLoginProfile> getProfiles(@NotNull String input) {
-        if(UtilUUID.isValidUUID(input)) {
-            //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
-            return ImmutableList.of(AuthedPlayerFactory.getProfile(UtilUUID.getFromString(input)));
+        List<XLoginProfile> result = nameProfilesCache.get(input);
+
+        if (result == null) {
+            if (UtilUUID.isValidUUID(input)) {
+                //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
+                result = ImmutableList.of(AuthedPlayerFactory.getProfile(UtilUUID.getFromString(input)));
+            } else {
+                result = AuthedPlayerFactory.getProfilesByName(input);
+            }
+
+            nameProfilesCache.put(input, result);
         }
 
-        return AuthedPlayerFactory.getProfilesByName(input);
+        return result;
     }
 
     /**
@@ -88,7 +101,23 @@ public class AuthedPlayerRepository {
      * @return Profile info for requested UUID or NULL if there's no such profile.
      */
     public XLoginProfile getProfile(@NotNull UUID uuid) {
-        return AuthedPlayerFactory.getProfile(uuid);
+        XLoginProfile result = idProfileCache.get(uuid);
+
+        if(result == null) {
+            result = overrideProfile(uuid);
+        }
+
+        return result;
+    }
+
+    //Gets a profile and overrides cache, if existent.
+    private XLoginProfile overrideProfile(UUID uuid) {
+        XLoginProfile result;
+
+        result = AuthedPlayerFactory.getProfile(uuid);
+        idProfileCache.put(uuid, result);
+
+        return result;
     }
 
     public void deletePlayer(@NotNull AuthedPlayer ap) {
@@ -117,20 +146,35 @@ public class AuthedPlayerRepository {
 
     public void clear() {
         this.knownPlayers.clear();
+        this.idProfileCache.clear();
+        this.nameProfilesCache.clear();
         AuthedPlayerFactory.clear();
     }
 
     public void forget(UUID uuid) {
-        updateKnown(uuid, null);
         this.knownPlayers.remove(uuid);
+        this.idProfileCache.remove(uuid);
         AuthedPlayerFactory.remove(uuid);
     }
 
-    public void updateKnown(UUID uuid, Boolean knownState) {
-        if (knownState == null) {
-            this.knownPlayers.remove(uuid);
+    public void refreshProfile(UUID uuid) {
+        XLoginProfile profile = overrideProfile(uuid);
+
+        if(profile == null) {
+            this.idProfileCache.remove(uuid);
         } else {
-            this.knownPlayers.put(uuid, knownState);
+            this.updateProfile(profile);
         }
+    }
+
+    public void forgetProfile(XLoginProfile profile) {
+        this.idProfileCache.remove(profile.getUniqueId());
+        this.nameProfilesCache.remove(profile.getName());
+    }
+
+    public void updateProfile(XLoginProfile profile) {
+        this.idProfileCache.put(profile.getUniqueId(), profile);
+        //If we have a casing of the name, keep that to prevent inconsistencies
+        this.nameProfilesCache.put(profile.getName(), Lists.newArrayList(profile));
     }
 }

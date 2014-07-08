@@ -72,7 +72,7 @@ public class CommandRegister extends Command {
         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, plr.getName()));
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
-        plugin.getRepository().updateKnown(plr.getUniqueId(), true);
+        plugin.getRepository().updateProfile(authedPlayer.toProfile());
 
         AuthedPlayerFactory.save(authedPlayer);
         plugin.notifyRegister(plr);
