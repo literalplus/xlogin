@@ -71,7 +71,34 @@ public class AuthedPlayerRepository {
     }
 
     /**
+     * Gets profiles that match the given user name. Premium players are returned first.
+     *
+     * @param name Name of the player to get. Casing is ignored.
+     * @return List of known profiles for that criteria.
+     *
+     * @see #getProfiles(String)
+     */
+    @NotNull
+    public List<XLoginProfile> getProfilesByName(@NotNull String name) {
+        List<XLoginProfile> result = nameProfilesCache.get(name);
+
+        if (result == null) {
+            result = AuthedPlayerFactory.getProfilesByName(name);
+
+
+            if (result.size() == 1) {
+                updateProfile(result.get(0));
+            } else {
+                nameProfilesCache.put(name, result);
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Gets profiles that match the given criteria. Premium players are returned first.
+     * If you are certain that the input is not a UUID, use {@link #getProfilesByName(String)}
      *
      * @param input {Name of the player to get. Casing is ignored.} or {a valid UUID String}
      * @return List of known profiles for that criteria.
@@ -83,12 +110,11 @@ public class AuthedPlayerRepository {
         if (result == null) {
             if (UtilUUID.isValidUUID(input)) {
                 //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
-                result = ImmutableList.of(AuthedPlayerFactory.getProfile(UtilUUID.getFromString(input)));
+                result = ImmutableList.of(getProfile(UtilUUID.getFromString(input)));
+                nameProfilesCache.put(input, result);
             } else {
-                result = AuthedPlayerFactory.getProfilesByName(input);
+                result = getProfilesByName(input);
             }
-
-            nameProfilesCache.put(input, result);
         }
 
         return result;
@@ -103,7 +129,7 @@ public class AuthedPlayerRepository {
     public XLoginProfile getProfile(@NotNull UUID uuid) {
         XLoginProfile result = idProfileCache.get(uuid);
 
-        if(result == null) {
+        if (result == null) {
             result = overrideProfile(uuid);
         }
 
@@ -160,7 +186,7 @@ public class AuthedPlayerRepository {
     public void refreshProfile(UUID uuid) {
         XLoginProfile profile = overrideProfile(uuid);
 
-        if(profile == null) {
+        if (profile == null) {
             this.idProfileCache.remove(uuid);
         } else {
             this.updateProfile(profile);
