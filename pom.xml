@@ -86,11 +86,6 @@
                 <version>4.0.10.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.avaje</groupId>
-                <artifactId>ebean</artifactId>
-                <version>${ebean.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.gag</groupId>
                 <artifactId>gag</artifactId>
                 <version>1.0.1</version>
