@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>xlogin-api</artifactId>
-    <packaging>pom</packaging>
 
     <ciManagement>
         <system>jenkins</system>
