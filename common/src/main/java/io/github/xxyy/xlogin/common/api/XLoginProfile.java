@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.common.api;
 
+import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -10,7 +11,7 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 8.7.14
  */
-public interface XLoginProfile {
+public interface XLoginProfile extends Profile {
     /**
      * @return the last recorded name of this player.
      */
@@ -33,4 +34,12 @@ public interface XLoginProfile {
      * @return the last known IP of this profile.
      */
     String getLastIp();
+
+    default boolean isDemo() {
+        return isPremium();
+    }
+
+    default String getId() {
+        return getUniqueId().toString();
+    }
 }

@@ -1,15 +1,20 @@
 package io.github.xxyy.xlogin.common.api;
 
+import io.github.xxyy.common.util.uuid.UUIDRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
+ * A repository containing xLogin profiles.
+ * Implementations also handle all tasks from {@link io.github.xxyy.common.util.uuid.UUIDRepository} as a FREE BONUS!!
+ * (only if you order today tho!!!)
+ *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 8.7.14
  */
-public interface XLoginRepository {
+public interface XLoginRepository extends UUIDRepository {
     /**
      * Checks whether a player specified by a given UUID is known to the database.
      * Will make a query, so make sure to execute this async wherever possible.
@@ -24,7 +29,6 @@ public interface XLoginRepository {
      *
      * @param name Name of the player to get. Casing is ignored.
      * @return List of known profiles for that criteria.
-     *
      * @see #getProfiles(String)
      */
     @NotNull

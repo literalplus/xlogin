@@ -2,12 +2,16 @@ package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.common.util.uuid.UUIDHelper;
+import io.github.xxyy.common.util.uuid.UUIDRepository;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.XLoginRepository;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -28,6 +32,27 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private Map<UUID, Boolean> knownPlayers = new HashMap<>();
     private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
     private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
+    private UUIDRepository parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
+
+    /**
+     * Creates a new repository and registers it with XYC's {@link UUIDHelper}.
+     */
+    public AuthedPlayerRepository() {
+        this(true);
+    }
+
+    /**
+     * Creates a new repository.
+     *
+     * @param registerWithXYC whether to register this instance with XYC's {@link UUIDHelper}
+     */
+    public AuthedPlayerRepository(boolean registerWithXYC) {
+        if (registerWithXYC) {
+            UUIDHelper.addRepository(this);
+        }
+    }
+
+//////////////////////// XLOGIN REPO API METHODS ///////////////////////////////////////////////////////////////////////
 
     @Override
     public boolean isPlayerKnown(@NotNull UUID uuid) {
@@ -47,27 +72,6 @@ public class AuthedPlayerRepository implements XLoginRepository {
         return rtrn;
     }
 
-    /**
-     * Fetches a player from database or creates it if there is no such player.
-     *
-     * @param uuid UUID of the player to get
-     * @param name Name of the player to get
-     * @return An AuthedPlayer instance corresponding to the arguments
-     */
-    public AuthedPlayer getProfile(@NotNull UUID uuid, @NotNull String name) {
-        AuthedPlayer authedPlayer = idProfileCache.get(uuid);
-
-        if (authedPlayer == null) {
-            authedPlayer = AuthedPlayerFactory.get(uuid, name);
-
-            if (!authedPlayer.getName().equals(name)) {
-                authedPlayer.setName(name);
-                AuthedPlayerFactory.save(authedPlayer);
-            }
-        }
-
-        return authedPlayer;
-    }
 
     @Override
     @NotNull
@@ -117,19 +121,39 @@ public class AuthedPlayerRepository implements XLoginRepository {
         return result;
     }
 
-    //Gets a profile and overrides cache, if existent.
-    private AuthedPlayer overrideProfile(UUID uuid) {
-        AuthedPlayer result;
+    @Override
+    public void refreshProfile(UUID uuid) {
+        AuthedPlayer profile = overrideProfile(uuid);
 
-        result = AuthedPlayerFactory.getProfile(uuid);
-        idProfileCache.put(uuid, result);
-
-        return result;
+        if (profile == null) {
+            this.idProfileCache.remove(uuid);
+        } else {
+            this.updateProfile(profile);
+        }
     }
 
-    public void deletePlayer(@NotNull AuthedPlayer ap) {
-        AuthedPlayerFactory.delete(ap);
-        forget(ap.getUniqueId());
+///////////////////////////// INTERNAL AND PRIVATE UTILITY METHODS /////////////////////////////////////////////////////
+
+    /**
+     * Fetches a player from database or creates it if there is no such player.
+     *
+     * @param uuid UUID of the player to get
+     * @param name Name of the player to get
+     * @return An AuthedPlayer instance corresponding to the arguments
+     */
+    public AuthedPlayer getProfile(@NotNull UUID uuid, @NotNull String name) {
+        AuthedPlayer authedPlayer = idProfileCache.get(uuid);
+
+        if (authedPlayer == null) {
+            authedPlayer = AuthedPlayerFactory.get(uuid, name);
+
+            if (!authedPlayer.getName().equals(name)) {
+                authedPlayer.setName(name);
+                AuthedPlayerFactory.save(authedPlayer);
+            }
+        }
+
+        return authedPlayer;
     }
 
     /**
@@ -142,7 +166,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
     public AuthedPlayer refreshPlayer(@NotNull UUID uuid, @NotNull String name) {
         AuthedPlayer oldPlayer = idProfileCache.get(uuid);
 
-        if(oldPlayer != null) {
+        if (oldPlayer != null) {
             oldPlayer.setValid(false);
         }
 
@@ -158,6 +182,29 @@ public class AuthedPlayerRepository implements XLoginRepository {
         return refreshedPlayer;
     }
 
+    //Gets a profile and overrides cache, if existent.
+    private AuthedPlayer overrideProfile(UUID uuid) {
+        AuthedPlayer result;
+
+        result = AuthedPlayerFactory.getProfile(uuid);
+        idProfileCache.put(uuid, result);
+
+        return result;
+    }
+
+    /**
+     * Entirely deletes a player from the underlying database and local cache.
+     *
+     * @param ap Player to delete
+     */
+    public void deletePlayer(@NotNull AuthedPlayer ap) {
+        AuthedPlayerFactory.delete(ap);
+        forget(ap.getUniqueId());
+    }
+
+    /**
+     * Clears this repo's cache.
+     */
     public void clear() {
         this.knownPlayers.clear();
         this.idProfileCache.clear();
@@ -174,17 +221,6 @@ public class AuthedPlayerRepository implements XLoginRepository {
         }
     }
 
-    @Override
-    public void refreshProfile(UUID uuid) {
-        AuthedPlayer profile = overrideProfile(uuid);
-
-        if (profile == null) {
-            this.idProfileCache.remove(uuid);
-        } else {
-            this.updateProfile(profile);
-        }
-    }
-
     public void forgetProfile(AuthedPlayer profile) {
         this.knownPlayers.remove(profile.getUniqueId());
         this.idProfileCache.remove(profile.getUniqueId());
@@ -195,5 +231,54 @@ public class AuthedPlayerRepository implements XLoginRepository {
         this.idProfileCache.put(profile.getUniqueId(), profile);
         //If we have a casing of the name, keep that to prevent inconsistencies
         this.nameProfilesCache.put(profile.getName(), Lists.newArrayList(profile));
+    }
+
+//////////////////////////////////////// XYC UUID API PROVIDER METHODS /////////////////////////////////////////////////
+
+    @Nullable
+    @Override
+    public UUID forName(String name) {
+        List<AuthedPlayer> profiles = getProfilesByName(name);
+
+        if (profiles.size() == 0) {
+            return getParent().forName(name);
+        } else {
+            return profiles.get(0).getUniqueId();
+        }
+    }
+
+    @NotNull
+    @Override
+    public UUID forNameChecked(String name) throws UnknownKeyException, InvalidResultException {
+        List<AuthedPlayer> profiles = getProfilesByName(name);
+
+        if (profiles.size() == 0) {
+            return getParent().forNameChecked(name);
+        } else if (profiles.size() == 1) {
+            return profiles.get(0).getUniqueId();
+        } else {
+            throw new InvalidResultException(profiles.toArray(new Profile[profiles.size()]));
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getName(UUID uuid) {
+        return getProfile(uuid).getName();
+    }
+
+    @NotNull
+    @Override
+    public UUIDRepository getParent() {
+        return parentUUIDRepo;
+    }
+
+    @Override
+    public void setParent(UUIDRepository newParent) {
+        if (newParent == null) {
+            parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
+        } else {
+            parentUUIDRepo = newParent;
+        }
     }
 }
