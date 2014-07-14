@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface XLoginRegistry {
     /**
      * Checks whether the given UUID represents an authenticated player.
+     *
      * @param uuid UUID to check for
      * @return whether the player represented by the given UUID is authenticated with xLogin.
      */

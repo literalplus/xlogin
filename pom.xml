@@ -14,6 +14,7 @@
         <module>bungee</module>
         <module>common</module>
         <module>bootstrap</module>
+        <module>api</module>
     </modules>
 
     <ciManagement>
@@ -73,6 +74,11 @@
                 <groupId>io.github.xxyy.xlogin</groupId>
                 <artifactId>xlogin-spigot</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xxyy.xlogin</groupId>
+                <artifactId>xlogin-api</artifactId>
+                <version>2.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.mchange</groupId>

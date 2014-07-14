@@ -21,7 +21,7 @@ public interface XLoginProfile extends Profile {
     /**
      * @return Unique ID of the player. Mojang UUID if {@link #isPremium()} returns TRUE,
      * otherwise name-based offline UUID.
-      */
+     */
     @NotNull
     UUID getUniqueId();
 
