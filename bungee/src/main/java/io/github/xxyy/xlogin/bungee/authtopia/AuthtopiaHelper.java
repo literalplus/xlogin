@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
@@ -134,7 +133,7 @@ public class AuthtopiaHelper {
                 if (queryMojang) {
                     Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
 
-                    if (profiles.length == 1 && !profiles[0].getDemo()) {
+                    if (profiles.length == 1 && !profiles[0].isDemo()) {
                         onlineMode = true;
                     } else if (profiles.length != 0) {
                         plugin.getLogger().info(String.format("Encountered multiple profiles for username %s: %s!",
@@ -205,25 +204,22 @@ public class AuthtopiaHelper {
      *                 established.
      */
     private void connect(final String host, final int port, final String user, final String pass, final String db, FutureCallback<Boolean> callback) {
-        ListenableFuture<Boolean> submit = service.submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                Properties p = new Properties(System.getProperties());
-                p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-                p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
-                System.setProperties(p);
-                dataSource = new ComboPooledDataSource();
-                dataSource.setDriverClass("com.mysql.jdbc.Driver");
-                dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
-                dataSource.setUser(user);
-                dataSource.setPassword(pass);
-                dataSource.setMinPoolSize(1);
-                dataSource.setMaxPoolSize(5);
-                dataSource.setTestConnectionOnCheckout(true);
-                dataSource.setCheckoutTimeout(3_000); // 3 seconds
-                return true;
+        ListenableFuture<Boolean> submit = service.submit(() -> {
+            Properties p = new Properties(System.getProperties());
+            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
+            System.setProperties(p);
+            dataSource = new ComboPooledDataSource();
+            dataSource.setDriverClass("com.mysql.jdbc.Driver");
+            dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
+            dataSource.setUser(user);
+            dataSource.setPassword(pass);
+            dataSource.setMinPoolSize(1);
+            dataSource.setMaxPoolSize(5);
+            dataSource.setTestConnectionOnCheckout(true);
+            dataSource.setCheckoutTimeout(3_000); // 3 seconds
+            return true;
 
-            }
         });
 
         Futures.addCallback(submit, callback);

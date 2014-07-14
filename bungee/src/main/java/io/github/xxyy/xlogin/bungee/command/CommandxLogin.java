@@ -33,7 +33,6 @@ import static net.md_5.bungee.api.ChatColor.*;
  */
 public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
-    private final XLoginPlugin plugin;
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
@@ -46,6 +45,7 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R]").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo forcecrack [Name]").color(GOLD).append("Adds a user to the `force cracked` list so that they can join with a cracked session on a premium account. Note that this changes the UUID and will remove ranks, inventories and similar.").color(ChatColor.GRAY).create(),
     };
+    private final XLoginPlugin plugin;
 
     public CommandxLogin(XLoginPlugin plugin) {
         super("xlogin", "xlogin.admin", "xlo");
@@ -91,7 +91,7 @@ public class CommandxLogin extends Command {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
-                    if (profiles.length == 0 || profiles[0].getDemo()) {
+                    if (profiles.length == 0 || profiles[0].isDemo()) {
                         sender.sendMessage(new ComponentBuilder("Für diesen Spieler wurde kein Premium-Account gefunden.").color(GOLD).create());
                         return;
                     } else if (profiles.length > 1) {
