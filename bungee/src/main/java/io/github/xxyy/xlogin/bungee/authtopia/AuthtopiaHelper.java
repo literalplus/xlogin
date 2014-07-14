@@ -2,9 +2,8 @@ package io.github.xxyy.xlogin.bungee.authtopia;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import com.google.common.util.concurrent.*;
+import com.google.common.util.concurrent.FutureCallback;
 import com.google.gag.annotation.remark.ShoutOutTo;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.ProfileRepository;
@@ -14,17 +13,12 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 /**
@@ -38,8 +32,8 @@ public class AuthtopiaHelper {
 
     public static final String CHANNEL_NAME = Const.AUTHTOPIA_CHANNEL_NAME;
     public static final ProfileRepository PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
-    private ComboPooledDataSource dataSource = null;
-    private ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
+    //    private ComboPooledDataSource dataSource = null;
+//    private ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
     private XLoginPlugin plugin;
 
     /**
@@ -192,85 +186,70 @@ public class AuthtopiaHelper {
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }
 
-    /**
-     * Connects to a SQL server.
-     *
-     * @param host     Hostname to use
-     * @param port     Port to connect to
-     * @param user     User to identify with
-     * @param pass     Password to use
-     * @param db       Database to query
-     * @param callback Code to be executed once the connection has been
-     *                 established.
-     */
-    private void connect(final String host, final int port, final String user, final String pass, final String db, FutureCallback<Boolean> callback) {
-        ListenableFuture<Boolean> submit = service.submit(() -> {
-            Properties p = new Properties(System.getProperties());
-            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
-            System.setProperties(p);
-            dataSource = new ComboPooledDataSource();
-            dataSource.setDriverClass("com.mysql.jdbc.Driver");
-            dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
-            dataSource.setUser(user);
-            dataSource.setPassword(pass);
-            dataSource.setMinPoolSize(1);
-            dataSource.setMaxPoolSize(5);
-            dataSource.setTestConnectionOnCheckout(true);
-            dataSource.setCheckoutTimeout(3_000); // 3 seconds
-            return true;
+//    /**
+//     * Connects to a SQL server.
+//     *
+//     * @param host     Hostname to use
+//     * @param port     Port to connect to
+//     * @param user     User to identify with
+//     * @param pass     Password to use
+//     * @param db       Database to query
+//     * @param callback Code to be executed once the connection has been
+//     *                 established.
+//     */
+//    private void connect(final String host, final int port, final String user, final String pass, final String db, FutureCallback<Boolean> callback) {
+//        ListenableFuture<Boolean> submit = service.submit(() -> {
+//            Properties p = new Properties(System.getProperties());
+//            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
+//            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
+//            System.setProperties(p);
+//            dataSource = new ComboPooledDataSource();
+//            dataSource.setDriverClass("com.mysql.jdbc.Driver");
+//            dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
+//            dataSource.setUser(user);
+//            dataSource.setPassword(pass);
+//            dataSource.setMinPoolSize(1);
+//            dataSource.setMaxPoolSize(5);
+//            dataSource.setTestConnectionOnCheckout(true);
+//            dataSource.setCheckoutTimeout(3_000); // 3 seconds
+//            return true;
+//
+//        });
+//
+//        Futures.addCallback(submit, callback);
+//    }
 
-        });
-
-        Futures.addCallback(submit, callback);
-    }
-
-    /**
-     * Creates necessary tables.
-     */
-    private void createTables() {
-        Statement stmt = null;
-        Connection con = null;
-        try {
-            con = dataSource.getConnection();
-            stmt = con.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS `auth_list` ("
-                    + "`id` int(100) NOT NULL AUTO_INCREMENT,"
-                    + "`name` varchar(16) NOT NULL,"
-                    + "PRIMARY KEY (`id`),"
-                    + "UNIQUE KEY `name` (`name`)"
-                    + ")";
-            stmt.execute(sql);
-        } catch (SQLException ex) {
-            ProxyServer.getInstance().getLogger().log(Level.SEVERE, "[Authopia|SQL] Could not create auth_list!", ex);
-        } finally {
-            tryClose(stmt);
-            tryClose(con);
-        }
-    }
-
-    /**
-     * Tries to close an {@link AutoCloseable}.
-     *
-     * @param closeable What to close?
-     */
-    private void tryClose(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (Exception ex) {
-                ProxyServer.getInstance().getLogger().log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+//    /**
+//     * Creates necessary tables.
+//     */
+//    private void createTables() {
+//        Statement stmt = null;
+//        Connection con = null;
+//        try {
+//            con = dataSource.getConnection();
+//            stmt = con.createStatement();
+//            String sql = "CREATE TABLE IF NOT EXISTS `auth_list` ("
+//                    + "`id` int(100) NOT NULL AUTO_INCREMENT,"
+//                    + "`name` varchar(16) NOT NULL,"
+//                    + "PRIMARY KEY (`id`),"
+//                    + "UNIQUE KEY `name` (`name`)"
+//                    + ")";
+//            stmt.execute(sql);
+//        } catch (SQLException ex) {
+//            ProxyServer.getInstance().getLogger().log(Level.SEVERE, "[Authopia|SQL] Could not create auth_list!", ex);
+//        } finally {
+//            tryClose(stmt);
+//            tryClose(con);
+//        }
+//    }
 
     /**
      * Destroys this object and cleans stuff up.
      */
     public void destroy() {
-        if (dataSource != null) {
-            dataSource.close();
-            service.shutdown();
-        }
+//        if (dataSource != null) {
+//            dataSource.close();
+//            service.shutdown();
+//        }
     }
 }
