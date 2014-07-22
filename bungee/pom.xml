@@ -57,6 +57,15 @@
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin> <!-- Yes hello this is dirty workaround -->
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
