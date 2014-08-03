@@ -1,5 +1,12 @@
 package io.github.xxyy.xlogin.spigot;
 
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
@@ -12,12 +19,6 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -174,6 +175,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         this.getConfig().set("spawn.pitch", location.getPitch());
         this.getConfig().set("spawn.yaw", location.getYaw());
         this.getConfig().set("spawn.world", location.getWorld().getName());
+        saveConfig();
     }
 
     @Override
