@@ -91,17 +91,13 @@
                             <pattern>lombok</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.lib.lombok</shadedPattern>
                         </relocation>
-                        <relocation>
+                        <!--<relocation>
                             <pattern>io.github.xxyy.common</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.lib.common</shadedPattern>
-                        </relocation>
+                        </relocation>-->
                         <relocation>
                             <pattern>org.apache.commons.lang3</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.lib.org.apache.commons.lang3</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.apache.commons.lang</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.lib.org.apache.commons.lang</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>

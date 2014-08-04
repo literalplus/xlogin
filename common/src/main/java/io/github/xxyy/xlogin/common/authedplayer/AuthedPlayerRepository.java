@@ -2,6 +2,10 @@ package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import io.github.xxyy.common.collections.CaseInsensitiveMap;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
@@ -9,9 +13,6 @@ import io.github.xxyy.common.util.uuid.UUIDHelper;
 import io.github.xxyy.common.util.uuid.UUIDRepository;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.XLoginRepository;
-import net.md_5.bungee.util.CaseInsensitiveMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.HashMap;
