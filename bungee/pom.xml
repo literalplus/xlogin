@@ -31,14 +31,6 @@
             <artifactId>Yamler-Core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.gag</groupId>
             <artifactId>gag</artifactId>
         </dependency>
@@ -62,6 +54,22 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>io.github.xxyy:common</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>io.github.xxyy.common</pattern>
+                            <shadedPattern>io.github.xxyy.xlogin.bungee.lib.xyc</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>

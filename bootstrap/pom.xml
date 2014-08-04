@@ -45,14 +45,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -60,7 +52,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -74,11 +65,8 @@
                         <includes>
                             <include>io.github.xxyy.xlogin:*</include>
                             <include>org.projectlombok:lombok</include>
-                            <include>io.github.xxyy:common</include>
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
-                            <include>javax.persistence:persistence-api</include>
-                            <include>joda-time:joda-time</include>
                             <include>mysql:mysql-connector-java</include>
                         </includes>
                     </artifactSet>
@@ -90,13 +78,6 @@
                         <relocation>
                             <pattern>lombok</pattern>
                             <shadedPattern>io.github.xxyy.xlogin.lib.lombok</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.github.xxyy.common</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.lib.common</shadedPattern>
-                            <excludes>
-                                <exclude>io.github.xxyy.common.shared</exclude>
-                            </excludes>
                         </relocation>
                         <relocation>
                             <pattern>org.apache.commons.lang3</pattern>

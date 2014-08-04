@@ -2,15 +2,15 @@ package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.xxyy.common.collections.CaseInsensitiveMap;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
+import io.github.xxyy.common.shared.uuid.UUIDRepository;
 import io.github.xxyy.common.sql.QueryResult;
-import io.github.xxyy.common.util.uuid.UUIDHelper;
-import io.github.xxyy.common.util.uuid.UUIDRepository;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.XLoginRepository;
 
@@ -34,24 +34,6 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
     private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
     private UUIDRepository parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
-
-    /**
-     * Creates a new repository and registers it with XYC's {@link UUIDHelper}.
-     */
-    public AuthedPlayerRepository() {
-        this(true);
-    }
-
-    /**
-     * Creates a new repository.
-     *
-     * @param registerWithXYC whether to register this instance with XYC's {@link UUIDHelper}
-     */
-    public AuthedPlayerRepository(boolean registerWithXYC) {
-        if (registerWithXYC) {
-            UUIDHelper.addRepository(this);
-        }
-    }
 
 //////////////////////// XLOGIN REPO API METHODS ///////////////////////////////////////////////////////////////////////
 
@@ -281,5 +263,10 @@ public class AuthedPlayerRepository implements XLoginRepository {
         } else {
             parentUUIDRepo = newParent;
         }
+    }
+
+    @Override
+    public ServicePriority getPriority() {
+        return ServicePriority.High;
     }
 }

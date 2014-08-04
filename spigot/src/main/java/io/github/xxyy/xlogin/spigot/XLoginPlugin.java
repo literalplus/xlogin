@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import io.github.xxyy.common.shared.uuid.UUIDRepositories;
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
@@ -72,7 +73,11 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             GenericListener.skip = true;
         }
 
+        //Register api stuffs
         PreferencesHolder.setConsumer(this);
+
+        //Register XYC uuid provider
+        UUIDRepositories.addRepository(AUTHED_PLAYER_REPOSITORY, this);
     }
 
     public void initConfig() {
@@ -162,7 +167,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         Location location = plr.getLocation();
 
         PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString());
+                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString()); //TODO async
         getLogger().info("Saved location for " + uuid);
     }
 

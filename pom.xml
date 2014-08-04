@@ -80,7 +80,7 @@
                 <artifactId>xlogin-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>com.mchange</groupId>
                 <artifactId>c3p0</artifactId>
                 <version>0.9.5-pre4</version>
@@ -89,7 +89,7 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
                 <version>4.0.10.Final</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>com.google.gag</groupId>
                 <artifactId>gag</artifactId>
@@ -111,7 +111,7 @@
                 <version>5.1.29</version>
             </dependency>
 
-            <dependency>
+            <!--<dependency>
                 <groupId>javax.transaction</groupId>
                 <artifactId>jta</artifactId>
                 <version>1.1</version>
@@ -135,7 +135,7 @@
                 <groupId>org.avaje.ebeanorm</groupId>
                 <artifactId>avaje-ebeanorm-agent</artifactId>
                 <version>${ebean.version}</version>
-            </dependency>
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -146,6 +146,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>
