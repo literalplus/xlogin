@@ -1,14 +1,15 @@
 package io.github.xxyy.xlogin.common.api;
 
-import io.github.xxyy.common.util.uuid.UUIDRepository;
 import org.jetbrains.annotations.NotNull;
+
+import io.github.xxyy.common.shared.uuid.UUIDRepository;
 
 import java.util.List;
 import java.util.UUID;
 
 /**
  * A repository containing xLogin profiles.
- * Implementations also handle all tasks from {@link io.github.xxyy.common.util.uuid.UUIDRepository} as a FREE BONUS!!
+ * Implementations also handle all tasks from {@link UUIDRepository} as a FREE BONUS!!
  * (only if you order today tho!!!)
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
