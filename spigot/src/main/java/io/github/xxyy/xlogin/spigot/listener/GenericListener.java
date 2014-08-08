@@ -120,7 +120,7 @@ public class GenericListener implements Listener {
         plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
         plugin.getServer().getScheduler().runTaskLater(plugin, 
-            () -> plr.teleport(plugin.getSpawnLocation(),
+            () -> plr.teleport(plugin.getSpawnLocation()),
             10L); //Let the player take their time to arrive - We have time! :)
         //evt.getPlayer().teleport(plugin.getSpawnLocation()); //Uncomment if spawning lags too much
     }
