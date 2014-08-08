@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.scheduer.BukkitScheduler;
 
 
 public class GenericListener implements Listener {
@@ -113,10 +114,14 @@ public class GenericListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
+        final Player plr = evt.getPlayer();
         evt.setJoinMessage(null); //TODO configurable
 
-        plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId()); //Pre-fetch
+        plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
-        evt.getPlayer().teleport(plugin.getSpawnLocation());
+        plugin.getServer().getScheduler().runTaskLater(plugin, 
+            () -> plr.teleport(plugin.getSpawnLocation(),
+            10L); //Let the player take their time to arrive - We have time! :)
+        //evt.getPlayer().teleport(plugin.getSpawnLocation()); //Uncomment if spawning lags too much
     }
 }
