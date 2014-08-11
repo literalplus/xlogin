@@ -133,6 +133,9 @@ public class GenericListener implements Listener {
                 }
                 ,
                 10L); //Let the player take their time to arrive - We have time! :)
-        //evt.getPlayer().teleport(plugin.getSpawnLocation()); //Uncomment if spawning lags too much
+
+        if (plugin.getServerName() == null) {
+            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
+        }
     }
 }

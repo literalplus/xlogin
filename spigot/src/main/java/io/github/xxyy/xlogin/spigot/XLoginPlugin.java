@@ -157,7 +157,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
             try (DataOutputStream dos = new DataOutputStream(bos)) {
                 dos.writeUTF(action);
-                dos.writeUTF(plr.getUniqueId().toString());
+                if (sendUUID) {
+                    dos.writeUTF(plr.getUniqueId().toString());
+                }
             } catch (IOException ignore) {
                 //go home Spigot, you have drunk
             }
