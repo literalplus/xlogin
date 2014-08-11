@@ -253,6 +253,16 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.authenticated = authenticated;
     } //TODO used by recv msg
 
+    @Override
+    public String getId() {
+        return getUuid();
+    }
+
+    @Override
+    public boolean isDemo() {
+        return !isPremium();
+    }
+
     public void registerPassword(String password, String ip) {
         String salt = PasswordHelper.generateSalt();
 

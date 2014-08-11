@@ -66,7 +66,7 @@ public class GenericListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent evt) {
-        if(skip){
+        if (skip) {
             return;
         }
 
@@ -100,7 +100,7 @@ public class GenericListener implements Listener {
     }
 
     public void checkLoginAndMsg(Cancellable e, Player plr) {
-        if(skip) {
+        if (skip) {
             return;
         }
 
@@ -125,9 +125,14 @@ public class GenericListener implements Listener {
 
         plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
-        plugin.getServer().getScheduler().runTaskLater(plugin, 
-            () -> plr.teleport(plugin.getSpawnLocation()),
-            10L); //Let the player take their time to arrive - We have time! :)
+        plugin.getServer().getScheduler().runTaskLater(plugin,
+                new Runnable() {
+                    public void run() {
+                        plr.teleport(plugin.getSpawnLocation());
+                    }
+                }
+                ,
+                10L); //Let the player take their time to arrive - We have time! :)
         //evt.getPlayer().teleport(plugin.getSpawnLocation()); //Uncomment if spawning lags too much
     }
 }

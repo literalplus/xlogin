@@ -14,7 +14,6 @@
         <module>bungee</module>
         <module>common</module>
         <module>bootstrap</module>
-        <module>bootstrap-java7</module>
         <module>api</module>
     </modules>
 
@@ -35,7 +34,7 @@
         <minecraft.version>1.7.9</minecraft.version>
         <bukkit.release>R0.1</bukkit.release>
         <bungeecord.version>1.7</bungeecord.version>
-        <java.version>1.8</java.version>
+        <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

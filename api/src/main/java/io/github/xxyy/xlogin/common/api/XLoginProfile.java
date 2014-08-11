@@ -1,7 +1,8 @@
 package io.github.xxyy.xlogin.common.api;
 
-import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import org.jetbrains.annotations.NotNull;
+
+import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 
 import java.util.UUID;
 
@@ -34,12 +35,4 @@ public interface XLoginProfile extends Profile {
      * @return the last known IP of this profile.
      */
     String getLastIp();
-
-    default boolean isDemo() {
-        return isPremium();
-    }
-
-    default String getId() {
-        return getUniqueId().toString();
-    }
 }

@@ -170,14 +170,17 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void saveLocation(Player plr, boolean async) {
-        UUID uuid = plr.getUniqueId();
-        Location loc = plr.getLocation();
+        final UUID uuid = plr.getUniqueId();
+        final Location loc = plr.getLocation();
 
-        Runnable saveLogic = () -> {
-            AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(uuid);
+        Runnable saveLogic = new Runnable() {
+            @Override
+            public void run() {
+                AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(uuid);
 
 
-            authedPlayer.setLastLocation(getServerName(), loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
+                authedPlayer.setLastLocation(getServerName(), loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
+            }
         };
 
         if (async) {
