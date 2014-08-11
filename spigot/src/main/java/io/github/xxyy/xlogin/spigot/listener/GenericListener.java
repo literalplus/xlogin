@@ -123,6 +123,11 @@ public class GenericListener implements Listener {
         final Player plr = evt.getPlayer();
         evt.setJoinMessage(null); //TODO configurable
 
+        if (plugin.getServerName() == null) {
+            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
+            plr.sendMessage("§cInterner Fehler: Kein Servername bekannt. Bitte joine in einer Minute erneut!");
+        }
+
         plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
         plugin.getServer().getScheduler().runTaskLater(plugin,
@@ -134,8 +139,5 @@ public class GenericListener implements Listener {
                 ,
                 10L); //Let the player take their time to arrive - We have time! :)
 
-        if (plugin.getServerName() == null) {
-            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
-        }
     }
 }

@@ -137,6 +137,12 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public void teleportToLastLocation(Player plr) {
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId(), plr.getName());
 
+        if (getServerName() == null) {
+            getLogger().severe("No server name!");
+            plr.kickPlayer("Interner Fehler: Kein Servername bekannt!");
+            return;
+        }
+
         LocationInfo lastLocation = authedPlayer.getLastLocation(getServerName());
 
         if (lastLocation == null) {
