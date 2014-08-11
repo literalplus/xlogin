@@ -55,6 +55,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         //Register Bukkit stuffs
         BungeeAPIListener apiListener = new BungeeAPIListener(this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, API_CHANNEL_NAME);
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, API_CHANNEL_NAME, apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
         getCommand("spawn").setExecutor(new CommandSpawn(this));
@@ -172,7 +173,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             }
 
             plr.sendPluginMessage(this, API_CHANNEL_NAME, bos.toByteArray());
-            getLogger().info("api send: " + action);
         } catch (IOException ignore) {
             //oke what you're gonna do tho
         }

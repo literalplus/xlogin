@@ -82,7 +82,6 @@ public class MainListener implements Listener {
                         plugin.getLogger().info("Sending server name to " + server.getInfo().getName());
 
                         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-
                             try (DataOutputStream dos = new DataOutputStream(bos)) {
                                 dos.writeUTF("server-name");
                                 dos.writeUTF(server.getInfo().getName());
@@ -91,10 +90,11 @@ public class MainListener implements Listener {
                             }
 
                             server.sendData(XLoginPlugin.API_CHANNEL_NAME, bos.toByteArray());
-
                         } catch (IOException ignore) {
                             //oke what you're gonna do tho
                         }
+                    } else {
+                        plugin.getLogger().info("Received unknown api message: " + command);
                     }
                 }
             } catch (IOException e) {
