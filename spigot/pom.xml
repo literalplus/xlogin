@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>io.github.xxyy</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>common-java7</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.xxyy.xlogin</groupId>
