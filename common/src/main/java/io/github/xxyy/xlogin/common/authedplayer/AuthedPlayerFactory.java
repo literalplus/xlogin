@@ -111,8 +111,7 @@ public final class AuthedPlayerFactory {
     private static AuthedPlayer getPlayerFromResultSet(ResultSet rs) throws SQLException {
         return new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
                 rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
-                rs.getTimestamp("reg_date"), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"), rs.getString("world"),
-                rs.getBoolean("sessions_enabled"));
+                rs.getTimestamp("reg_date"), rs.getBoolean("sessions_enabled"));
     }
 
     public static AuthedPlayer get(UUID uuid, String username, boolean create) {
@@ -123,8 +122,7 @@ public final class AuthedPlayerFactory {
             } else if (create) {
                 PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "uuid=?, username=?", uuid.toString(), username);
-                return new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()),
-                        0, 0, 0, null, true);
+                return new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()), true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

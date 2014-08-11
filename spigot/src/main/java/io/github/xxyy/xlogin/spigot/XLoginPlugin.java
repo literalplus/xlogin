@@ -17,6 +17,7 @@ import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
+import io.github.xxyy.xlogin.common.authedplayer.LocationInfo;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
@@ -44,7 +45,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     @Override
     public void onDisable() {
         for (Player plr : Bukkit.getOnlinePlayers()) {
-            saveLocation(plr);
+            saveLocation(plr, false); //We can't register async tasks when (being) disabled :/
         }
     }
 
@@ -136,20 +137,18 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public void teleportToLastLocation(Player plr) {
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId(), plr.getName());
 
-        int x = authedPlayer.getLastLogoutBlockX();
-        int y = authedPlayer.getLastLogoutBlockY();
-        int z = authedPlayer.getLastLogoutBlockZ();
+        LocationInfo lastLocation = authedPlayer.getLastLocation(getServerName());
 
-        if (x == 0 || y == 0 || z == 0) {
+        if (lastLocation == null) {
             plr.teleport(spawnLocation);
         } else {
-            World world = getServer().getWorld(authedPlayer.getLastWorldName());
+            World world = getServer().getWorld(lastLocation.getWorldName());
             if (world == null) {
                 world = spawnLocation.getWorld();
             }
 
-            plr.teleport(new Location(world, authedPlayer.getLastLogoutBlockX(),
-                    authedPlayer.getLastLogoutBlockY(), authedPlayer.getLastLogoutBlockZ()));
+            plr.teleport(new Location(world, lastLocation.getX(),
+                    lastLocation.getY(), lastLocation.getZ()));
         }
     }
 
@@ -170,13 +169,22 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         }
     }
 
-    public void saveLocation(Player plr) {
+    public void saveLocation(Player plr, boolean async) {
         UUID uuid = plr.getUniqueId();
-        Location location = plr.getLocation();
+        Location loc = plr.getLocation();
 
-        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET x=?,y=?,z=?,world=? WHERE uuid=?",
-                location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName(), uuid.toString()); //TODO async
-        getLogger().info("Saved location for " + uuid);
+        Runnable saveLogic = () -> {
+            AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(uuid);
+
+
+            authedPlayer.setLastLocation(getServerName(), loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
+        };
+
+        if (async) {
+            getServer().getScheduler().runTaskAsynchronously(this, saveLogic);
+        } else {
+            saveLogic.run();
+        }
     }
 
     public void setSpawn(Location location) {

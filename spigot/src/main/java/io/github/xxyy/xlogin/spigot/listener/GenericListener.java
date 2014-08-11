@@ -1,6 +1,5 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
-import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -8,15 +7,23 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.*;
-import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 
 
 public class GenericListener implements Listener {
+    public static boolean skip = false;
     private final String notLoggedInMessage;
     private final String notRegisteredMessage;
     private final XLoginPlugin plugin;
-    public static boolean skip = false;
 
     public GenericListener(XLoginPlugin plugin) {
         this.plugin = plugin;
@@ -28,7 +35,7 @@ public class GenericListener implements Listener {
     public void onQuit(final PlayerQuitEvent evt) {
         Player plr = evt.getPlayer();
 
-        plugin.saveLocation(plr);
+        plugin.saveLocation(plr, true);
 
         evt.setQuitMessage(null);
 
@@ -37,7 +44,7 @@ public class GenericListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onKick(final PlayerKickEvent evt) {
-        plugin.saveLocation(evt.getPlayer());
+        plugin.saveLocation(evt.getPlayer(), true);
 
         plugin.getRegistry().forget(evt.getPlayer().getUniqueId());
     }
@@ -108,7 +115,6 @@ public class GenericListener implements Listener {
             plr.sendMessage(this.notLoggedInMessage);
 
             e.setCancelled(true);
-            return;
         }
     }
 
