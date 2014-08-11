@@ -6,7 +6,8 @@ author: xxyy98 (Philipp Nowak)
 database: false
 website: http://xxyy.github.io/
 prefix: xLo
-loadbefore: [MinoTopiaCore, McSystem]
+load: STARTUP
+softdepend: [XYC]
 
 commands:
   spawn:
