@@ -68,7 +68,7 @@
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
                             <include>mysql:mysql-connector-java</include>
-                            <include>io.github.xxyy.common</include>
+                            <include>io.github.xxyy:common</include>
                         </includes>
                     </artifactSet>
                     <relocations>
