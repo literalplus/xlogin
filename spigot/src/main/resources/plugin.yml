@@ -6,7 +6,6 @@ author: xxyy98 (Philipp Nowak)
 database: false
 website: http://xxyy.github.io/
 prefix: xLo
-load: STARTUP
 softdepend: [XYC]
 
 commands:
