@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 
@@ -25,7 +26,7 @@ public class BungeeAPIListener implements PluginMessageListener {
         ByteArrayInputStream bi = new ByteArrayInputStream(data);
         DataInputStream ds = new DataInputStream(bi);
         try {
-            if (channel.equalsIgnoreCase("xLo-BungeeAPI")) {
+            if (channel.equalsIgnoreCase(Const.API_CHANNEL_NAME)) {
                 String command = ds.readUTF();
                 if (command.equalsIgnoreCase("tp")) { //Teleports the target player to their last notation
                     UUID uuid = UUID.fromString(ds.readUTF());
@@ -72,8 +73,8 @@ public class BungeeAPIListener implements PluginMessageListener {
                 } else if (command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
                 } else if (command.equals("server-name")) {
-                    plugin.setServerName(ds.readUTF());
                     plugin.getLogger().info("Received server name: " + plugin.getServerName());
+                    plugin.setServerName(ds.readUTF());
                 } else {
                     plugin.getLogger().info("Received unknown API message with action=" + command);
                 }

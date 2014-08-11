@@ -11,6 +11,7 @@ import io.github.xxyy.common.shared.uuid.UUIDRepositories;
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
+import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
-    public static final String API_CHANNEL_NAME = "xLo-BungeeAPI";
+    public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
     @Getter
     private Location spawnLocation;
     @Getter
@@ -171,7 +172,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             }
 
             plr.sendPluginMessage(this, API_CHANNEL_NAME, bos.toByteArray());
-
+            getLogger().info("api send: " + action);
         } catch (IOException ignore) {
             //oke what you're gonna do tho
         }
