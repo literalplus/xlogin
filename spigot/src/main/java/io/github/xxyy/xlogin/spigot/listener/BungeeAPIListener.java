@@ -33,7 +33,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                     Player plr = Bukkit.getPlayer(uuid);
 
                     if (plr == null) {
-                        plugin.getLogger().info(MessageFormat.format("Received tp request for unknown player '{'UUID={0}}'",
+                        plugin.getLogger().info(MessageFormat.format("Received tp request for unknown player '{'UUID={0}'}'",
                                 uuid));
                         return;
                     }
