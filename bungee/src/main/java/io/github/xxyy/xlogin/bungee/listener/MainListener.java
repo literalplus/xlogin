@@ -79,6 +79,7 @@ public class MainListener implements Listener {
                     } else if (command.equals("server-name")) {
                         Validate.isTrue(evt.getSender() instanceof Server, "Invalid sender found for server-name plugin message");
                         Server server = (Server) evt.getSender();
+                        plugin.getLogger().info("Sending server name to " + server.getInfo().getName());
 
                         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 

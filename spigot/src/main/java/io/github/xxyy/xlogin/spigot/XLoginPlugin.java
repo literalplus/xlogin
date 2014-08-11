@@ -71,8 +71,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
 
         if (Bukkit.getOnlinePlayers().length > 0) {
-            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
-            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "server-name");
+            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend", false);
+            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "server-name", false);
             GenericListener.skip = true;
         }
 
@@ -152,7 +152,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         }
     }
 
-    public void sendAPIMessage(Player plr, String action) {
+    public void sendAPIMessage(Player plr, String action, boolean sendUUID) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
             try (DataOutputStream dos = new DataOutputStream(bos)) {
