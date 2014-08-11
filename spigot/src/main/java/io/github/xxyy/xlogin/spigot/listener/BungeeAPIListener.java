@@ -1,10 +1,11 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -67,9 +68,12 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = plugin.getRepository().refreshPlayer(uuid, plr.getName());
-                } else if(command.equalsIgnoreCase("resend-ok")) {
+                    plugin.getRepository().refreshPlayer(uuid, plr.getName());
+                } else if (command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
+                } else if (command.equals("server-name")) {
+                    plugin.setServerName(ds.readUTF());
+                    plugin.getLogger().info("Received server name: " + plugin.getServerName());
                 } else {
                     plugin.getLogger().info("Received unknown API message with action=" + command);
                 }

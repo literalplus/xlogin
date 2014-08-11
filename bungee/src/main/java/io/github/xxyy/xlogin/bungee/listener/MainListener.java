@@ -1,16 +1,21 @@
 package io.github.xxyy.xlogin.bungee.listener;
 
-import io.github.xxyy.xlogin.bungee.XLoginPlugin;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.apache.commons.lang3.Validate;
+
+import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
@@ -55,11 +60,11 @@ public class MainListener implements Listener {
                 try (DataInputStream ds = new DataInputStream(bi)) {
                     String command = ds.readUTF();
 
-                    if(command.equals("resend")) {
+                    if (command.equals("resend")) {
                         ProxyServer.getInstance().getLogger().info("Resending auth data!");
                         ProxiedPlayer finalPlr = null;
 
-                        for(ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
+                        for (ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
                             AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
                             if (authedPlayer.isAuthenticated()) {
@@ -71,6 +76,24 @@ public class MainListener implements Listener {
                         }
 
                         plugin.sendAPIMessage(finalPlr, "resend-ok");
+                    } else if (command.equals("server-name")) {
+                        Validate.isTrue(evt.getSender() instanceof Server, "Invalid sender found for server-name plugin message");
+                        Server server = (Server) evt.getSender();
+
+                        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
+                            try (DataOutputStream dos = new DataOutputStream(bos)) {
+                                dos.writeUTF("server-name");
+                                dos.writeUTF(server.getInfo().getName());
+                            } catch (IOException ignore) {
+                                //go home BungeeCord, you have drunk
+                            }
+
+                            server.sendData(XLoginPlugin.API_CHANNEL_NAME, bos.toByteArray());
+
+                        } catch (IOException ignore) {
+                            //oke what you're gonna do tho
+                        }
                     }
                 }
             } catch (IOException e) {

@@ -38,6 +38,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public static final String API_CHANNEL_NAME = "xLo-BungeeAPI";
     @Getter
     private Location spawnLocation;
+    @Getter
+    private String serverName;
 
     @Override
     public void onDisable() {
@@ -51,7 +53,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         //Register Bukkit stuffs
         BungeeAPIListener apiListener = new BungeeAPIListener(this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, API_CHANNEL_NAME);
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, "xLo-BungeeAPI", apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
         getCommand("spawn").setExecutor(new CommandSpawn(this));
@@ -70,6 +71,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         if (Bukkit.getOnlinePlayers().length > 0) {
             sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
+            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "server-name");
             GenericListener.skip = true;
         }
 
@@ -113,6 +115,12 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         if (spawnLocation == null) {
             getLogger().warning("Couldn't load spawn.");
             updateSpawnLocation(Bukkit.getWorlds().get(0).getSpawnLocation());
+        }
+
+        serverName = getConfig().getString("server-name");
+
+        if (serverName == null) {
+            getLogger().info("No server name given! Locations will be saved once BungeeCord responds to our query.");
         }
 
         spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
@@ -191,5 +199,11 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     @Override
     public AuthedPlayerRegistry getRegistry() {
         return AUTHED_PLAYER_REGISTRY;
+    }
+
+    public void setServerName(String newServerName) {
+        serverName = newServerName;
+        this.getConfig().set("server-name", serverName);
+        saveConfig();
     }
 }
