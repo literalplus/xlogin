@@ -123,17 +123,17 @@ public class GenericListener implements Listener {
         final Player plr = evt.getPlayer();
         evt.setJoinMessage(null); //TODO configurable
 
-        if (plugin.getServerName() == null) {
-            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
-//            plr.sendMessage("§cInterner Fehler: Kein Servername bekannt. Bitte joine in einer Minute erneut!");
-        }
-
         plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
         plugin.getServer().getScheduler().runTaskLater(plugin,
                 new Runnable() {
                     public void run() {
                         plr.teleport(plugin.getSpawnLocation());
+
+
+                        if (plugin.getServerName() == null) { //Requesting in here because Bukkit is a bit weird with initializing its stuffs
+                            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
+                        }
                     }
                 }
                 ,
