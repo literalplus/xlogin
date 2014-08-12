@@ -1,11 +1,5 @@
 package io.github.xxyy.xlogin.bungee.authtopia;
 
-import io.github.xxyy.common.sql.QueryResult;
-import io.github.xxyy.xlogin.bungee.XLoginPlugin;
-import io.github.xxyy.xlogin.common.PreferencesHolder;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
-import io.github.xxyy.xlogin.common.ips.IpAddress;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -13,6 +7,13 @@ import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+
+import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+import io.github.xxyy.xlogin.common.ips.IpAddress;
 
 import java.sql.SQLException;
 import java.text.MessageFormat;
@@ -172,7 +173,7 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
-        plugin.getRepository().refreshProfile(evt.getPlayer().getUniqueId());
+//        plugin.getRepository().refreshProfile(evt.getPlayer().getUniqueId());
 
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
     }
