@@ -11,6 +11,7 @@ import io.github.xxyy.common.shared.uuid.UUIDRepositories;
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.util.LocationHelper;
+import io.github.xxyy.common.version.PluginVersion;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
@@ -83,6 +84,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         //Register XYC uuid provider
         UUIDRepositories.addRepository(AUTHED_PLAYER_REPOSITORY, this);
+
+        getLogger().info("xLogin " + PluginVersion.ofClass(getClass()) + " enabled!");
     }
 
     public void initConfig() {
