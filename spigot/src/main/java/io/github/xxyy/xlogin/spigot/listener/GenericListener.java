@@ -125,7 +125,7 @@ public class GenericListener implements Listener {
 
         if (plugin.getServerName() == null) {
             plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
-            plr.sendMessage("§cInterner Fehler: Kein Servername bekannt. Bitte joine in einer Minute erneut!");
+//            plr.sendMessage("§cInterner Fehler: Kein Servername bekannt. Bitte joine in einer Minute erneut!");
         }
 
         plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
