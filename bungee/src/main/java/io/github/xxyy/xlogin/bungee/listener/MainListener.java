@@ -55,11 +55,12 @@ public class MainListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(final PluginMessageEvent evt) {
+        plugin.getLogger().info(evt.getTag() + " -> ");
         if (evt.getTag().equals(XLoginPlugin.API_CHANNEL_NAME)) {
             try (ByteArrayInputStream bi = new ByteArrayInputStream(evt.getData())) {
                 try (DataInputStream ds = new DataInputStream(bi)) {
                     String command = ds.readUTF();
-
+                    plugin.getLogger().info(command);
                     if (command.equals("resend")) {
                         ProxyServer.getInstance().getLogger().info("Resending auth data!");
                         ProxiedPlayer finalPlr = null;
