@@ -85,6 +85,16 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         //Register XYC uuid provider
         UUIDRepositories.addRepository(AUTHED_PLAYER_REPOSITORY, this);
 
+        //Register task saving locations every 5m
+        getServer().getScheduler().runTaskTimer(this, new Runnable() {
+            @Override
+            public void run() {
+                for (Player plr : Bukkit.getOnlinePlayers()) {
+                    saveLocation(plr, true);
+                }
+            }
+        }, 20 * 60 * 5L, 20 * 60 * 5L);
+
         getLogger().info("xLogin " + PluginVersion.ofClass(getClass()) + " enabled!");
     }
 
@@ -189,7 +199,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             @Override
             public void run() {
                 AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(uuid);
-
 
                 authedPlayer.setLastLocation(getServerName(), loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
             }
