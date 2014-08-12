@@ -141,7 +141,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         if (getServerName() == null) {
             getLogger().severe("No server name!");
-            plr.kickPlayer("Interner Fehler: Kein Servername bekannt!");
+            plr.sendMessage("§c§lInterner Fehler: Kein Servername bekannt! Du konntest nicht zurückteleportiert werden!");
             return;
         }
 
