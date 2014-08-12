@@ -73,8 +73,8 @@ public class BungeeAPIListener implements PluginMessageListener {
                 } else if (command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
                 } else if (command.equals("server-name")) {
-                    plugin.getLogger().info("Received server name: " + plugin.getServerName());
                     plugin.setServerName(ds.readUTF());
+                    plugin.getLogger().info("Received server name: " + plugin.getServerName());
                 } else {
                     plugin.getLogger().info("Received unknown API message with action=" + command);
                 }
