@@ -63,6 +63,6 @@ public class LocationInfo {
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + TABLE_NAME +
                         " SET uuid=?, server_name=?, world=?, x=?, y=?, z=?" +
                         " ON DUPLICATE KEY UPDATE world=?, x=?, y=?, z=?",
-                playerId.toString(), serverName, worldName, x, y, z);
+                playerId.toString(), serverName, worldName, x, y, z, worldName, x, y, z);
     }
 }
