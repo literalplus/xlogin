@@ -138,8 +138,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         if (serverName == null) {
             getLogger().info("No server name given! Locations will be saved once BungeeCord responds to our query.");
         }
-
-        spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
     }
 
     public void updateSpawnLocation(Location location) {
@@ -147,6 +145,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         SpawnLocationHolder.setSpawn(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ(),
                 spawnLocation.getPitch(), spawnLocation.getYaw(), spawnLocation.getWorld().getName());
+
+
+        spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
     }
 
     public void teleportToLastLocation(Player plr) {
