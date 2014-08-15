@@ -113,9 +113,9 @@ public class AuthtopiaListener implements Listener {
                         if (evt.getPlayer().getServer() != null) {
                             plugin.notifyRegister(evt.getPlayer());
                         }
-                    }
 
-                    AuthedPlayerFactory.save(authedPlayer);
+                        AuthedPlayerFactory.save(authedPlayer);
+                    }
                 } else if (!authed) {
                     if (authedPlayer.authenticateSession(ipAddress)) {
                         plugin.getRegistry().registerAuthentication(authedPlayer);
