@@ -38,7 +38,7 @@ public class LocationInfo {
      */
     protected static LocationInfo load(AuthedPlayer authedPlayer, String serverName) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " +
-                TABLE_NAME + " WHERE uuid=? AND server_name=?", authedPlayer.getUuid(), serverName).vouchForResultSet()) {
+                TABLE_NAME + " WHERE uuid=? AND server_name=?", authedPlayer.getUniqueId().toString(), serverName).vouchForResultSet()) {
             ResultSet rs = qr.rs();
             if (!rs.next()) {
                 return null;

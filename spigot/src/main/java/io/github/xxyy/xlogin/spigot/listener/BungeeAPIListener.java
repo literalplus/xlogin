@@ -39,7 +39,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    plugin.teleportToLastLocation(plr);
+//                    plugin.teleportToLastLocation(plr);
                 } else if (command.equalsIgnoreCase("auth")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
 
@@ -58,6 +58,7 @@ public class BungeeAPIListener implements PluginMessageListener {
 
                     plugin.getRegistry().registerAuthentication(authedPlayer);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
+                    plugin.teleportToLastLocation(plr);
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
                     Player plr = Bukkit.getPlayer(uuid);

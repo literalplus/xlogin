@@ -153,7 +153,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void teleportToLastLocation(Player plr) {
-        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId(), plr.getName());
+        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId());
 
         if (getServerName() == null) {
             getLogger().severe("No server name!");
@@ -165,6 +165,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         if (lastLocation == null) {
             plr.teleport(spawnLocation);
+            getLogger().info("No previous location for " + plr.getName());
         } else {
             World world = getServer().getWorld(lastLocation.getWorldName());
             if (world == null) {
