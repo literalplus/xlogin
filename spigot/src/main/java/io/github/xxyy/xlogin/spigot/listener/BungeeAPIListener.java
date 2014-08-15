@@ -70,6 +70,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                     }
 
                     plugin.getRepository().refreshPlayer(uuid, plr.getName());
+                    plugin.getLogger().info(MessageFormat.format("Received register for {0} w/ {1}", plr.getName(), uuid));
                 } else if (command.equalsIgnoreCase("resend-ok")) {
                     GenericListener.skip = false;
                 } else if (command.equals("server-name")) {
