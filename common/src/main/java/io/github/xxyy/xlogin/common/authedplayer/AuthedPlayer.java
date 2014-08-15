@@ -235,12 +235,12 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
 
         this.valid = newValid;
 
-        this.setAuthenticated(false); //If we change validation state, we need to drop the authentication
-        this.setAuthenticationProvider(null); //to prevent cracked users from hijacking premium sessions.
-
-        if (save) {
+        if (save && isAuthenticated()) {
             AuthedPlayerFactory.save(this);
         }
+
+        this.setAuthenticated(false); //If we change validation state, we need to drop the authentication
+        this.setAuthenticationProvider(null); //to prevent cracked users from hijacking premium sessions.
     }
 
     public AuthenticationProvider getAuthenticationProvider() {

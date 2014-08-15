@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.Validate;
 
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
@@ -150,6 +151,8 @@ public final class AuthedPlayerFactory {
         if (ap == null) {
             return;
         }
+
+        Validate.isTrue(ap.isAuthenticated(), "Don't fucking save non-authed players, will you!!");
 
         PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
