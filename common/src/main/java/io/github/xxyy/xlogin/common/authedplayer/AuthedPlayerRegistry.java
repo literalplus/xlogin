@@ -7,6 +7,7 @@ import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * Class which keeps track of all logged-in users.
@@ -15,6 +16,7 @@ import java.util.UUID;
  * @since 11.5.14
  */
 public class AuthedPlayerRegistry implements XLoginRegistry {
+    private static final Logger LOGGER = Logger.getLogger(AuthedPlayerRegistry.class.getName());
     private final AuthedPlayerRepository repository;
     private final List<UUID> authedPlayers = new ArrayList<>();
 
@@ -28,6 +30,8 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
 
         if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
             this.authedPlayers.remove(uuid);
+            LOGGER.info("Removing player from registry because null, invalid or something. " +
+                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
             return false;
         }
 
