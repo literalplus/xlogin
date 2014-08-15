@@ -123,7 +123,7 @@ public class GenericListener implements Listener {
         final Player plr = evt.getPlayer();
         evt.setJoinMessage(null); //TODO configurable
 
-        plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
+//        plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
 
         plugin.getServer().getScheduler().runTaskLater(plugin,
                 new Runnable() {
