@@ -1,5 +1,13 @@
 package io.github.xxyy.xlogin.bungee.command;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
@@ -11,19 +19,17 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.md_5.bungee.api.ChatColor.*;
+import static net.md_5.bungee.api.ChatColor.DARK_RED;
+import static net.md_5.bungee.api.ChatColor.GOLD;
+import static net.md_5.bungee.api.ChatColor.GRAY;
+import static net.md_5.bungee.api.ChatColor.GREEN;
+import static net.md_5.bungee.api.ChatColor.RED;
+import static net.md_5.bungee.api.ChatColor.YELLOW;
 
 /**
  * Handles administrative commands.
@@ -179,7 +185,7 @@ public class CommandxLogin extends Command {
 
                     for (AuthedPlayer match : matches) {
                         sender.sendMessage(new ComponentBuilder("Name: ").color(GOLD)
-                                .append(match.getName()).color(ChatColor.YELLOW).create());
+                                .append(match.getName()).color(YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("UUID: ").color(GOLD)
                                 .append(match.getUuid()).color(YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("Premium? ").color(GOLD)
@@ -190,9 +196,9 @@ public class CommandxLogin extends Command {
                                 .append(match.getLastIp()).color(YELLOW).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
                         sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
-                                .append(ip == null ? null : String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
+                                .append(ip == null ? "null" : String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("IP-Sessions: ").color(GOLD)
-                                .append(ip == null ? null : String.valueOf(ip.isSessionsEnabled()))
+                                .append(ip == null ? "null" : String.valueOf(ip.isSessionsEnabled()))
                                 .color(ip == null ? GRAY : ip.isSessionsEnabled() ? GREEN : RED).create()); //red/green if non-null, gray if null
                     }
                 }
@@ -233,6 +239,23 @@ public class CommandxLogin extends Command {
                             .append(" wird nun immer als Cracked erkannt. Der Account ist ").color(GOLD)
                             .append(premium ? "bei " : "nicht bei ").color(premium ? GREEN : RED)
                             .append(" Mojang gekauft.").color(GOLD).create());
+                }
+                return;
+            case "debugp":
+                if (args.length < 2) {
+                    sender.sendMessage(new ComponentBuilder("/xlo debugp <UUID|%Part|Name|/IP>").create());
+                } else {
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+
+                    if (matches.length == 0) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
+                        return;
+                    }
+
+                    for (AuthedPlayer match : matches) {
+                        sender.sendMessage(new ComponentBuilder("Player: ").color(YELLOW)
+                                .append(String.valueOf(match)).color(GOLD).create());
+                    }
                 }
                 return;
             default:

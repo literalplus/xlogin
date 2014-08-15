@@ -1,12 +1,13 @@
 package io.github.xxyy.xlogin.bungee.command;
 
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 
 /**
  * Handles the /login command.
@@ -52,7 +53,7 @@ public class CommandLogin extends Command {
         if(!authedPlayer
                 .authenticatePassword(args[0], plr.getAddress().getAddress().toString())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().wrongPassword));
-            return; //TODO: Only allow 5 tries, then tempban IP for 5m
+            return; //TODO: Only allow 5 attempts, then tempban IP for 5m
         }
 
         plugin.getRegistry().registerAuthentication(authedPlayer);

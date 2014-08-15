@@ -1,7 +1,8 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 import org.apache.commons.lang3.Validate;
+
+import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +26,8 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
     public boolean isAuthenticated(UUID uuid){
         AuthedPlayer authedPlayer = repository.getProfile(uuid);
 
-        if(authedPlayer == null) {
+        if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
             this.authedPlayers.remove(uuid);
-            return false;
-        }
-
-        if(!authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
-            forget(uuid);
             return false;
         }
 
