@@ -137,7 +137,7 @@ public class GenericListener implements Listener {
                     }
                 }
                 ,
-                10L); //Let the player take their time to arrive - We have time! :)
+                3L); //Let the player take their time to arrive - We have time! :)
 
     }
 }

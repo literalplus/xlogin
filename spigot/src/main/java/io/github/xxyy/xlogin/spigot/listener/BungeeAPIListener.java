@@ -43,7 +43,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                 } else if (command.equalsIgnoreCase("auth")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
 
-                    Player plr = Bukkit.getPlayer(uuid);
+                    final Player plr = Bukkit.getPlayer(uuid);
                     AuthedPlayer.AuthenticationProvider authProvider = AuthedPlayer.AuthenticationProvider.values()[ds.readInt()];
 
                     if (plr == null) {
@@ -58,7 +58,12 @@ public class BungeeAPIListener implements PluginMessageListener {
 
                     plugin.getRegistry().registerAuthentication(authedPlayer);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
-                    plugin.teleportToLastLocation(plr);
+                    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                        @Override
+                        public void run() {
+                            plugin.teleportToLastLocation(plr);
+                        }
+                    }, 10L);
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
                     Player plr = Bukkit.getPlayer(uuid);
