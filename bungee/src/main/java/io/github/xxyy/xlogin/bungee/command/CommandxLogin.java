@@ -131,7 +131,7 @@ public class CommandxLogin extends Command {
                         amount = Integer.parseInt(args[2]);
                     }
 
-                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
                     boolean doMatchCheck = !args[1].startsWith("/");
 
@@ -176,7 +176,7 @@ public class CommandxLogin extends Command {
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
-                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
                     if (matches.length == 0) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
@@ -207,7 +207,7 @@ public class CommandxLogin extends Command {
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
-                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
                     if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))) {
                         sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurden mehr als ein Spieler gefunden. " +
@@ -245,7 +245,7 @@ public class CommandxLogin extends Command {
                 if (args.length < 2) {
                     sender.sendMessage(new ComponentBuilder("/xlo debugp <UUID|%Part|Name|/IP>").create());
                 } else {
-                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1]);
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
                     if (matches.length == 0) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());

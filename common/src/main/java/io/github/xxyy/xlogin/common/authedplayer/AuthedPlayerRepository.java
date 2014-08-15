@@ -186,6 +186,15 @@ public class AuthedPlayerRepository implements XLoginRepository {
     }
 
     /**
+     * Checks if a profile matching given UUID is currently cached.
+     * @param uuid the uuid to find
+     * @return true if a profile matching given UUID is cached
+     */
+    public boolean hasCached(@NotNull UUID uuid) {
+        return idProfileCache.containsKey(uuid);
+    }
+
+    /**
      * Clears this repo's cache.
      */
     public void clear() {

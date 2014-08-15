@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
+
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
@@ -23,11 +24,12 @@ public final class AuthedPlayerFactory {
     /**
      * Gets AuthedPlayers.
      *
-     * @param input Either an UUID, part of a name to match all players having that part in their name or an
-     *              IP, starting with /.
+     * @param input      Either an UUID, part of a name to match all players having that part in their name or an
+     *                   IP, starting with /.
+     * @param repository the repository to use to get already loaded players
      * @return All AuthedPlayer that match given criteria.
      */
-    public static AuthedPlayer[] getByCriteria(String input) {
+    public static AuthedPlayer[] getByCriteria(String input, AuthedPlayerRepository repository) {
         if (input == null) {
             return new AuthedPlayer[0];
         }
@@ -41,6 +43,11 @@ public final class AuthedPlayerFactory {
             query += "username LIKE CONCAT(\"%\", ?, \"%\")";
         } else if (UtilUUID.isValidUUID(input)) {
             query += "uuid=?";
+
+            AuthedPlayer cached = getCached(repository, input);
+            if (cached != null) {
+                return new AuthedPlayer[]{cached};
+            }
         } else {
             query += "username=?";
         }
@@ -48,7 +55,10 @@ public final class AuthedPlayerFactory {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult(query, input).assertHasResultSet()) {
             List<AuthedPlayer> rtrn = new ArrayList<>();
             while (qr.rs().next()) {
-                AuthedPlayer authedPlayer = getPlayerFromResultSet(qr.rs());
+                AuthedPlayer authedPlayer = getCached(repository, qr.rs().getString("uuid"));
+                if (authedPlayer == null) {
+                    authedPlayer = getPlayerFromResultSet(qr.rs());
+                }
                 rtrn.add(authedPlayer);
             }
 
@@ -161,5 +171,16 @@ public final class AuthedPlayerFactory {
 
         PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid=?",
                 ap.getUuid());
+    }
+
+    private static AuthedPlayer getCached(AuthedPlayerRepository repository, String input) {
+        if (repository != null) {
+            UUID uuid = UtilUUID.getFromString(input);
+            if (repository.hasCached(uuid)) {
+                return repository.getProfile(uuid);
+            }
+        }
+
+        return null;
     }
 }
