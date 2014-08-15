@@ -48,7 +48,7 @@ public class CommandLogin extends Command {
 
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
-        authedPlayer.setValid(true);
+        authedPlayer.setValid(true, false);
 
         if(!authedPlayer
                 .authenticatePassword(args[0], plr.getAddress().getAddress().toString())) {

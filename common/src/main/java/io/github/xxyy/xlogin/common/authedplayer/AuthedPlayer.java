@@ -223,6 +223,10 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
     }
 
     public void setValid(boolean newValid) {
+        setValid(newValid, false);
+    }
+
+    public void setValid(boolean newValid, boolean save) {
 //        Validate.isTrue(isValid() || !newValid, "Cannot re-validate player!");
 
         if (isValid() == newValid) {
@@ -234,7 +238,9 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.setAuthenticated(false); //If we change validation state, we need to drop the authentication
         this.setAuthenticationProvider(null); //to prevent cracked users from hijacking premium sessions.
 
-        AuthedPlayerFactory.save(this);
+        if (save) {
+            AuthedPlayerFactory.save(this);
+        }
     }
 
     public AuthenticationProvider getAuthenticationProvider() {
@@ -269,7 +275,7 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
         setSalt(salt);
         setPassword(PasswordHelper.encrypt(password, salt));
 
-        setValid(true);
+        setValid(true, true);
 
         Validate.isTrue(authenticatePassword(password, ip), "Setting password failed for registration!");
     }

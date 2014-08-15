@@ -77,7 +77,7 @@ public class AuthtopiaListener implements Listener {
                 if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     authedPlayer = plugin.getRepository()
                             .getProfile(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
-                    authedPlayer.setValid(true);
+                    authedPlayer.setValid(true, false);
                 }
 
                 if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {

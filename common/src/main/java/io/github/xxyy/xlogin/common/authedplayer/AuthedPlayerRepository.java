@@ -132,7 +132,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
             if (!authedPlayer.getName().equals(name)) {
                 authedPlayer.setName(name);
-                AuthedPlayerFactory.save(authedPlayer);
+//                AuthedPlayerFactory.save(authedPlayer);
             }
         }
 
@@ -150,14 +150,14 @@ public class AuthedPlayerRepository implements XLoginRepository {
         AuthedPlayer oldPlayer = idProfileCache.get(uuid);
 
         if (oldPlayer != null) {
-            oldPlayer.setValid(false);
+            oldPlayer.setValid(false, false);
         }
 
         AuthedPlayer refreshedPlayer = AuthedPlayerFactory.get(uuid, name);
 
         if (!refreshedPlayer.getName().equals(name)) {
             refreshedPlayer.setName(name);
-            AuthedPlayerFactory.save(refreshedPlayer);
+//            AuthedPlayerFactory.save(refreshedPlayer);
         }
 
         updateProfile(refreshedPlayer);

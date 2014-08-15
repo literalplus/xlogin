@@ -4,6 +4,10 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.gag.annotation.remark.ShoutOutTo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PreLoginEvent;
+import org.jetbrains.annotations.NotNull;
+
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.ProfileRepository;
@@ -13,9 +17,6 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PreLoginEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -180,7 +181,7 @@ public class AuthtopiaHelper {
         AuthedPlayer authedPlayer = plugin.getRepository()
                 .getProfile(plr.getUniqueId(), plr.getName());
 
-        authedPlayer.setValid(false);
+        authedPlayer.setValid(false, true);
         plugin.getRegistry().forget(plr.getUniqueId());
         plugin.getRepository().forgetProfile(authedPlayer);
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
