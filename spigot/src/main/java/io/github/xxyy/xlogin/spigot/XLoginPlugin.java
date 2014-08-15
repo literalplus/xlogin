@@ -20,6 +20,7 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.common.authedplayer.LocationInfo;
+import io.github.xxyy.xlogin.spigot.commands.CommandLocalXLo;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
@@ -60,6 +61,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
         getCommand("spawn").setExecutor(new CommandSpawn(this));
+        getCommand("lxlo").setExecutor(new CommandLocalXLo(this));
 
         //Init config
         initConfig();

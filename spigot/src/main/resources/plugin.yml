@@ -14,7 +14,8 @@ commands:
     aliases: [sporn, spawnpunkt, espawn]
     permission: xlogin.spawn
     usage: "/<command> - Teleportiert dich zum Spawn."
-
+  lxlo:
+    permission: xlogin.debug
 permissions:
   xlogin.spawn:
     default: true
