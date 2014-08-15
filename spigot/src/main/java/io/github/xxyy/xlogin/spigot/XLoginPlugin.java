@@ -201,6 +201,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             public void run() {
                 AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(uuid);
 
+                if (authedPlayer == null) {
+                    return;
+                }
+
                 authedPlayer.setLastLocation(getServerName(), loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
             }
         };
