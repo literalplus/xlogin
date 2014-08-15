@@ -56,9 +56,11 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
-        plugin.getRepository().refreshPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
-
         final boolean knownBefore = plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
+        if (knownBefore) {
+            plugin.getRepository().refreshPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+        }
+
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             public void run() {
                 if (plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
