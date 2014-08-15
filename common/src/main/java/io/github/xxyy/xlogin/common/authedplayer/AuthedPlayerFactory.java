@@ -156,7 +156,7 @@ public final class AuthedPlayerFactory {
 
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
-                        "sessions_enabled=? WHERE uuid=? ON DUPLICATE KEY UPDATE " +
+                        "sessions_enabled=?, uuid=? ON DUPLICATE KEY UPDATE " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
                         "sesions_enabled=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
