@@ -1,6 +1,8 @@
 package io.github.xxyy.xlogin.bungee.listener;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -17,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 /**
  * Listens for extremely important events. Wow.
@@ -56,6 +59,15 @@ public class MainListener implements Listener {
     @EventHandler
     public void onPluginMessage(final PluginMessageEvent evt) {
         if (evt.getTag().equals(XLoginPlugin.API_CHANNEL_NAME)) {
+            if (evt.getSender() instanceof ProxiedPlayer) {
+                ProxiedPlayer player = (ProxiedPlayer) evt.getSender();
+
+                player.disconnect(new ComponentBuilder("youtried.png").color(ChatColor.DARK_RED).create());
+                plugin.getLogger().warning(MessageFormat.format("Player {0} ({1}) tried to fake auth messages from IP {2}",
+                        player.getName(), player.getUniqueId().toString(), player.getAddress().getAddress().toString()));
+                return; //TODO: Maybe we should encrypt messages somehow
+            }
+
             try (ByteArrayInputStream bi = new ByteArrayInputStream(evt.getData())) {
                 try (DataInputStream ds = new DataInputStream(bi)) {
                     String command = ds.readUTF();

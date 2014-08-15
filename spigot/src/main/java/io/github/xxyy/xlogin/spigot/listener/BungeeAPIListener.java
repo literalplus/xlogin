@@ -56,7 +56,6 @@ public class BungeeAPIListener implements PluginMessageListener {
                     authedPlayer.setAuthenticationProvider(authProvider);
                     authedPlayer.setAuthenticated(true);
 
-
                     plugin.getRegistry().registerAuthentication(authedPlayer);
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                 } else if (command.equalsIgnoreCase("register")) {
