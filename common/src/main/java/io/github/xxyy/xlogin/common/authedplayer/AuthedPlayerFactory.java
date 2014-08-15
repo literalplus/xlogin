@@ -131,8 +131,8 @@ public final class AuthedPlayerFactory {
             if (qr.rs().next()) {
                 return getPlayerFromResultSet(qr.rs());
             } else if (create) {
-                PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
-                        "uuid=?, username=?", uuid.toString(), username);
+//                PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
+//                        "uuid=?, username=?", uuid.toString(), username);
                 return new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()), true);
             }
         } catch (SQLException e) {
@@ -154,11 +154,15 @@ public final class AuthedPlayerFactory {
 
         Validate.isTrue(ap.isAuthenticated(), "Don't fucking save non-authed players, will you!!");
 
-        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
+        PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
-                        "sessions_enabled=? WHERE uuid=?",
+                        "sessions_enabled=? WHERE uuid=? ON DUPLICATE KEY UPDATE " +
+                        "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
+                        "sesions_enabled=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
-                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid()
+                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid(),
+                ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
+                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled()
         );
     }
 
