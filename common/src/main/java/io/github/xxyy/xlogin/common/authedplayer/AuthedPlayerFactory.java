@@ -158,7 +158,7 @@ public final class AuthedPlayerFactory {
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
                         "sessions_enabled=?, uuid=? ON DUPLICATE KEY UPDATE " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
-                        "sesions_enabled=?",
+                        "sessions_enabled=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
                 ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid(),
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
