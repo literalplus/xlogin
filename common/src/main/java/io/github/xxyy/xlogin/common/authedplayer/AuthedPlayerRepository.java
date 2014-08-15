@@ -220,6 +220,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
     }
 
     public void updateProfile(AuthedPlayer profile) {
+        this.knownPlayers.put(profile.getUniqueId(), true);
         this.idProfileCache.put(profile.getUniqueId(), profile);
         //If we have a casing of the name, keep that to prevent inconsistencies
         this.nameProfilesCache.put(profile.getName(), Lists.newArrayList(profile));
