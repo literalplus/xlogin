@@ -40,6 +40,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
+    public static final String VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     @Getter
     private Location spawnLocation;
     @Getter
@@ -50,6 +51,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         for (Player plr : Bukkit.getOnlinePlayers()) {
             saveLocation(plr, false); //We can't register async tasks when (being) disabled :/
         }
+
+        getLogger().info("xLogin " + VERSION + " disabled!");
     }
 
     @Override
@@ -97,7 +100,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             }
         }, 20 * 60 * 5L, 20 * 60 * 5L);
 
-        getLogger().info("xLogin " + PluginVersion.ofClass(getClass()) + " enabled!");
+        getLogger().info("xLogin " + VERSION + " enabled!");
     }
 
     public void initConfig() {
