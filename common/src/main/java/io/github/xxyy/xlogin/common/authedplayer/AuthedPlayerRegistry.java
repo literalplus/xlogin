@@ -26,16 +26,19 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
 
     @Override
     public boolean isAuthenticated(UUID uuid){
-        AuthedPlayer authedPlayer = repository.getProfile(uuid);
-
-        if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
-            this.authedPlayers.remove(uuid);
-            LOGGER.info("Removing player from registry because null, invalid or something. " +
-                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
+        if (!authedPlayers.contains(uuid)) {
             return false;
         }
 
-        return authedPlayers.contains(uuid);
+        AuthedPlayer authedPlayer = repository.getProfile(uuid);
+        if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
+            this.authedPlayers.remove(uuid);
+//            LOGGER.info("Removing player from registry because null, invalid or something. " +
+//                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
+            return false;
+        }
+
+        return true;
     }
 
     public void registerAuthentication(AuthedPlayer authedPlayer){
