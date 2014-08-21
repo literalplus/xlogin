@@ -23,6 +23,10 @@
         </dependency>
         <dependency>
             <groupId>io.github.xxyy.xlogin</groupId>
+            <artifactId>xlogin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xxyy.xlogin</groupId>
             <artifactId>xlogin-bungee</artifactId>
         </dependency>
         <dependency>
