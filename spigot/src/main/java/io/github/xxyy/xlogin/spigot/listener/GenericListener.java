@@ -132,7 +132,7 @@ public class GenericListener implements Listener {
 
 
                         if (plugin.getServerName() == null) { //Requesting in here because Bukkit is a bit weird with initializing its stuffs
-                            plugin.sendAPIMessage(plr, "server-name", false); //Request server name - there might not have been any players online at startup
+                            plugin.sendAPIMessage(plr, "server-name"); //Request server name - there might not have been any players online at startup
                         }
                     }
                 }
