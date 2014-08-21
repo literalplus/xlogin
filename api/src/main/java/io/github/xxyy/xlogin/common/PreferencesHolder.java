@@ -23,12 +23,12 @@ public final class PreferencesHolder {
         return PreferencesHolder.maxUsersPerIp;
     }
 
-    public static int getSessionExpiryTime() {
-        return PreferencesHolder.sessionExpiryTime;
-    }
-
     public static void setMaxUsersPerIp(int maxUsersPerIp) {
         PreferencesHolder.maxUsersPerIp = maxUsersPerIp;
+    }
+
+    public static int getSessionExpiryTime() {
+        return PreferencesHolder.sessionExpiryTime;
     }
 
     public static void setSessionExpiryTime(int sessionExpiryTime) {
