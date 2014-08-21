@@ -73,21 +73,20 @@ public class MainListener implements Listener {
                     String command = ds.readUTF();
 
                     if (command.equals("resend")) {
-                        ProxyServer.getInstance().getLogger().info("Resending auth data!");
-                        ProxiedPlayer finalPlr = null;
+                        Validate.validState(evt.getSender() instanceof Server, "Cannot receive resend from anything else than a server");
+                        Server server = (Server) evt.getSender();
+                        ProxyServer.getInstance().getLogger().info("Resending auth data to " + server.getInfo().getName() + "!");
 
-                        for (ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
+                        for (ProxiedPlayer plr : server.getInfo().getPlayers()) {
                             AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
                             if (authedPlayer.isAuthenticated()) {
                                 plugin.sendAuthNotification(plr, authedPlayer);
                                 plugin.teleportToLastLocation(plr);
                             }
-
-                            finalPlr = plr;
                         }
 
-                        plugin.sendAPIMessage(finalPlr, "resend-ok");
+                        server.sendData(XLoginPlugin.API_CHANNEL_NAME, "resend-ok".getBytes("UTF-8"));
                     } else if (command.equals("server-name")) {
                         Validate.isTrue(evt.getSender() instanceof Server, "Invalid sender found for server-name plugin message");
                         Server server = (Server) evt.getSender();
