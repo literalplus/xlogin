@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
+import io.github.xxyy.xlogin.spigot.listener.GenericListener;
 
 /**
  * Teleports players to spawn. wow.
@@ -23,8 +24,15 @@ public class CommandLocalXLo implements CommandExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
+        if (!sender.hasPermission("xlogin.admin")) {
+            sender.sendMessage("no");
+            return true;
+        }
+
         if (args.length == 0) {
             sender.sendMessage("/lxlo [debugp] - debug tool");
+            sender.sendMessage(XLoginPlugin.VERSION);
+            sender.sendMessage("skip=" + GenericListener.skip);
             return true;
         }
 
@@ -42,7 +50,7 @@ public class CommandLocalXLo implements CommandExecutor {
                 }
 
                 for (AuthedPlayer authedPlayer : authedPlayers) {
-                    sender.sendMessage("§6Player: §e" + authedPlayer);
+                    sender.sendMessage("§6Player: §e" + authedPlayer + "§6 authed=" + plugin.getRegistry().isAuthenticated(authedPlayer.getUniqueId()));
                 }
                 break;
             default:
