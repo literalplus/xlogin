@@ -1,12 +1,25 @@
 package io.github.xxyy.xlogin.bungee;
 
+import lombok.Getter;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ConfigurationAdapter;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.plugin.Plugin;
+
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectable;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.version.PluginVersion;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaHelper;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaListener;
-import io.github.xxyy.xlogin.bungee.command.*;
+import io.github.xxyy.xlogin.bungee.command.CommandChangePassword;
+import io.github.xxyy.xlogin.bungee.command.CommandLogin;
+import io.github.xxyy.xlogin.bungee.command.CommandPremium;
+import io.github.xxyy.xlogin.bungee.command.CommandRegister;
+import io.github.xxyy.xlogin.bungee.command.CommandSessions;
+import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
@@ -16,12 +29,6 @@ import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
-import lombok.Getter;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ConfigurationAdapter;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -39,12 +46,12 @@ import java.util.concurrent.TimeUnit;
 public class XLoginPlugin extends Plugin implements ApiConsumer {
     public static final String PLUGIN_VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
+    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY); //TODO clear every 5m or so
     @Getter
     private XLoginConfig config;
     @Getter
     private AuthtopiaHelper authtopiaHelper;
-    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
-    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY); //TODO clear every 5m or so
     @Getter
     private Map<String, Integer> ipOnlinePlayers = new HashMap<>();
     @Getter
@@ -140,16 +147,21 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
     }
 
     public void sendAPIMessage(ProxiedPlayer plr, String action) {
+        sendAPIMessage(plr.getServer(), action, plr.getUniqueId().toString());
+    }
+
+    public void sendAPIMessage(Server server, String... data) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
             try (DataOutputStream dos = new DataOutputStream(bos)) {
-                dos.writeUTF(action);
-                dos.writeUTF(plr.getUniqueId().toString());
+                for (String line : data) {
+                    dos.writeUTF(line);
+                }
             } catch (IOException ignore) {
                 //go home BungeeCord, you have drunk
             }
 
-            plr.getServer().sendData(API_CHANNEL_NAME, bos.toByteArray());
+            server.sendData(API_CHANNEL_NAME, bos.toByteArray());
 
         } catch (IOException ignore) {
             //oke what you're gonna do tho

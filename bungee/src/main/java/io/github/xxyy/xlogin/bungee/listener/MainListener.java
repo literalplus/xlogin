@@ -86,7 +86,7 @@ public class MainListener implements Listener {
                             }
                         }
 
-                        server.sendData(XLoginPlugin.API_CHANNEL_NAME, "resend-ok".getBytes("UTF-8"));
+                        plugin.sendAPIMessage(server, "resend-ok");
                     } else if (command.equals("server-name")) {
                         Validate.isTrue(evt.getSender() instanceof Server, "Invalid sender found for server-name plugin message");
                         Server server = (Server) evt.getSender();
