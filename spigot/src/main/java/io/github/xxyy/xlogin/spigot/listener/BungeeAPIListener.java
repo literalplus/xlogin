@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import io.github.xxyy.xlogin.common.Const;
+import io.github.xxyy.xlogin.common.api.spigot.event.AuthenticationEvent;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 
@@ -28,16 +29,16 @@ public class BungeeAPIListener implements PluginMessageListener {
         try {
             if (channel.equalsIgnoreCase(Const.API_CHANNEL_NAME)) {
                 String command = ds.readUTF();
-                if (command.equalsIgnoreCase("tp")) { //Teleports the target player to their last notation
-                    UUID uuid = UUID.fromString(ds.readUTF());
-
-                    Player plr = Bukkit.getPlayer(uuid);
-
-                    if (plr == null) {
-                        plugin.getLogger().info(MessageFormat.format("Received tp request for unknown player '{'UUID={0}'}'",
-                                uuid));
-                        return;
-                    }
+                if (command.equalsIgnoreCase("tp")) { //Teleports the target player to their last notation - DEPRECATED: Now handled in auth
+//                    UUID uuid = UUID.fromString(ds.readUTF());
+//
+//                    Player plr = Bukkit.getPlayer(uuid);
+//
+//                    if (plr == null) {
+//                        plugin.getLogger().info(MessageFormat.format("Received tp request for unknown player '{'UUID={0}'}'",
+//                                uuid));
+//                        return;
+//                    }
 
 //                    plugin.teleportToLastLocation(plr);
                 } else if (command.equalsIgnoreCase("auth")) {
@@ -57,6 +58,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                     authedPlayer.setAuthenticated(true);
 
                     plugin.getRegistry().registerAuthentication(authedPlayer);
+                    plugin.getServer().getPluginManager().callEvent(new AuthenticationEvent(plr, authedPlayer));
                     plugin.getLogger().info(MessageFormat.format("Received auth for {0} w/ {1} using {2}", plr.getName(), uuid, authProvider.name()));
                     plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
                         @Override
