@@ -102,7 +102,7 @@ public class ModuleManager {
                 e.printStackTrace();
                 return false;
             }
-            plugin.getLogger().warning("[" + clazz.getSimpleName() + "] Successfully enabled!");
+            plugin.getLogger().info("[" + clazz.getSimpleName() + "] Successfully enabled!");
         }
 
         return true; //Was about time
