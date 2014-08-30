@@ -1,9 +1,7 @@
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Calendar;
@@ -64,9 +62,8 @@ class WarnPunishmentBuilder {
         }
 
         cb.append("Letzter Warngrund:\n" + ChatColor.stripColor(mostRecentWarning.getReason())).color(ChatColor.YELLOW)
-                .append("[Hier klicken für Liste deiner Verwarnungen]\n").color(ChatColor.GOLD).underlined(true)
-                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://www.minotopia.me/?p=5&n=" + targetName))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("http://minotopia.me/?p=5&n=" + targetName).create()));
+                .append("Liste deiner Verwarnungen:\n").color(ChatColor.GOLD)
+                .append("http://www.minotopia.me/?p=5&n=" + targetName).color(ChatColor.YELLOW).underlined(true);
 
         if (warningsTotal < 10) {
             cb.append("Bei zehn Warnungen wirst du permanent gebannt.").color(ChatColor.RED).underlined(false);

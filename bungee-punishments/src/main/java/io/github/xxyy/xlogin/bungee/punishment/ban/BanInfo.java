@@ -2,9 +2,7 @@ package io.github.xxyy.xlogin.bungee.punishment.ban;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
@@ -58,12 +56,11 @@ public class BanInfo extends AbstractPunishment {
 
         appendExpiryTime(cb);
 
-        return cb.append("gebannt:\n\n").bold(false).color(ChatColor.RED)
+        return cb.append(" gebannt:\n\n").bold(false).color(ChatColor.RED)
                 .append(ChatColor.stripColor(getReason())).color(ChatColor.YELLOW)
                 .append("\n\nUnfair? ").color(ChatColor.RED)
-                .append("[Entbannatrag stellen]").color(ChatColor.GOLD).underlined(true)
-                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://www.minotopia.me/forum/"))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("http://minotopia.me/forum/").create()))
+                .append("Entbannatrag im Forum: ").color(ChatColor.GOLD)
+                .append("http://www.minotopia.me/forum/").color(ChatColor.YELLOW).underlined(true)
                 .create();
     }
 
