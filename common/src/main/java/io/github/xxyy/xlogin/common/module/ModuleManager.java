@@ -45,11 +45,13 @@ public class ModuleManager {
 
     //clazz == null to request plugin instance
     private boolean enableModule(@NotNull Class<?> inputClazz, @Nullable Class<? extends XLoginModule> causedBy) {
-        if (plugin.getClass().isAssignableFrom(inputClazz) || modules.containsKey(inputClazz.getSimpleName())) {
+        if (inputClazz.isAssignableFrom(plugin.getClass()) || modules.containsKey(inputClazz.getSimpleName())) {
             return true;
         }
         if (!XLoginModule.class.isAssignableFrom(inputClazz)) {
-            plugin.getLogger().warning("[" + causedBy.getSimpleName() + "] Can only inject plugin or modules! (Requested: " + inputClazz.getName() + ")");
+            if (causedBy != null) {
+                plugin.getLogger().warning("[" + causedBy.getSimpleName() + "] Can only inject plugin or modules! (Requested: " + inputClazz.getName() + ")");
+            }
             return false;
         }
         @SuppressWarnings("unchecked") Class<? extends XLoginModule> clazz = (Class<? extends XLoginModule>) inputClazz;
@@ -114,7 +116,7 @@ public class ModuleManager {
         CanHasPotato potato = field.getAnnotation(CanHasPotato.class);
         if (potato != null) {
             Object toInject = null;
-            if (plugin.getClass().isAssignableFrom(potato.value())) {
+            if (potato.value().isAssignableFrom(plugin.getClass())) {
                 toInject = plugin;
             } else { //enableModule() checks if it is actually a module class
                 if (enableModule(potato.value(), clazz)) {
