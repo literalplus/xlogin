@@ -11,6 +11,7 @@ import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.module.XLoginModule;
 import io.github.xxyy.xlogin.common.module.annotation.CanHasPotato;
+import io.github.xxyy.xlogin.common.module.annotation.Module;
 
 import java.util.Date;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.8.14
  */
+@Module(enableByDefault = true)
 public class BanModule extends XLoginModule {
     private final LoadingCache<UUID, Pair<Boolean, BanInfo>> banInfoCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
