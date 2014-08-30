@@ -37,7 +37,7 @@ class CommandListWarns extends Command {
             UUID senderId = ChatHelper.getSenderId(sender);
             listWarnings(sender, module.getPlugin().getRepository().getProfile(senderId), WarningInfoFactory.fetchByTarget(senderId));
         } else if (!args[0].equalsIgnoreCase("help")) {
-            AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[1], module.getPlugin().getRepository());
+            AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
             if (matchedPlayers.length == 0) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
             } else if (matchedPlayers.length > 1) {

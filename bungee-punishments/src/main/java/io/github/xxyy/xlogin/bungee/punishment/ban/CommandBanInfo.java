@@ -36,7 +36,7 @@ class CommandBanInfo extends Command {
             return;
         }
 
-        AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[1], module.getPlugin().getRepository());
+        AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
         if (matchedPlayers.length == 0) {
             sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(RED).create());
             return;
