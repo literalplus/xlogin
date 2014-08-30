@@ -39,6 +39,7 @@ import static net.md_5.bungee.api.ChatColor.YELLOW;
  */
 public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
+    public static final String PERMISSION = "xlogin.admin";
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
@@ -54,7 +55,7 @@ public class CommandxLogin extends Command {
     private final XLoginPlugin plugin;
 
     public CommandxLogin(XLoginPlugin plugin) {
-        super("xlogin", "xlogin.admin", "xlo");
+        super("xlogin", PERMISSION, "xlo");
         this.plugin = plugin;
     }
 

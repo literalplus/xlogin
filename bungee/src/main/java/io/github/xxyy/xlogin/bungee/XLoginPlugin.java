@@ -6,7 +6,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectable;
@@ -23,12 +22,14 @@ import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
+import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
+import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
-import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
+import io.github.xxyy.xlogin.common.module.ModuleManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -43,7 +44,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 10.5.14
  */
-public class XLoginPlugin extends Plugin implements ApiConsumer {
+public class XLoginPlugin extends XLoginBungee {
     public static final String PLUGIN_VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
@@ -96,6 +97,9 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
         }, 5L, 5L, TimeUnit.MINUTES);
 
         PreferencesHolder.setConsumer(this);
+
+        //Enable modules
+        new ModuleManager(this).enable(WarnModule.class, BanModule.class);
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }
@@ -190,7 +194,7 @@ public class XLoginPlugin extends Plugin implements ApiConsumer {
     public void resetIpOnlinePlayers() {
         Map<String, Integer> newMap = new HashMap<>(getProxy().getPlayers().size());
 
-        for(ProxiedPlayer plr : getProxy().getPlayers()) {
+        for (ProxiedPlayer plr : getProxy().getPlayers()) {
             registerOnlineIp(plr);
         }
 
