@@ -8,7 +8,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.plugin.Command;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+
+import java.util.List;
 
 import static net.md_5.bungee.api.ChatColor.GOLD;
 import static net.md_5.bungee.api.ChatColor.GREEN;
@@ -36,17 +37,15 @@ class CommandBanInfo extends Command {
             return;
         }
 
-        AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
-        if (matchedPlayers.length == 0) {
-            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(RED).create());
-            return;
-        } else if (matchedPlayers.length > 1) {
-            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.length)
-                    .color(RED).create());
-            return;
+        List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
+        if (matchedPlayers.isEmpty()) {
+            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
+        } else if (matchedPlayers.size() > 1) {
+            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
+                    .color(ChatColor.RED).create());
         }
 
-        AuthedPlayer match = matchedPlayers[0];
+        AuthedPlayer match = matchedPlayers.get(0);
         BanInfo banInfo = module.getBanInfo(match.getUniqueId());
 
         if (banInfo == null) {

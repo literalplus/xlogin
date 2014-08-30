@@ -16,11 +16,11 @@ import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -72,19 +72,19 @@ class CommandWarn extends Command {
         UUID uuid;
         String name;
         if (target == null) {
-            AuthedPlayer[] players = AuthedPlayerFactory.getByCriteria(args[0], plugin.getRepository());
-            if (players.length == 0) {
+            List<AuthedPlayer> players = plugin.getRepository().getProfiles(args[0]);
+            if (players.isEmpty()) {
                 plugin.getMessages().sendMessageWithPrefix("§cSorry, so einen Spieler kennen wir nicht.", sender);
                 return;
-            } else if (players.length > 0) {
+            } else if (players.size() > 1) {
                 plugin.getMessages().sendMessageWithPrefix("§cIch habe mehrere Spieler gefunden. Meintest du:", sender);
                 for (AuthedPlayer authedPlayer : players) {
                     sender.sendMessage(new ComponentBuilder(authedPlayer.getName()).color(GOLD).create());
                 }
                 return;
             } else {
-                uuid = players[0].getUniqueId();
-                name = players[0].getName();
+                uuid = players.get(0).getUniqueId();
+                name = players.get(0).getName();
             }
         } else {
             uuid = target.getUniqueId();

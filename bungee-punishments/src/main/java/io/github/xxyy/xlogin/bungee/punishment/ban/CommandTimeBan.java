@@ -9,9 +9,9 @@ import net.md_5.bungee.api.plugin.Command;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,14 +36,12 @@ class CommandTimeBan extends Command {
             sender.sendMessage(new ComponentBuilder("Zeitraum: y=Jahr, M=Monat, d=Tag, h=Stunde, m=Minute, s=Sekunde").color(ChatColor.YELLOW).create());
             sender.sendMessage(new ComponentBuilder("Bsp: /tempban urmom 5y3M42m <Grund> -> Bannt 'urmom' 5 Jahre, 3 Monate und 42 Minuten lang.").color(ChatColor.YELLOW).create());
         } else {
-            AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
-            if (matchedPlayers.length == 0) {
+            List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
+            if (matchedPlayers.isEmpty()) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
-                return;
-            } else if (matchedPlayers.length > 1) {
-                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.length)
+            } else if (matchedPlayers.size() > 1) {
+                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                         .color(ChatColor.RED).create());
-                return;
             }
 
             long timePeriod;
@@ -61,15 +59,15 @@ class CommandTimeBan extends Command {
             }
 
             String reason = StringHelper.varArgsString(args, 2, true);
-            BanInfo banInfo = BanInfoFactory.create(matchedPlayers[0].getUniqueId(), ChatHelper.getSenderId(sender),
+            BanInfo banInfo = BanInfoFactory.create(matchedPlayers.get(0).getUniqueId(), ChatHelper.getSenderId(sender),
                     sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer() : null,
                     reason,
                     new Date(System.currentTimeMillis() + timePeriod));
 
-            module.setBanned(matchedPlayers[0].getUniqueId(), banInfo);
+            module.setBanned(matchedPlayers.get(0).getUniqueId(), banInfo);
             banInfo.announce(module);
 
-            ProxiedPlayer targetPlayer = module.getPlugin().getProxy().getPlayer(matchedPlayers[0].getUniqueId());
+            ProxiedPlayer targetPlayer = module.getPlugin().getProxy().getPlayer(matchedPlayers.get(0).getUniqueId());
             if (targetPlayer != null) {
                 targetPlayer.disconnect(banInfo.createKickMessage());
             }

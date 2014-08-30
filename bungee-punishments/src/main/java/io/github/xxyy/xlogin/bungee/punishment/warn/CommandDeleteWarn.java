@@ -12,7 +12,6 @@ import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -173,15 +172,15 @@ class CommandDeleteWarn extends Command {
                 amount = Integer.parseInt(args[argStartIndex + 1]);
             }
 
-            AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[argStartIndex], plugin.getRepository());
-            if (matchedPlayers.length == 0) {
+            List<AuthedPlayer> matchedPlayers = plugin.getRepository().getProfiles(args[argStartIndex]);
+            if (matchedPlayers.isEmpty()) {
                 throw new IllegalArgumentException("Keine Spieler mit diesem Namen/dieser UUID gefunden!");
-            } else if (matchedPlayers.length > 1) {
+            } else if (matchedPlayers.size() > 1) {
                 throw new IllegalArgumentException("Zu viele Spieler mit diesem Namen/dieser UUID gefunden: " +
-                        matchedPlayers.length + " => " + CommandHelper.CSCollectionShort(Lists.newArrayList(matchedPlayers))); //TODO: UX
+                        matchedPlayers.size() + " => " + CommandHelper.CSCollectionShort(Lists.newArrayList(matchedPlayers))); //TODO: UX
             }
 
-            List<WarningInfo> warnings = WarningInfoFactory.fetchByTarget(matchedPlayers[0].getUniqueId());
+            List<WarningInfo> warnings = WarningInfoFactory.fetchByTarget(matchedPlayers.get(0).getUniqueId());
             List<WarningInfo> toDelete = new ArrayList<>(amount);
             for (int i = warnings.size() - 1; i >= 0; i--) {
                 if (toDelete.size() < amount) {

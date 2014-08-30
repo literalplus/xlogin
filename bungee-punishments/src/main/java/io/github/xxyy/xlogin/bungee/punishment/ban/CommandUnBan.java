@@ -8,7 +8,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+
+import java.util.List;
 
 /**
  * Command which removes bans from players.
@@ -33,29 +34,27 @@ class CommandUnBan extends Command {
             return;
         }
 
-        AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
-        if (matchedPlayers.length == 0) {
+        List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
+        if (matchedPlayers.isEmpty()) {
             sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
-            return;
-        } else if (matchedPlayers.length > 1) {
-            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.length)
+        } else if (matchedPlayers.size() > 1) {
+            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                     .color(ChatColor.RED).create());
-            return;
         }
 
-        BanInfo banInfo = module.getBanInfo(matchedPlayers[0].getUniqueId());
+        BanInfo banInfo = module.getBanInfo(matchedPlayers.get(0).getUniqueId());
 
         if (banInfo == null) {
-            sender.sendMessage(new ComponentBuilder(matchedPlayers[0].getName()).color(ChatColor.DARK_GREEN)
+            sender.sendMessage(new ComponentBuilder(matchedPlayers.get(0).getName()).color(ChatColor.DARK_GREEN)
                     .append(" ist nicht gebannt!").color(ChatColor.GREEN).create());
             return;
         }
         banInfo.delete();
-        module.setBanned(matchedPlayers[0].getUniqueId(), null);
+        module.setBanned(matchedPlayers.get(0).getUniqueId(), null);
 
         BaseComponent[] adminComponents = new ComponentBuilder(sender.getName()).color(ChatColor.DARK_GREEN)
                 .append(" hat ").color(ChatColor.GREEN)
-                .append(matchedPlayers[0].getName()).color(ChatColor.DARK_GREEN)
+                .append(matchedPlayers.get(0).getName()).color(ChatColor.DARK_GREEN)
                 .append(" entbannt!").color(ChatColor.GREEN).create();
 
         for (ProxiedPlayer plr : module.getPlugin().getProxy().getPlayers()) {

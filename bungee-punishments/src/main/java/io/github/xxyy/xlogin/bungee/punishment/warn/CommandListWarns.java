@@ -10,7 +10,6 @@ import net.md_5.bungee.api.plugin.Command;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -37,14 +36,14 @@ class CommandListWarns extends Command {
             UUID senderId = ChatHelper.getSenderId(sender);
             listWarnings(sender, module.getPlugin().getRepository().getProfile(senderId), WarningInfoFactory.fetchByTarget(senderId));
         } else if (!args[0].equalsIgnoreCase("help")) {
-            AuthedPlayer[] matchedPlayers = AuthedPlayerFactory.getByCriteria(args[0], module.getPlugin().getRepository());
-            if (matchedPlayers.length == 0) {
+            List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
+            if (matchedPlayers.isEmpty()) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
-            } else if (matchedPlayers.length > 1) {
-                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.length)
+            } else if (matchedPlayers.size() > 1) {
+                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                         .color(ChatColor.RED).create());
             } else {
-                listWarnings(sender, matchedPlayers[0], WarningInfoFactory.fetchByTarget(matchedPlayers[0].getUniqueId()));
+                listWarnings(sender, matchedPlayers.get(0), WarningInfoFactory.fetchByTarget(matchedPlayers.get(0).getUniqueId()));
             }
         } else {
             sender.sendMessage(new ComponentBuilder("/warns [Spieler] - Zeigt Verwarnungen an.").color(ChatColor.YELLOW).create());
