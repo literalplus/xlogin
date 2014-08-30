@@ -1,7 +1,7 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
