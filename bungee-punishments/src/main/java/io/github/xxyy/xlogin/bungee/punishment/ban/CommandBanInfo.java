@@ -89,8 +89,18 @@ class CommandBanInfo extends Command {
                 .append(String.valueOf(banInfo.getSourceName(module.getPlugin().getRepository()))).color(YELLOW).create());
         sender.sendMessage(new ComponentBuilder("gebannt um: ").color(GOLD)
                 .append(banInfo.getTimestampString()).color(YELLOW).create());
-        sender.sendMessage(new ComponentBuilder("gebannt bis: ").color(GOLD)
-                .append(banInfo.getExpiryString()).color(YELLOW).create());
+
+        ComponentBuilder bannedUntilBuilder = new ComponentBuilder("gebannt bis: ").color(GOLD)
+                .append(banInfo.getExpiryString()).color(YELLOW);
+
+        if (sender.hasPermission(CommandUnBan.PERMISSION)) {
+            bannedUntilBuilder.append(" [entbannen]").color(GREEN).underlined(true)
+                    .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/unban " + match.getName()))
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("/unban " + match.getName()).create()));
+        }
+
+        sender.sendMessage(bannedUntilBuilder.create());
+
         sender.sendMessage(new ComponentBuilder("Grund: ").color(GOLD)
                 .append(banInfo.getReason()).color(YELLOW).create());
     }
