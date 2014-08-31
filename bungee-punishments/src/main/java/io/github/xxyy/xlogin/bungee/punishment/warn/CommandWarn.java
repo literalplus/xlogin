@@ -135,7 +135,7 @@ class CommandWarn extends Command implements TabExecutor {
         headerComponents.add(TextComponent.fromLegacyText(headerParts[0]));
         headerComponents.add(new ComponentBuilder(targetName).color(YELLOW)
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warns " + targetName))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Hier klicken, um").append("alle Warnungen anzuzeigen.").create()))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Hier klicken, um\n").append("alle Warnungen anzuzeigen.").create()))
                 .create());
         headerComponents.add(TextComponent.fromLegacyText(MessageFormat.format(headerParts[1], multiplier)));
         plr.sendMessage(headerComponents.build().toArray(new BaseComponent[3])); //Please don't kill me for this horrible piece of code
@@ -164,7 +164,7 @@ class CommandWarn extends Command implements TabExecutor {
             }
         } else if (args.length == 2) {
             return ImmutableList.of("01", "02", "03", "04", "05", "06", "07", "08", "09", "10");
-        } else if (args.length == 3) {
+        } else {
             return ImmutableList.of("Werbung", "Beleidigung", "Spam", "Zeichenspam", "Bugusing", "Commandspam");
         }
 
