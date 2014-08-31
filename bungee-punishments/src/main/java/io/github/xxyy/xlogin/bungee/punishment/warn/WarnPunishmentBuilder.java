@@ -61,12 +61,13 @@ class WarnPunishmentBuilder {
                     warningsTotal + " Warnungen erreicht!", cal.getTime());
         }
 
-        cb.append("Letzter Warngrund:\n" + ChatColor.stripColor(mostRecentWarning.getReason())).color(ChatColor.YELLOW)
-                .append("Liste deiner Verwarnungen:\n").color(ChatColor.GOLD)
+        cb.append("Letzter Warngrund:\n").color(ChatColor.GOLD)
+                .append(ChatColor.stripColor(mostRecentWarning.getReason())).color(ChatColor.YELLOW)
+                .append("\nListe deiner Verwarnungen:\n").color(ChatColor.GOLD)
                 .append("http://www.minotopia.me/?p=5&n=" + targetName).color(ChatColor.YELLOW).underlined(true);
 
         if (warningsTotal < 10) {
-            cb.append("Bei zehn Warnungen wirst du permanent gebannt.").color(ChatColor.RED).underlined(false);
+            cb.append("\nBei zehn Warnungen wirst du permanent gebannt.").color(ChatColor.RED).underlined(false);
         }
 
         target.disconnect(cb.create()); //TODO: The source needs to be informed of the punishment
