@@ -30,7 +30,7 @@ class CommandTimeBan extends Command implements TabExecutor {
     private final BanModule module;
 
     public CommandTimeBan(BanModule module) {
-        super("timeban", PERMISSION, "tempban", "tban", "tb");
+        super("timeban", PERMISSION, "tempban", "tban", "tb", "tempban");
         this.module = module;
     }
 
