@@ -66,8 +66,15 @@ class CommandListWarns extends Command implements TabExecutor {
             return;
         }
 
-        ComponentBuilder headerBuilder = new ComponentBuilder("==== ").color(ChatColor.GOLD)
-                .append(warnings.size() + " Verwarnungen von " + target.getName()).color(ChatColor.YELLOW);
+        int validWarnings = 0;
+        for (WarningInfo warningInfo : warnings) {
+            if (warningInfo.isValid()) {
+                validWarnings++;
+            }
+        }
+
+        ComponentBuilder headerBuilder = new ComponentBuilder("==== Zeige ").color(ChatColor.GOLD)
+                .append(validWarnings + " Verwarnungen von " + target.getName()).color(ChatColor.YELLOW);
 
         if (receiver.hasPermission(CommandWarn.PERMISSION)) { //Display a link to warn the user if permitted
             headerBuilder.append(" [+] ").color(ChatColor.DARK_GREEN).underlined(true)
