@@ -32,8 +32,9 @@ public final class WarningInfo extends AbstractPunishment {
         return state;
     }
 
-    public void setState(WarningState state) {
+    public WarningInfo setState(WarningState state) {
         this.state = state;
+        return this;
     }
 
     @Override

@@ -56,11 +56,11 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                         if (exec.getFlags().contains(DelWarnFlag.FORCE)) {
                             warning.delete();
                         } else if (exec.getFlags().contains(DelWarnFlag.UNKNOWN_REASON)) {
-                            warning.setState(WarningInfo.WarningState.UNKNOWN_REASON);
+                            warning.setState(WarningInfo.WarningState.UNKNOWN_REASON).save();
                         } else if (exec.getFlags().contains(DelWarnFlag.REMOVE_FLAGS)) {
-                            warning.setState(WarningInfo.WarningState.VALID);
+                            warning.setState(WarningInfo.WarningState.VALID).save();
                         } else {
-                            warning.setState(WarningInfo.WarningState.INVALID);
+                            warning.setState(WarningInfo.WarningState.INVALID).save();
                         }
                     }
 
