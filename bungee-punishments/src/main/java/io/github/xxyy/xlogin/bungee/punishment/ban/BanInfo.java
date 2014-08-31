@@ -59,7 +59,7 @@ public class BanInfo extends AbstractPunishment {
         return cb.append(" gebannt:\n\n").bold(false).color(ChatColor.RED)
                 .append(ChatColor.stripColor(getReason())).color(ChatColor.YELLOW)
                 .append("\n\nUnfair? ").color(ChatColor.RED)
-                .append("Entbannatrag im Forum: ").color(ChatColor.GOLD)
+                .append("Entbannantrag im Forum: ").color(ChatColor.GOLD)
                 .append("http://www.minotopia.me/forum/").color(ChatColor.YELLOW).underlined(true)
                 .create();
     }
