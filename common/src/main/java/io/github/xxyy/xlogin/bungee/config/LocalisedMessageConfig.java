@@ -164,7 +164,7 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
             if (rawMessage.startsWith("!JSON")) {
                 return parseMessage(String.format(rawMessage, args), true);
             } else {
-                return parseMessage(MessageFormat.format(rawMessage, args), true);
+                return parseMessage(MessageFormat.format(rawMessage, args), false);
             }
         } catch (IllegalArgumentException e) {
             plugin.getLogger().warning(MessageFormat.format("Illegal format: {0} for args: {1}", rawMessage, Arrays.toString(args)));
