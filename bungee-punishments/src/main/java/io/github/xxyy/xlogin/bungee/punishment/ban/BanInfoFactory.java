@@ -92,10 +92,10 @@ final class BanInfoFactory {
 
     public static void save(BanInfo banInfo) {
         PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE " + BanInfo.BAN_TABLE_NAME + " SET reason=?, expiry_time=? WHERE target_uuid=?",
-                banInfo.getReason(), banInfo.getExpiryTime(), banInfo.getTargetId());
+                banInfo.getReason(), banInfo.getExpiryTime(), banInfo.getTargetId().toString());
     }
 
     public static void delete(BanInfo banInfo) {
-        PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM " + BanInfo.BAN_TABLE_NAME + " WHERE target_uuid=?", banInfo.getTargetId());
+        PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM " + BanInfo.BAN_TABLE_NAME + " WHERE target_uuid=?", banInfo.getTargetId().toString());
     }
 }
