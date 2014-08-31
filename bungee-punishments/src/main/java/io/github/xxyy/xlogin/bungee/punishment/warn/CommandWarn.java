@@ -151,7 +151,11 @@ class CommandWarn extends Command implements TabExecutor {
 
         Set<String> matches = new HashSet<>();
 
-        if (args.length == 1) {
+        if (args.length == 0) {
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                matches.add(player.getName());
+            }
+        } else if (args.length == 1) {
             String search = args[0].toLowerCase();
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                 if (player.getName().toLowerCase().startsWith(search)) {
@@ -159,13 +163,9 @@ class CommandWarn extends Command implements TabExecutor {
                 }
             }
         } else if (args.length == 2) {
-            return ImmutableList.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+            return ImmutableList.of("01", "02", "03", "04", "05", "06", "07", "08", "09", "10");
         } else if (args.length == 3) {
             return ImmutableList.of("Werbung", "Beleidigung", "Spam", "Zeichenspam", "Bugusing", "Commandspam");
-        } else {
-            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-                matches.add(player.getName());
-            }
         }
 
         return matches;
