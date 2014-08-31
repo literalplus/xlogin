@@ -63,7 +63,7 @@ public class ModuleManager {
         @SuppressWarnings("unchecked") Class<? extends XLoginModule> clazz = (Class<? extends XLoginModule>) inputClazz;
         causedBy.add(clazz);
 
-        Module modAnnotation = clazz.getDeclaredAnnotation(Module.class);
+        Module modAnnotation = clazz.getAnnotation(Module.class);
         boolean enableByDefault = false;
         if (modAnnotation != null) {
             enableByDefault = modAnnotation.enableByDefault();
