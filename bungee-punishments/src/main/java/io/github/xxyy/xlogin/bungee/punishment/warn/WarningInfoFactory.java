@@ -88,7 +88,7 @@ final class WarningInfoFactory {
             }
 
             return new WarningInfo(
-                    ur.gk().getInt(0), targetId, sourceId, reason, sourceServerName,
+                    ur.gk().getInt(1), targetId, sourceId, reason, sourceServerName,
                     new Timestamp(System.currentTimeMillis()), WarningInfo.WarningState.VALID
             );
         } catch (SQLException e) {
