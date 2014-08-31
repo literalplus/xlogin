@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +23,13 @@ final class WarnPunishmentBuilder {
     }
 
     public static void compute(WarnModule module, ProxiedPlayer target, UUID targetId, String targetName) { //#spigot [0509] <Akkarin> there is no real limit afaik (apart from the packet limits)
-        List<WarningInfo> warnings = WarningInfoFactory.fetchByTarget(targetId);
+        List<WarningInfo> dbWarnings = WarningInfoFactory.fetchByTarget(targetId);
+        List<WarningInfo> warnings = new ArrayList<>();
+        for (WarningInfo warn : dbWarnings) {
+            if (warn.isValid()) {
+                warnings.add(warn);
+            }
+        }
         int warningsTotal = warnings.size();
 
         if (warningsTotal == 0) {
