@@ -22,6 +22,11 @@ public class AuthenticationEvent extends PlayerEvent {
         this.profile = profile;
     }
 
+    //Apparently Bukkit needs that AND IT'S NOT DOCUMENTED
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;
