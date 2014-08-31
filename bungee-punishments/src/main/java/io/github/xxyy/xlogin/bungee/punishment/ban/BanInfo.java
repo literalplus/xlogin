@@ -69,7 +69,7 @@ public class BanInfo extends AbstractPunishment {
         if (expiryTime == null) {
             cb.bold(true).color(ChatColor.DARK_RED);
         } else {
-            cb.color(ChatColor.YELLOW).bold(true);
+            cb.color(ChatColor.YELLOW);
         }
         return cb;
     }
