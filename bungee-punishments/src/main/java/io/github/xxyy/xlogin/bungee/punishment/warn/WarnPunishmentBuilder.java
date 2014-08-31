@@ -42,7 +42,7 @@ final class WarnPunishmentBuilder {
             cb.append("permanent").color(ChatColor.DARK_RED).bold(true)
                     .append(" gebannt!\n").color(ChatColor.RED).bold(false);
             module.getBanModule().setBanned(targetId, mostRecentWarning.getSourceId(),
-                    mostRecentWarning.getSourceServerName(), "10 Warnungen erreicht!", null);
+                    mostRecentWarning.getSourceServerName(), "10 Warnungen erreicht (" + mostRecentWarning.getReason() + ")!", null);
             ProxyServer.getInstance().broadcast(module.getPlugin().getMessages().parseMessageWithPrefix("§c" + targetName + "§6 wurde daher §4§lpermanent§6 gebannt."));
         } else {
             int banHours = (int) Math.ceil((warningsTotal / 3) * 2);
@@ -52,7 +52,7 @@ final class WarnPunishmentBuilder {
             cal.add(Calendar.HOUR_OF_DAY, banHours);
 
             module.getBanModule().setBanned(targetId, mostRecentWarning.getSourceId(), mostRecentWarning.getSourceServerName(),
-                    warningsTotal + " Warnungen erreicht!", cal.getTime());
+                    warningsTotal + " Warnungen erreicht! (" + mostRecentWarning.getReason() + ")", cal.getTime());
             ProxyServer.getInstance().broadcast(module.getPlugin().getMessages().parseMessageWithPrefix("§c" + targetName + "§6 wurde daher für " + banHours + " Stunden gebannt."));
         }
 
