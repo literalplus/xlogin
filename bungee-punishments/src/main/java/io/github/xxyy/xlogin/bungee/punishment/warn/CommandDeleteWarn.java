@@ -189,9 +189,9 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                 if (!StringUtils.isNumeric(args[argStartIndex])) {
                     throw new IllegalArgumentException("Parameter für -i muss eine Zahl sein! (Gefunden: " + args[argStartIndex] + ")");
                 }
-                return ImmutableList.of(WarningInfoFactory.fetch(Integer.parseInt(args[argStartIndex])));
+                return ImmutableList.of(validateWINotNull(WarningInfoFactory.fetch(Integer.parseInt(args[argStartIndex]))));
             } else if (flags.contains(DelWarnFlag.LAST)) {
-                return ImmutableList.of(WarningInfoFactory.fetchLastIssuedBy(ChatHelper.getSenderId(sender)));
+                return ImmutableList.of(validateWINotNull(WarningInfoFactory.fetchLastIssuedBy(ChatHelper.getSenderId(sender))));
             }
 
             int amount = 1;
@@ -219,6 +219,13 @@ class CommandDeleteWarn extends Command implements TabExecutor {
             }
 
             return toDelete;
+        }
+
+        public WarningInfo validateWINotNull(WarningInfo warningInfo) {
+            if (warningInfo == null) {
+                throw new IllegalArgumentException("Keine passende Verwarnung gefunden!");
+            }
+            return warningInfo;
         }
 
         public boolean checkPermission(WarningInfo warningInfo) {
