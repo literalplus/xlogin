@@ -60,6 +60,7 @@ class CommandListWarns extends Command implements TabExecutor {
         if (warnings.isEmpty()) {
             if (ChatHelper.getSenderId(receiver).equals(target.getUniqueId())) {
                 receiver.sendMessage(new ComponentBuilder("Du hast keine Verwarnungen! :)").color(ChatColor.DARK_GREEN).create());
+                return;
             }
             receiver.sendMessage(new ComponentBuilder(target.getName() + " hat keine Verwarnungen!").color(ChatColor.GREEN).create());
             return;
