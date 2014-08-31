@@ -38,7 +38,7 @@ class CommandListWarns extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0 && !args[0].equalsIgnoreCase("help")) {
+        if (args.length == 0) {
             UUID senderId = ChatHelper.getSenderId(sender);
             listWarnings(sender, module.getPlugin().getRepository().getProfile(senderId), WarningInfoFactory.fetchByTarget(senderId));
         } else if (!args[0].equalsIgnoreCase("help")) {

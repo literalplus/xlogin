@@ -69,7 +69,7 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                             .append("source=" + warning.getSourceName(plugin.getRepository()) + ", ")
                             .append("reason=" + ChatColor.translateAlternateColorCodes('&', warning.getReason()))
                             .append("state=" + warning.getState().name())
-                            .append((hasPermission ? "" : "nicht ") + "modifiziert.")
+                            .append((hasPermission ? " " : " nicht ") + "modifiziert.")
                             .create());
                 }
 
