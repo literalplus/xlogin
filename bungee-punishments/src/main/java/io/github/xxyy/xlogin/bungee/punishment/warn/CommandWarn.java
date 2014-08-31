@@ -122,7 +122,7 @@ class CommandWarn extends Command implements TabExecutor {
             }
         }, 20, TimeUnit.SECONDS);
 
-        new WarnPunishmentBuilder(module, target, uuid, name).compute();
+        WarnPunishmentBuilder.compute(module, target, uuid, name);
     }
 
     private void sendWarnInfo(ProxiedPlayer plr, String targetName, String sourceName, int multiplier, String reason) {
