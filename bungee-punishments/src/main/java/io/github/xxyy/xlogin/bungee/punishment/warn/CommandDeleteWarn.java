@@ -1,11 +1,15 @@
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.apache.commons.lang3.StringUtils;
 
 import io.github.xxyy.common.bungee.ChatHelper;
@@ -15,7 +19,9 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A command which allows to delete warnings.
@@ -23,7 +29,7 @@ import java.util.List;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 28.8.14
  */
-class CommandDeleteWarn extends Command {
+class CommandDeleteWarn extends Command implements TabExecutor {
     public static final String PERMISSION = "xlogin.delwarn";
     private final XLoginBungee plugin;
 
@@ -84,6 +90,30 @@ class CommandDeleteWarn extends Command {
             sender.sendMessage(new ComponentBuilder(flag.getFlag() + ": " + flag.getDescription()).color(ChatColor.YELLOW).create());
         }
         sender.sendMessage(new ComponentBuilder("Arr-gumente sind order-sensitive!").color(ChatColor.YELLOW).create());
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length > 1) {
+            return ImmutableSet.of();
+        }
+
+        Set<String> matches = new HashSet<>();
+
+        if (args.length == 1) {
+            String search = args[0].toLowerCase();
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                if (player.getName().toLowerCase().startsWith(search)) {
+                    matches.add(player.getName());
+                }
+            }
+        } else {
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                matches.add(player.getName());
+            }
+        }
+
+        return matches;
     }
 
     enum DelWarnFlag {

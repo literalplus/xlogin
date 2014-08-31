@@ -1,15 +1,20 @@
 package io.github.xxyy.xlogin.bungee.punishment.ban;
 
+import com.google.common.collect.ImmutableSet;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Command which removes bans from players.
@@ -17,7 +22,7 @@ import java.util.List;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 30.8.14
  */
-class CommandUnBan extends Command {
+class CommandUnBan extends Command implements TabExecutor {
     public static final String PERMISSION = "xlogin.unban";
     private final BanModule module;
 
@@ -62,5 +67,29 @@ class CommandUnBan extends Command {
                 plr.sendMessage(adminComponents);
             }
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length > 1) {
+            return ImmutableSet.of();
+        }
+
+        Set<String> matches = new HashSet<>();
+
+        if (args.length == 1) {
+            String search = args[0].toLowerCase();
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                if (player.getName().toLowerCase().startsWith(search)) {
+                    matches.add(player.getName());
+                }
+            }
+        } else {
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                matches.add(player.getName());
+            }
+        }
+
+        return matches;
     }
 }

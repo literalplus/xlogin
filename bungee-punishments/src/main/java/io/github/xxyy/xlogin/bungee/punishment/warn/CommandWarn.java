@@ -1,8 +1,10 @@
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -10,6 +12,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.apache.commons.lang.StringUtils;
 
 import io.github.xxyy.common.bungee.ChatHelper;
@@ -33,7 +36,7 @@ import static net.md_5.bungee.api.ChatColor.YELLOW;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.8.14
  */
-class CommandWarn extends Command {
+class CommandWarn extends Command implements TabExecutor {
     public static final String PERMISSION = "xlogin.warn";
     private final Set<UUID> rateLimitPlayers = Collections.synchronizedSet(new HashSet<UUID>());
     private final XLoginBungee plugin;
@@ -138,5 +141,33 @@ class CommandWarn extends Command {
         plr.sendMessage(headerComponents.build().toArray(new BaseComponent[3])); //Please don't kill me for this horrible piece of code
 
         plugin.getMessages().sendMessage(plugin.getMessages().warnBroadcastBody, plr, reason);
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length > 3) {
+            return ImmutableSet.of();
+        }
+
+        Set<String> matches = new HashSet<>();
+
+        if (args.length == 1) {
+            String search = args[0].toLowerCase();
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                if (player.getName().toLowerCase().startsWith(search)) {
+                    matches.add(player.getName());
+                }
+            }
+        } else if (args.length == 2) {
+            return ImmutableList.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+        } else if (args.length == 3) {
+            return ImmutableList.of("Werbung", "Beleidigung", "Spam", "Zeichenspam", "Bugusing", "Commandspam");
+        } else {
+            for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                matches.add(player.getName());
+            }
+        }
+
+        return matches;
     }
 }
