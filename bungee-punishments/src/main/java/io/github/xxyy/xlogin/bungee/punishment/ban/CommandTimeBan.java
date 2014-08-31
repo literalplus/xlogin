@@ -58,8 +58,8 @@ class CommandTimeBan extends Command implements TabExecutor {
                 return;
             }
 
-            if (!sender.hasPermission("xlogin.ban.temporary") && timePeriod > TimeUnit.MILLISECONDS.convert(3, TimeUnit.DAYS)) {
-                sender.sendMessage(new ComponentBuilder("Sorry, du darfst nur bis zu 3 Tage lang bannen!").color(ChatColor.RED).create());
+            if (!sender.hasPermission("xlogin.ban.temporary") && timePeriod > TimeUnit.MILLISECONDS.convert(60, TimeUnit.DAYS)) {
+                sender.sendMessage(new ComponentBuilder("Sorry, du darfst nur bis zu 2 Monate lang bannen!").color(ChatColor.RED).create());
                 return;
             }
 
