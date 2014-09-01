@@ -77,7 +77,7 @@ class CommandWarn extends Command implements TabExecutor {
         if (target == null) {
             List<AuthedPlayer> players = plugin.getRepository().getProfiles(args[0]);
             if (players.isEmpty()) {
-                plugin.getMessages().sendMessageWithPrefix("§cSorry, so einen Spieler kennen wir nicht.", sender);
+                plugin.getMessages().sendMessageWithPrefix("§eSorry, so einen Spieler kennen wir nicht.", sender);
                 return;
             } else if (players.size() > 1) {
                 plugin.getMessages().sendMessageWithPrefix("§cIch habe mehrere Spieler gefunden. Meintest du:", sender);
