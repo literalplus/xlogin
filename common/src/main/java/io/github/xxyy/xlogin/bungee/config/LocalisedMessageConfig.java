@@ -3,6 +3,7 @@ package io.github.xxyy.xlogin.bungee.config;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Config;
+import net.cubespace.Yamler.Config.Path;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -83,12 +84,13 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     @Comment("param0: Date object. Non-JSON example: {0,time,dd.MM.yyyy HH:mm}//param1: IP address")
     public String failedLoginAttemptItem = "§eam §6{0,time,dd.MM.yyyy HH:mm} §evon §6{1}§e ";
 
-    @Comments({"This uses a special pattern: {} will be replaced by the target name, with special JSON magic.",
-            "{0} has to be behind the {}.",
+    @Comments({"This will be prepepended with the prefix and clickable player name",
             "param0: Amount of warns dealt"})
-    public String warnBroadcastHeader = "§6[§bMTC§6] {}§c wurde {0}mal gewarnt. Grund:";
+    @Path("warn-broadcast-header")
+    public String warnBroadcastHeader = "§c wurde {0}mal gewarnt. Grund:";
     @Comment("param0: Warn reason")
-    public String warnBroadcastBody = "§6[§bMTC§6] §c=>§6{0}§c<=";
+    @Path("warn-broadcast-body")
+    public String warnBroadcastBody = "§c=>§6{0}§c<=";
 
     @Comment("param0: target name param1: string describing the ban time, with formatting codes")
     public String banBroadcastHeader = "§6{0}§c wurde {1} §cgebannt! Grund:";
@@ -103,7 +105,7 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
                 "Make sure that you know what you're doing before changing anything. Thank you!",
                 "xLogin is not free software and may not be used without explicit written permission",
                 "from the author, which you can contact at devnull@nowak-at.net."};
-        CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
+        CONFIG_FILE = new File(plugin.getDataFolder(), "messages.yml");
 
         this.plugin = plugin;
 

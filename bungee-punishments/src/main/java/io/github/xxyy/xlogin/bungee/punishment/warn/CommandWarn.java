@@ -21,6 +21,7 @@ import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -109,7 +110,19 @@ class CommandWarn extends Command implements TabExecutor {
         }
 
         for (ProxiedPlayer plr : plugin.getProxy().getPlayers()) {
-            sendWarnInfo(plr, name, sender.getName(), multiplier, reason);
+            if (plr.hasPermission("xlogin.adminmsg")) {
+                plugin.getMessages().sendMessage("§6" + name + "§c wurde von §6" + sender.getName() + "§c gewarnt:", plr);
+            }
+
+            ImmutableList.Builder<BaseComponent> headerComponents = ImmutableList.builder();
+            headerComponents.addAll(Arrays.asList(plugin.getMessages().jsonPrefix));
+            headerComponents.add(new ComponentBuilder(name).color(YELLOW)
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warns " + name))
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Hier klicken, um\n").append("alle Warnungen anzuzeigen.").create()))
+                    .create());
+            headerComponents.add(TextComponent.fromLegacyText(MessageFormat.format(plugin.getMessages().warnBroadcastHeader, multiplier)));
+            plr.sendMessage(headerComponents.build().toArray(new BaseComponent[3]));
+            plugin.getMessages().sendMessage(plugin.getMessages().warnBroadcastBody, plr, reason);
         }
 
 
@@ -123,24 +136,6 @@ class CommandWarn extends Command implements TabExecutor {
         }, 20, TimeUnit.SECONDS);
 
         WarnPunishmentBuilder.compute(module, target, uuid, name);
-    }
-
-    private void sendWarnInfo(ProxiedPlayer plr, String targetName, String sourceName, int multiplier, String reason) {
-        if (plr.hasPermission("xlogin.adminmsg")) {
-            plugin.getMessages().sendMessage("§6" + targetName + "§c wurde von §6" + sourceName + "§c gewarnt:", plr);
-        }
-
-        String[] headerParts = plugin.getMessages().warnBroadcastHeader.split("\\{\\}", 2); //TODO: This should be calculated once for all players
-        ImmutableList.Builder<BaseComponent> headerComponents = ImmutableList.builder();
-        headerComponents.add(TextComponent.fromLegacyText(headerParts[0]));
-        headerComponents.add(new ComponentBuilder(targetName).color(YELLOW)
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warns " + targetName))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Hier klicken, um\n").append("alle Warnungen anzuzeigen.").create()))
-                .create());
-        headerComponents.add(TextComponent.fromLegacyText(MessageFormat.format(headerParts[1], multiplier)));
-        plr.sendMessage(headerComponents.build().toArray(new BaseComponent[3])); //Please don't kill me for this horrible piece of code
-
-        plugin.getMessages().sendMessage(plugin.getMessages().warnBroadcastBody, plr, reason);
     }
 
     @Override

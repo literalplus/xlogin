@@ -54,7 +54,8 @@ public class XLoginConfig extends Config {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",
                 "xLogin is not free software and may not be used without explicit written permission",
-                "from the author, which you can contact at devnull@nowak-at.net."};
+                "from the author, which you can contact at devnull@nowak-at.net.",
+                "*** WARNING *** Messages are now configured in messages.yml!"};
         CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
     }
 
