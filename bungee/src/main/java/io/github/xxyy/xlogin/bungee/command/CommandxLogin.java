@@ -39,7 +39,7 @@ import static net.md_5.bungee.api.ChatColor.YELLOW;
  */
 public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
-    public static final String PERMISSION = "xlogin.admin";
+    public static final String PERMISSION = "xlogin.cmd";
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
@@ -68,6 +68,10 @@ public class CommandxLogin extends Command {
 
         switch (args[0].toLowerCase()) {
             case "reload":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
                 plugin.getRepository().clear();
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
@@ -75,6 +79,11 @@ public class CommandxLogin extends Command {
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
                 return;
             case "cpw":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 3) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
@@ -94,6 +103,11 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "premium":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
@@ -123,6 +137,11 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "free":
+                if (!sender.hasPermission("xlogin.free")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
@@ -205,6 +224,11 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "unregister":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
@@ -230,6 +254,11 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "forcecrack":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
@@ -243,6 +272,11 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "debugp":
+                if (!sender.hasPermission("xlogin.admin")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
                 if (args.length < 2) {
                     sender.sendMessage(new ComponentBuilder("/xlo debugp <UUID|%Part|Name|/IP>").create());
                 } else {

@@ -84,7 +84,7 @@ class CommandBanInfo extends Command implements TabExecutor {
                                     .append("Authentifiziert: ").color(GOLD)
                                     .append(String.valueOf(match.getAuthenticationProvider()) + "\n").color(YELLOW)
                                     .append("Letzte IP: ").color(GOLD)
-                                    .append(match.getLastIp()).color(YELLOW)
+                                    .append(String.valueOf(match.getLastIp())).color(YELLOW)
                                     .append("\n[Klick für mehr Info]")
                                     .create()
                     ));
