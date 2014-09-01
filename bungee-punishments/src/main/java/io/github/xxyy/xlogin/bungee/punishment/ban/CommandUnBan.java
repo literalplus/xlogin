@@ -42,9 +42,11 @@ class CommandUnBan extends Command implements TabExecutor {
         List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
         if (matchedPlayers.isEmpty()) {
             sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
+            return;
         } else if (matchedPlayers.size() > 1) {
             sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                     .color(ChatColor.RED).create());
+            return;
         }
 
         BanInfo banInfo = module.getBanInfo(matchedPlayers.get(0).getUniqueId());
