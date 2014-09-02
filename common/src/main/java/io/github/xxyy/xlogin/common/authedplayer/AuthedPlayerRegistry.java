@@ -1,10 +1,12 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.Validate;
 
 import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -57,6 +59,13 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
     public void forget(UUID uuid){
         authedPlayers.remove(uuid);
         repository.forget(uuid);
+    }
+
+    /**
+     * @return a collection of all authenticated players' UUIDs
+     */
+    public Collection<UUID> getAuthenticatedPlayers() {
+        return ImmutableList.copyOf(authedPlayers);
     }
 
     public void clear() {

@@ -23,6 +23,7 @@ import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static net.md_5.bungee.api.ChatColor.DARK_RED;
 import static net.md_5.bungee.api.ChatColor.GOLD;
@@ -76,6 +77,11 @@ public class CommandxLogin extends Command {
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
                 plugin.reloadConfig();
+
+                for (UUID uuid : plugin.getRegistry().getAuthenticatedPlayers()) {
+                    plugin.getRepository().getProfile(uuid); //Registry removes players not in repo
+                }
+
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
                 return;
             case "cpw":
