@@ -16,7 +16,7 @@ public class Session {
     private IpAddress ip;
 
 //    @Column(name = "expiry_time")
-    private int expiryTime;
+    private long expiryTime;
 
 //    @java.beans.ConstructorProperties({"id", "user", "ip", "expiryTime"})
     public Session(int id, String uuid, IpAddress ip, int expiryTime) {
@@ -41,7 +41,7 @@ public class Session {
         return this.ip;
     }
 
-    public int getExpiryTime() {
+    public long getExpiryTime() {
         return this.expiryTime;
     }
 
