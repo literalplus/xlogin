@@ -39,12 +39,7 @@ public class CommandSessions extends Command {
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
         if (args.length >= 1) {
-            if (args[0].equalsIgnoreCase("help")) {
-                plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().commandSessionsUsage));
-                return;
-            } //Just show state
-
-            boolean newState = false;
+            boolean newState;
 
             switch (args[0]) {
                 case "on":
