@@ -218,14 +218,18 @@ public class CommandxLogin extends Command {
                                 .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED).create());
                         sender.sendMessage(new ComponentBuilder("Authentifiziert: ").color(GOLD)
                                 .append(String.valueOf(match.getAuthenticationProvider())).color(YELLOW).create());
-                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
-                                .append(match.getLastIp()).color(YELLOW).create());
+                        sender.sendMessage(new ComponentBuilder("Sessions? ").color(GOLD)
+                                .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
-                        sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
-                                .append(ip == null ? "null" : String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
-                        sender.sendMessage(new ComponentBuilder("IP-Sessions: ").color(GOLD)
-                                .append(ip == null ? "null" : String.valueOf(ip.isSessionsEnabled()))
-                                .color(ip == null ? GRAY : ip.isSessionsEnabled() ? GREEN : RED).create()); //red/green if non-null, gray if null
+                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
+                                .append(ip == null ? "keine" : match.getLastIp()).color(ip == null ? GRAY : YELLOW).create());
+                        if (ip != null) {
+                            sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
+                                    .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
+                            sender.sendMessage(new ComponentBuilder("IP-Sessions: ").color(GOLD)
+                                    .append(String.valueOf(ip.isSessionsEnabled()))
+                                    .color(ip.isSessionsEnabled() ? GREEN : RED).create()); //red/green if non-null, gray if null
+                        }
                     }
                 }
                 return;
