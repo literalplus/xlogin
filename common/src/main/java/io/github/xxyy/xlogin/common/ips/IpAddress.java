@@ -11,7 +11,7 @@ public class IpAddress {
     private String ip;
     private int maxUsers;
 
-    public IpAddress(String ip, int maxUsers) {
+    protected IpAddress(String ip, int maxUsers) {
         this.ip = ip;
         this.maxUsers = maxUsers;
     }
