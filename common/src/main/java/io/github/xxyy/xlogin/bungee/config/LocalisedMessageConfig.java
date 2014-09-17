@@ -43,6 +43,8 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
 
     public String sessionsEnabled = "Sitzungen sind aktiviert.";
     public String sessionsDisabled = "Sitzungen sind deaktiviert.";
+    public String sessionsUnavailable = "Sitzungen sind momentan global deaktiviert. Bitte entschuldige die Unannehmlichkeiten!";
+    public String sessionsPremium = "Als Minecraft-Premium-Benutzer brauchst du keine Sessions! :)";
 
     public String premiumLoggedIn = "§6[§a/premium§6] §7Du wurdest automatisch eingeloggt!";
     public String sessionsLoggedIn = "§6[§a/sessions§6] §7Deine Sitzung ist noch gültig.";

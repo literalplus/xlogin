@@ -34,9 +34,17 @@ public class CommandSessions extends Command {
         if (!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
             return;
+        } else if(!plugin.getConfig().isEnableSessions()) {
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsUnavailable));
+            return;
         }
 
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
+
+        if(authedPlayer.isPremium()) {
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsPremium));
+            return;
+        }
 
         if (args.length >= 1) {
             boolean newState;
