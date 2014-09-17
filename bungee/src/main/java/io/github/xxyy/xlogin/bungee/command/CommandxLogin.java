@@ -222,13 +222,10 @@ public class CommandxLogin extends Command {
                                 .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
                         sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
-                                .append(ip == null ? "keine" : match.getLastIp()).color(ip == null ? GRAY : YELLOW).create());
+                                .append(ip == null ? "unbekannt" : match.getLastIp()).color(ip == null ? GRAY : YELLOW).create());
                         if (ip != null) {
                             sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
                                     .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
-                            sender.sendMessage(new ComponentBuilder("IP-Sessions: ").color(GOLD)
-                                    .append(String.valueOf(ip.isSessionsEnabled()))
-                                    .color(ip.isSessionsEnabled() ? GREEN : RED).create()); //red/green if non-null, gray if null
                         }
                     }
                 }
