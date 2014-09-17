@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 public class SessionHelperTest {
     public static final String IP_A = "/123.456.768.1";
     public static final String IP_B = "/8.8.8.8";
+    public static final UUID SOME_UUID = UUID.randomUUID();
 
     @Test
     public void testIsValid() {
@@ -38,7 +39,8 @@ public class SessionHelperTest {
         Assert.assertThat("Expiry time ignored!", SessionHelper.isSessionValid(ap, sess, ip), is(false));
         when(sess.getExpiryTime()).thenReturn(Math.floorDiv(System.currentTimeMillis(), 1000L) + 500L);
         Assert.assertThat("UUID ignored!", SessionHelper.isSessionValid(ap, sess, ip), is(false));
-        when(sess.getUuid()).thenReturn(ap.getUuid());
+        when(ap.getUuid()).thenReturn(SOME_UUID.toString());
+        when(sess.getUuid()).thenReturn(SOME_UUID.toString());
         Assert.assertThat("Valid session incorrectly refused!", SessionHelper.isSessionValid(ap, sess, ip), is(true));
     }
 }

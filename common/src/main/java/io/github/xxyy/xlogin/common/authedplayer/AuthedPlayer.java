@@ -20,7 +20,7 @@ import java.util.UUID;
  * @since 11.5.14
  */
 //TODO common interface w/ PlayerWrapper
-public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
+public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     public static final String AUTH_DATA_TABLE_NAME = "mt_main.xlogin_data";
 
     private String uuid;
