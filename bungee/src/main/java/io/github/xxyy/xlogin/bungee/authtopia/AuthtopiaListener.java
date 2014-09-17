@@ -144,7 +144,7 @@ public class AuthtopiaListener implements Listener {
         int count = 0;
 
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
-                " WHERE user_lastip = ? AND uuid != ?", ipString, evt.getPlayer().getUniqueId())) {
+                " WHERE user_lastip = ? AND uuid != ? AND username != ?", ipString, evt.getPlayer().getUniqueId(), evt.getPlayer().getName())) {
             if (qr.rs().next()) {
                 count = qr.rs().getInt("cnt");
             }
