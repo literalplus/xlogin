@@ -18,9 +18,6 @@ public final class SessionHelper {
     }
 
     public static boolean hasValidSession(AuthedPlayer authedPlayer, IpAddress address) {
-//        Session session = EbeanManager.getEbean().find(Session.class)
-//                .where().eq("user", authedPlayer.getUuid())
-//                .findUnique();
         Session session;
 
         try(QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM mt_main.xlogin_sessions WHERE user=?", authedPlayer.getUuid()).assertHasResultSet()) {
@@ -34,16 +31,20 @@ public final class SessionHelper {
             throw new RuntimeException(e);
         }
 
-        boolean valid = authedPlayer.isSessionsEnabled() &&
-                session.getIp().getIp().equals(authedPlayer.getLastIp()) &&
-                (System.currentTimeMillis() / 1000L) < session.getExpiryTime() &&
-                session.getUuid().equals(authedPlayer.getUuid());
+        boolean valid = isSessionValid(authedPlayer, session, address);
 
         if(!valid) {
-            PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=?", session.getId());
+            PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM mt_main.xlogin_sessions WHERE id=? OR user=?", session.getId(), session.getUuid());
         }
 
         return valid;
+    }
+
+    public static boolean isSessionValid(AuthedPlayer authedPlayer, Session session, IpAddress address) {
+        return authedPlayer.isSessionsEnabled() &&
+                session.getIp().getIp().equals(address.getIp()) &&
+                (System.currentTimeMillis() / 1000L) < session.getExpiryTime() &&
+                session.getUuid().equals(authedPlayer.getUuid());
     }
 
     public static boolean start(AuthedPlayer authedPlayer) {
