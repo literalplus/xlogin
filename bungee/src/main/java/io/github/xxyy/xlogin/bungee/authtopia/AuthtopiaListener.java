@@ -94,8 +94,6 @@ public class AuthtopiaListener implements Listener {
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
                     authed = true;
                 } else { //  vvvvv Inform player if they are premium
-                    evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
-
                     //noinspection ConstantConditions
                     if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
                             !authedPlayer.isDisabledPremiumMessage()) {
@@ -122,6 +120,7 @@ public class AuthtopiaListener implements Listener {
                     if (authedPlayer.authenticateSession(ipAddress)) {
                         plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
+                        authed = true;
                     }
                 }
 
@@ -131,6 +130,10 @@ public class AuthtopiaListener implements Listener {
                     }
 
                     plugin.getRepository().updateProfile(authedPlayer);
+                }
+
+                if(!authed) {
+                    evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
                 }
 
             }
