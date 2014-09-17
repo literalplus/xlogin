@@ -110,7 +110,7 @@ public class AuthtopiaListener implements Listener {
                             .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
-                        authedPlayer.setPremium(true);
+                        authedPlayer.setPremium(true); //TODO: Do we need this call?
 
                         if (evt.getPlayer().getServer() != null) {
                             plugin.notifyRegister(evt.getPlayer());

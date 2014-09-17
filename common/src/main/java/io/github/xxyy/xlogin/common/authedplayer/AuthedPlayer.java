@@ -184,7 +184,7 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
             if (IpAddressFactory.exists(newIpString)) {
                 IpAddress oldIp = IpAddress.fromIpString(this.lastIp);
                 IpAddress newIp = IpAddress.fromIpString(newIpString);
-                newIp.adaptToProperties(oldIp);
+                newIp.adaptToProperties(oldIp); //TODO: Do we need the old IP here?
                 IpAddressFactory.save(newIp);
             }
         }
