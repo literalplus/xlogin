@@ -28,12 +28,12 @@ public class IpAddressFactory {
             ResultSet rs = qr.rs();
 
             if (rs.next()) {
-                IpAddress ipAddress = new IpAddress(ipString, rs.getInt("maxusers"), rs.getBoolean("sessions_on"));
+                IpAddress ipAddress = new IpAddress(ipString, rs.getInt("maxusers"));
                 cache.put(ipString, ipAddress);
                 return ipAddress;
             } else {
                 PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + IpAddress.TABLE_NAME + " SET ip=?,maxusers=?", ipString, PreferencesHolder.getMaxUsersPerIp());
-                return new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp(), true);
+                return new IpAddress(ipString, PreferencesHolder.getMaxUsersPerIp());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -45,8 +45,8 @@ public class IpAddressFactory {
             return;
         }
 
-        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=?,sessions_on=? WHERE ip=?",
-                toSave.getMaxUsers(), toSave.isSessionsEnabled(), toSave.getIp());
+        PreferencesHolder.getSql().safelyExecuteUpdate("UPDATE mt_main.xlogin_ips SET maxusers=? WHERE ip=?",
+                toSave.getMaxUsers(), toSave.getIp());
         cache.put(toSave.getIp(), toSave);
     }
 

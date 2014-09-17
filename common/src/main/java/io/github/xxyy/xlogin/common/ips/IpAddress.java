@@ -10,12 +10,10 @@ public class IpAddress {
     public static final String TABLE_NAME = "mt_main.xlogin_ips";
     private String ip;
     private int maxUsers;
-    private boolean sessionsEnabled;
 
-    public IpAddress(String ip, int maxUsers, boolean sessionsEnabled) {
+    public IpAddress(String ip, int maxUsers) {
         this.ip = ip;
         this.maxUsers = maxUsers;
-        this.sessionsEnabled = sessionsEnabled;
     }
 
     public static IpAddress fromIpString(String ipString) {
@@ -30,11 +28,6 @@ public class IpAddress {
         return this.maxUsers;
     }
 
-    public boolean isSessionsEnabled() {
-        return this.sessionsEnabled;
-    }
-
-
     public void setIp(String ip) {
         this.ip = ip;
     }
@@ -43,17 +36,12 @@ public class IpAddress {
         this.maxUsers = maxUsers;
     }
 
-    public void setSessionsEnabled(boolean sessionsEnabled) {
-        this.sessionsEnabled = sessionsEnabled;
-    }
-
     /**
      * Makes this object adapt the properties of the argument.
      * @param other Object to source properties from.
      */
     public void adaptToProperties(IpAddress other) {
         this.maxUsers = other.getMaxUsers();
-        this.sessionsEnabled = other.isSessionsEnabled();
     }
 
     public boolean equals(Object o) {
