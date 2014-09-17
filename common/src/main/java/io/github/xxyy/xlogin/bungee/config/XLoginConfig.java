@@ -50,6 +50,9 @@ public class XLoginConfig extends Config {
     @Comment("Enable specific modules here:")
     private Map<String, Boolean> enabledModules = new HashMap<>();
 
+    @Comment("Whether to allow users to skip logging in when they connect using the same IP again. (Can be turned off at a per-user basis too)")
+    private boolean enableSessions = true;
+
     public XLoginConfig(Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",
