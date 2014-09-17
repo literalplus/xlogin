@@ -164,7 +164,7 @@ public class AuthtopiaHelper {
      * @param plr Target player
      */
     public boolean registerPremium(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
-        if (authedPlayer.authenticatePremium()) {
+        if (authedPlayer.authenticatePremium(plr.getAddress().getAddress().toString())) {
             plugin.getRegistry().registerAuthentication(authedPlayer);
 
             plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());

@@ -60,10 +60,9 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
      *
      * @return true if the user has opted in to use premium authentication and was logged in. False otherwise.
      */
-    public boolean authenticatePremium() {
+    public boolean authenticatePremium(String currentIp) {
         if (this.isPremium()) {
-            this.setAuthenticated(true);
-            this.authenticationProvider = AuthenticationProvider.MINECRAFT_PREMIUM;
+            authenticate(AuthenticationProvider.MINECRAFT_PREMIUM, currentIp);
             return true;
         } else {
             return false;
@@ -93,10 +92,7 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
             return false;
         }
 
-        setLastIp(newIp);
-
-        this.authenticationProvider = AuthenticationProvider.XLOGIN_SQL;
-        this.authenticated = true;
+        authenticate(AuthenticationProvider.XLOGIN_SQL, newIp);
 
         AuthedPlayerFactory.save(this);
 
@@ -105,13 +101,18 @@ public final class AuthedPlayer implements ToShortStringable, XLoginProfile {
 
     public boolean authenticateSession(IpAddress ipAddress) {
         if (SessionHelper.hasValidSession(this, ipAddress)) {
-            this.authenticationProvider = AuthenticationProvider.XLOGIN_SESSION;
-            this.authenticated = true;
+            authenticate(AuthenticationProvider.XLOGIN_SESSION, ipAddress.getIp());
 
             return true;
         }
 
         return false;
+    }
+
+    private void authenticate(@NotNull AuthenticationProvider provider, @NotNull String currentIp) {
+        setAuthenticationProvider(provider);
+        setAuthenticated(true);
+        setLastIp(currentIp);
     }
 
     /**
