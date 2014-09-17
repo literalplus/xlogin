@@ -88,12 +88,12 @@ public class AuthtopiaListener implements Listener {
 
                 boolean authed = false;
 
-                if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
+                if (evt.getPlayer().getPendingConnection().isOnlineMode() && //vvv **THIS** is where we authenticate premium players
                         plugin.getAuthtopiaHelper().registerPremium(evt.getPlayer(), authedPlayer)) {
 
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
                     authed = true;
-                } else { //  v^ Inform player if they are premium
+                } else { //  vvvvv Inform player if they are premium
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
 
                     //noinspection ConstantConditions
@@ -105,7 +105,7 @@ public class AuthtopiaListener implements Listener {
 
 
                 //Make sure the user is in database
-                if (!knownBefore) {
+                if (!knownBefore) { //This just notifies and registers, nothing authenticating here
                     if (authedPlayer != null && authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
                             .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
 
@@ -118,15 +118,15 @@ public class AuthtopiaListener implements Listener {
 
                         AuthedPlayerFactory.save(authedPlayer);
                     }
-                } else if (!authed && plugin.getConfig().isEnableSessions()) {
+                } else if (!authed && plugin.getConfig().isEnableSessions()) { //**THIS** however authenticates sessions!
                     if (authedPlayer.authenticateSession(ipAddress)) {
                         plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                     }
                 }
 
-                if (authedPlayer != null) {
-                    if (evt.getPlayer().getServer() != null) {
+                if (authedPlayer != null) { //Happens if we are premium or already known
+                    if (evt.getPlayer().getServer() != null) { //This notifies servers of a premium or session authentication...if any occurred
                         plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
                     }
 
