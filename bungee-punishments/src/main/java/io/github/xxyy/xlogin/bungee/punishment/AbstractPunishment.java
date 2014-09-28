@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.bungee.punishment;
 
+import io.github.xxyy.common.XycConstants;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 
@@ -40,6 +41,10 @@ public abstract class AbstractPunishment implements Punishment {
 
     @Override
     public String getSourceName(AuthedPlayerRepository repo) {
+        if(XycConstants.NIL_UUID.equals(sourceId)) {
+            return "CONSOLE";
+        }
+
         AuthedPlayer authedPlayer = repo.getProfile(sourceId);
 
         if (authedPlayer == null) {
