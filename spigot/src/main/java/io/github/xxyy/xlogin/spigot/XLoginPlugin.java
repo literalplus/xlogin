@@ -16,6 +16,7 @@ import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
+import io.github.xxyy.xlogin.common.api.punishments.BanManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
@@ -247,5 +248,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         serverName = newServerName;
         this.getConfig().set("server-name", serverName);
         saveConfig();
+    }
+
+    @Override
+    public BanManager getBanManager() {
+        return null; //TODO: not yet implemented - #289
     }
 }
