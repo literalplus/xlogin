@@ -5,6 +5,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.punishment.AbstractPunishment;
 
@@ -22,18 +24,24 @@ import java.util.UUID;
 public class BanInfo extends AbstractPunishment {
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     public static String BAN_TABLE_NAME = "mt_main.xlogin_bans";
+    @Nullable
     private Timestamp expiryTime;
 
-    protected BanInfo(UUID targetId, UUID sourceId, String reason, String sourceServerName, Timestamp timestamp, Timestamp expiryTime) {
+    protected BanInfo(@NotNull UUID targetId, @NotNull UUID sourceId, @NotNull String reason, @Nullable String sourceServerName,
+                      @NotNull Timestamp timestamp, @Nullable Timestamp expiryTime) {
         super(targetId, sourceId, timestamp, sourceServerName, reason);
         this.expiryTime = expiryTime;
     }
 
+    /**
+     * @return the date and time when this ban expires or NULL if this ban does not expire. This may change afterwards.
+     */
+    @Nullable
     public Timestamp getExpiryTime() {
         return expiryTime;
     }
 
-    @Override
+    @Override @NotNull
     public BanInfo save() {
         BanInfoFactory.save(this);
         return this;

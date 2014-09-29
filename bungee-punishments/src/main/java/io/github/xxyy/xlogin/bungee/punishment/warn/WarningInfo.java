@@ -1,5 +1,9 @@
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
+import org.apache.commons.lang.Validate;
+
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.punishment.AbstractPunishment;
 
 import java.sql.Timestamp;
@@ -15,10 +19,12 @@ public final class WarningInfo extends AbstractPunishment {
     public static String WARN_TABLE_NAME = "mt_main.xlogin_warns";
 
     private final int id;
+    @NotNull
     private WarningState state;
     private boolean valid = true;
 
-    protected WarningInfo(int id, UUID targetId, UUID sourceId, String reason, String sourceServerName, Timestamp timestamp, WarningState state) {
+    protected WarningInfo(int id, @NotNull UUID targetId, @NotNull UUID sourceId, @NotNull String reason,
+                          @Nullable String sourceServerName, @NotNull Timestamp timestamp, @NotNull WarningState state) {
         super(targetId, sourceId, timestamp, sourceServerName, reason);
         this.id = id;
         this.state = state;
@@ -28,11 +34,21 @@ public final class WarningInfo extends AbstractPunishment {
         return id;
     }
 
+    /**
+     * @return the state of this warning.
+     */
+    @NotNull
     public WarningState getState() {
         return state;
     }
 
-    public WarningInfo setState(WarningState state) {
+    /**
+     * Sets this warning's state.
+     * @param state the state to set. Must not be {@link WarningInfo.WarningState#DELETED}.
+     * @return this object, for convenience
+     */
+    public WarningInfo setState(@NotNull WarningState state) {
+        Validate.notNull(state, "warning state must not be null!");
         this.state = state;
         return this;
     }
@@ -78,6 +94,9 @@ public final class WarningInfo extends AbstractPunishment {
         return result;
     }
 
+    /**
+     * Represents a state a warning can be in.
+     */
     public enum WarningState {
         VALID("valide"),
         INVALID("invalide"),
@@ -90,6 +109,9 @@ public final class WarningInfo extends AbstractPunishment {
             this.desc = desc;
         }
 
+        /**
+         * @return a description of this state. Currently only available in German.
+         */
         public String getDescription() {
             return desc;
         }

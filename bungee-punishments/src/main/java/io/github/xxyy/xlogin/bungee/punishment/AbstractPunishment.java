@@ -1,8 +1,11 @@
 package io.github.xxyy.xlogin.bungee.punishment;
 
 import io.github.xxyy.common.XycConstants;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
+import io.github.xxyy.xlogin.common.api.punishments.Punishment;
+import io.github.xxyy.xlogin.common.api.XLoginProfile;
+import io.github.xxyy.xlogin.common.api.XLoginRepository;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -15,13 +18,19 @@ import java.util.UUID;
  * @since 27.8.14
  */
 public abstract class AbstractPunishment implements Punishment {
+    @NotNull
     private final UUID targetId;
+    @NotNull
     private final UUID sourceId;
+    @NotNull
     private final Timestamp timestamp;
+    @Nullable
     private final String sourceServerName;
+    @Nullable
     private String reason;
 
-    public AbstractPunishment(UUID targetId, UUID sourceId, Timestamp timestamp, String sourceServerName, String reason) {
+    public AbstractPunishment(@NotNull UUID targetId, @NotNull UUID sourceId, @NotNull Timestamp timestamp,
+                              @Nullable String sourceServerName, @Nullable String reason) {
         this.targetId = targetId;
         this.sourceId = sourceId;
         this.timestamp = timestamp;
@@ -29,58 +38,57 @@ public abstract class AbstractPunishment implements Punishment {
         this.reason = reason;
     }
 
-    @Override
+    @Override @NotNull
     public UUID getTargetId() {
         return targetId;
     }
 
-    @Override
+    @Override @NotNull
     public UUID getSourceId() {
         return sourceId;
     }
 
-    @Override
-    public String getSourceName(AuthedPlayerRepository repo) {
+    @Override @NotNull
+    public String getSourceName(XLoginRepository repo) {
         if(XycConstants.NIL_UUID.equals(sourceId)) {
             return "CONSOLE";
         }
+        XLoginProfile profile = repo.getProfile(sourceId);
 
-        AuthedPlayer authedPlayer = repo.getProfile(sourceId);
-
-        if (authedPlayer == null) {
+        if (profile == null) {
             return "unknown/" + sourceId.toString();
         }
 
-        return authedPlayer.getName();
+        return profile.getName();
     }
 
-    @Override
-    public String getTargetName(AuthedPlayerRepository repo) {
-        AuthedPlayer authedPlayer = repo.getProfile(targetId);
+    @Override @NotNull
+    public String getTargetName(XLoginRepository repo) {
+        XLoginProfile profile = repo.getProfile(targetId);
 
-        if (authedPlayer == null) {
+        if (profile == null) {
             return "unknown/" + targetId.toString();
         }
 
-        return authedPlayer.getName();
+        return profile.getName();
     }
 
-    @Override
+    @Override @NotNull
     public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    @Override
+    @Override @Nullable
     public String getReason() {
         return reason;
     }
 
-    @Override
+    @Override @Nullable
     public String getSourceServerName() {
         return sourceServerName;
     }
 
-    @Override
+    @Override@NotNull
     public Date getDate() {
         return new Date(getTimestamp().getTime());
     }
