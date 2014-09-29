@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.ArrayList;
@@ -56,11 +57,11 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                         if (exec.getFlags().contains(DelWarnFlag.FORCE)) {
                             warning.delete();
                         } else if (exec.getFlags().contains(DelWarnFlag.UNKNOWN_REASON)) {
-                            warning.setState(WarningInfo.WarningState.UNKNOWN_REASON).save();
+                            warning.setState(XLoginWarning.WarningState.UNKNOWN_REASON).save();
                         } else if (exec.getFlags().contains(DelWarnFlag.REMOVE_FLAGS)) {
-                            warning.setState(WarningInfo.WarningState.VALID).save();
+                            warning.setState(XLoginWarning.WarningState.VALID).save();
                         } else {
-                            warning.setState(WarningInfo.WarningState.INVALID).save();
+                            warning.setState(XLoginWarning.WarningState.INVALID).save();
                         }
                     }
 

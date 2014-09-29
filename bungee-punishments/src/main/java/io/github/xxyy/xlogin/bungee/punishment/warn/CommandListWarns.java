@@ -13,6 +13,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.text.SimpleDateFormat;
@@ -101,8 +102,8 @@ class CommandListWarns extends Command implements TabExecutor {
         }
 
         for (WarningInfo warn : warnings) {
-            boolean unknownReason = warn.getState() == WarningInfo.WarningState.UNKNOWN_REASON;
-            boolean invalid = warn.getState() == WarningInfo.WarningState.INVALID;
+            boolean unknownReason = warn.getState() == XLoginWarning.WarningState.UNKNOWN_REASON;
+            boolean invalid = warn.getState() == XLoginWarning.WarningState.INVALID;
 
             ComponentBuilder warnBuilder = new ComponentBuilder((unknownReason ? "!" : "#") + warn.getId());
             if (unknownReason) {

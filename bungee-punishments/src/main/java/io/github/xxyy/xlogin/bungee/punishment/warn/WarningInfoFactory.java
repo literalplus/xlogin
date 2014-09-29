@@ -6,6 +6,7 @@ import net.md_5.bungee.api.connection.Server;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.common.sql.UpdateResult;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -64,7 +65,7 @@ final class WarningInfoFactory {
                         qr.rs().getString("reason"),
                         qr.rs().getString("source_server"),
                         qr.rs().getTimestamp("timestamp"),
-                        WarningInfo.WarningState.values()[qr.rs().getInt("state")]
+                        XLoginWarning.WarningState.values()[qr.rs().getInt("state")]
                 ));
             }
         } catch (SQLException e) {
@@ -89,7 +90,7 @@ final class WarningInfoFactory {
 
             return new WarningInfo(
                     ur.gk().getInt(1), targetId, sourceId, reason, sourceServerName,
-                    new Timestamp(System.currentTimeMillis()), WarningInfo.WarningState.VALID
+                    new Timestamp(System.currentTimeMillis()), XLoginWarning.WarningState.VALID
             );
         } catch (SQLException e) {
             throw new IllegalStateException(e);
@@ -103,6 +104,6 @@ final class WarningInfoFactory {
 
     public static void delete(WarningInfo warningInfo) {
         PreferencesHolder.getSql().safelyExecuteUpdate("DELETE FROM " + WarningInfo.WARN_TABLE_NAME + " WHERE warn_id=?", warningInfo.getId());
-        warningInfo.setState(WarningInfo.WarningState.DELETED);
+        warningInfo.setState(XLoginWarning.WarningState.DELETED);
     }
 }

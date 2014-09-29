@@ -9,6 +9,7 @@ import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.punishment.AbstractPunishment;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginBan;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 27.8.14
  */
-public class BanInfo extends AbstractPunishment {
+public class BanInfo extends AbstractPunishment implements XLoginBan {
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     public static String BAN_TABLE_NAME = "mt_main.xlogin_bans";
     @Nullable
@@ -33,9 +34,7 @@ public class BanInfo extends AbstractPunishment {
         this.expiryTime = expiryTime;
     }
 
-    /**
-     * @return the date and time when this ban expires or NULL if this ban does not expire. This may change afterwards.
-     */
+    @Override
     @Nullable
     public Timestamp getExpiryTime() {
         return expiryTime;
@@ -103,6 +102,7 @@ public class BanInfo extends AbstractPunishment {
         }
     }
 
+    @Override
     public String getExpiryString() {
         if (expiryTime == null) {
             return "permanent";

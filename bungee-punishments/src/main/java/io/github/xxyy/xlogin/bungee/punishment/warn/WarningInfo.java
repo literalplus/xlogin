@@ -5,6 +5,7 @@ import org.apache.commons.lang.Validate;
 import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.punishment.AbstractPunishment;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -15,7 +16,7 @@ import java.util.UUID;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 23.8.14
  */
-public final class WarningInfo extends AbstractPunishment {
+public final class WarningInfo extends AbstractPunishment implements XLoginWarning {
     public static String WARN_TABLE_NAME = "mt_main.xlogin_warns";
 
     private final int id;
@@ -30,13 +31,12 @@ public final class WarningInfo extends AbstractPunishment {
         this.state = state;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
-    /**
-     * @return the state of this warning.
-     */
+    @Override
     @NotNull
     public WarningState getState() {
         return state;
@@ -94,26 +94,4 @@ public final class WarningInfo extends AbstractPunishment {
         return result;
     }
 
-    /**
-     * Represents a state a warning can be in.
-     */
-    public enum WarningState {
-        VALID("valide"),
-        INVALID("invalide"),
-        UNKNOWN_REASON("unbekannter Grund"),
-        DELETED("gelöscht");
-
-        private final String desc;
-
-        WarningState(String desc) {
-            this.desc = desc;
-        }
-
-        /**
-         * @return a description of this state. Currently only available in German.
-         */
-        public String getDescription() {
-            return desc;
-        }
-    }
 }
