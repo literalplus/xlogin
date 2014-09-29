@@ -41,7 +41,7 @@ class CommandListWarns extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
             UUID senderId = ChatHelper.getSenderId(sender);
-            listWarnings(sender, module.getPlugin().getRepository().getProfile(senderId), WarningInfoFactory.fetchByTarget(senderId));
+            listWarnings(sender, module.getPlugin().getRepository().getProfile(senderId), module.getWarningsByTarget(senderId));
         } else if (!args[0].equalsIgnoreCase("help")) {
             List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
             if (matchedPlayers.isEmpty()) {
@@ -50,7 +50,7 @@ class CommandListWarns extends Command implements TabExecutor {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                         .color(ChatColor.RED).create());
             } else {
-                listWarnings(sender, matchedPlayers.get(0), WarningInfoFactory.fetchByTarget(matchedPlayers.get(0).getUniqueId()));
+                listWarnings(sender, matchedPlayers.get(0), module.getWarningsByTarget(matchedPlayers.get(0).getUniqueId()));
             }
         } else {
             sender.sendMessage(new ComponentBuilder("/warns [Spieler] - Zeigt Verwarnungen an.").color(ChatColor.YELLOW).create());

@@ -23,7 +23,7 @@ final class WarnPunishmentBuilder {
     }
 
     public static void compute(WarnModule module, ProxiedPlayer target, UUID targetId, String targetName) { //#spigot [0509] <Akkarin> there is no real limit afaik (apart from the packet limits)
-        List<WarningInfo> dbWarnings = WarningInfoFactory.fetchByTarget(targetId);
+        List<WarningInfo> dbWarnings = module.getWarningsByTarget(targetId);
         List<WarningInfo> warnings = new ArrayList<>();
         for (WarningInfo warn : dbWarnings) {
             if (warn.isValid()) {

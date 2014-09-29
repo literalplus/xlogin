@@ -53,7 +53,7 @@ public final class WarningInfo extends AbstractPunishment implements XLoginWarni
         return this;
     }
 
-    @Override
+    @Override @NotNull
     public WarningInfo save() {
         WarningInfoFactory.save(this);
         return this;

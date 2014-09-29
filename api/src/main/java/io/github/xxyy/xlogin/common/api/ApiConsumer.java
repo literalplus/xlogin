@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.common.api;
 
 import io.github.xxyy.xlogin.common.api.punishments.BanManager;
+import io.github.xxyy.xlogin.common.api.punishments.WarningManager;
 
 /**
  * Represents a consumer of the API.
@@ -23,4 +24,9 @@ public interface ApiConsumer {
      * @return the ban manager used by this consumer, if this consumer supports bans. NULL otherwise.
      */
     BanManager getBanManager();
+
+    /**
+     * @return the warning manager used by this consumer, if this consumer supports warnings. NULL otherwise.
+     */
+    WarningManager getWarningManager();
 }

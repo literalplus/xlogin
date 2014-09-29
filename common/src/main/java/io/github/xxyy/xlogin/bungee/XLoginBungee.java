@@ -8,6 +8,7 @@ import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
 import io.github.xxyy.xlogin.common.api.punishments.BanManager;
+import io.github.xxyy.xlogin.common.api.punishments.WarningManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 
@@ -20,10 +21,17 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 public abstract class XLoginBungee extends Plugin implements ApiConsumer { //Please don't kill me for this
     @Getter
     private BanManager banManager;
+    @Getter
+    private WarningManager warningManager;
 
     public void setBanManager(BanManager newBanManager) {
         Validate.isTrue(banManager == null, "Cannot override singleton banManager!");
         this.banManager = newBanManager;
+    }
+
+    public void setWarningManager(WarningManager newWarningManager) {
+        Validate.isTrue(banManager == null, "Cannot override singleton warningManager!");
+        this.warningManager = newWarningManager;
     }
 
     public abstract XLoginConfig getConfig();

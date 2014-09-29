@@ -103,7 +103,7 @@ class CommandWarn extends Command implements TabExecutor {
         }
 
         for (int i = 0; i < multiplier; i++) {
-            WarningInfoFactory.create(uuid,
+            module.createWarning(uuid,
                     ChatHelper.getSenderId(sender),
                     sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer() : null,
                     ChatColor.translateAlternateColorCodes('&', reason));

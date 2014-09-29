@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.CommandHelper;
-import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
@@ -32,12 +31,12 @@ import java.util.Set;
  */
 class CommandDeleteWarn extends Command implements TabExecutor {
     public static final String PERMISSION = "xlogin.delwarn";
-    private final XLoginBungee plugin;
+    private final WarnModule module;
 
 
     public CommandDeleteWarn(WarnModule module) {
         super("delwarn", PERMISSION, "dw");
-        this.plugin = module.getPlugin();
+        this.module = module;
     }
 
     @Override
@@ -66,8 +65,8 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                     }
 
                     sender.sendMessage(new ComponentBuilder("Verwarnung: ").color(ChatColor.YELLOW)
-                            .append("target=" + warning.getTargetName(plugin.getRepository()) + ", ")
-                            .append("source=" + warning.getSourceName(plugin.getRepository()) + ", ")
+                            .append("target=" + warning.getTargetName(module.getPlugin().getRepository()) + ", ")
+                            .append("source=" + warning.getSourceName(module.getPlugin().getRepository()) + ", ")
                             .append("reason=" + ChatColor.translateAlternateColorCodes('&', warning.getReason()))
                             .append("state=" + warning.getState().name())
                             .append((hasPermission ? " " : " nicht ") + "modifiziert.")
@@ -190,9 +189,9 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                 if (!StringUtils.isNumeric(args[argStartIndex])) {
                     throw new IllegalArgumentException("Parameter für -i muss eine Zahl sein! (Gefunden: " + args[argStartIndex] + ")");
                 }
-                return ImmutableList.of(validateWINotNull(WarningInfoFactory.fetch(Integer.parseInt(args[argStartIndex]))));
+                return ImmutableList.of(validateWINotNull(module.getWarning(Integer.parseInt(args[argStartIndex]))));
             } else if (flags.contains(DelWarnFlag.LAST)) {
-                return ImmutableList.of(validateWINotNull(WarningInfoFactory.fetchLastIssuedBy(ChatHelper.getSenderId(sender))));
+                return ImmutableList.of(validateWINotNull(module.getLastIssuedBy(ChatHelper.getSenderId(sender))));
             }
 
             int amount = 1;
@@ -203,7 +202,7 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                 amount = Integer.parseInt(args[argStartIndex + 1]);
             }
 
-            List<AuthedPlayer> matchedPlayers = plugin.getRepository().getProfiles(args[argStartIndex]);
+            List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[argStartIndex]);
             if (matchedPlayers.isEmpty()) {
                 throw new IllegalArgumentException("Keine Spieler mit diesem Namen/dieser UUID gefunden!");
             } else if (matchedPlayers.size() > 1) {
@@ -211,7 +210,7 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                         matchedPlayers.size() + " => " + CommandHelper.CSCollectionShort(Lists.newArrayList(matchedPlayers))); //TODO: UX
             }
 
-            List<WarningInfo> warnings = WarningInfoFactory.fetchByTarget(matchedPlayers.get(0).getUniqueId());
+            List<WarningInfo> warnings = module.getWarningsByTarget(matchedPlayers.get(0).getUniqueId());
             List<WarningInfo> toDelete = new ArrayList<>(amount);
             for (int i = warnings.size() - 1; i >= 0; i--) {
                 if (toDelete.size() < amount) {
