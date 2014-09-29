@@ -25,13 +25,15 @@ import java.util.UUID;
 public class BanInfo extends AbstractPunishment implements XLoginBan {
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     public static String BAN_TABLE_NAME = "mt_main.xlogin_bans";
+    private final BanModule manager;
     @Nullable
     private Timestamp expiryTime;
 
-    protected BanInfo(@NotNull UUID targetId, @NotNull UUID sourceId, @NotNull String reason, @Nullable String sourceServerName,
+    protected BanInfo(@NotNull BanModule manager, @NotNull UUID targetId, @NotNull UUID sourceId, @NotNull String reason, @Nullable String sourceServerName,
                       @NotNull Timestamp timestamp, @Nullable Timestamp expiryTime) {
         super(targetId, sourceId, timestamp, sourceServerName, reason);
         this.expiryTime = expiryTime;
+        this.manager = manager;
     }
 
     @Override
@@ -50,6 +52,7 @@ public class BanInfo extends AbstractPunishment implements XLoginBan {
     public void delete() {
         BanInfoFactory.delete(this);
         expiryTime = new Timestamp(System.currentTimeMillis() - 1);
+        manager.setBannedCache(getTargetId(), null);
     }
 
     @Override

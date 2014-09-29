@@ -48,10 +48,9 @@ class CommandBan extends Command implements TabExecutor {
             }
 
             String reason = StringHelper.varArgsString(args, 1, true);
-            BanInfo banInfo = BanInfoFactory.create(matchedPlayers.get(0).getUniqueId(), ChatHelper.getSenderId(sender),
-                    sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer() : null,
+            BanInfo banInfo = module.setBanned(matchedPlayers.get(0).getUniqueId(), ChatHelper.getSenderId(sender),
+                    sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : null,
                     reason, null);
-            module.setBanned(matchedPlayers.get(0).getUniqueId(), banInfo);
             banInfo.announce(module);
 
             ProxiedPlayer targetPlayer = module.getPlugin().getProxy().getPlayer(matchedPlayers.get(0).getUniqueId());

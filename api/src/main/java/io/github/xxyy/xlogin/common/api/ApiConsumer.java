@@ -1,5 +1,7 @@
 package io.github.xxyy.xlogin.common.api;
 
+import io.github.xxyy.xlogin.common.api.punishments.BanManager;
+
 /**
  * Represents a consumer of the API.
  *
@@ -16,4 +18,9 @@ public interface ApiConsumer {
      * @return the AuthedPlayer registry used by this consumer.
      */
     XLoginRegistry getRegistry();
+
+    /**
+     * @return the ban manager used by this consumer, if this consumer supports bans. NULL otherwise.
+     */
+    BanManager getBanManager();
 }

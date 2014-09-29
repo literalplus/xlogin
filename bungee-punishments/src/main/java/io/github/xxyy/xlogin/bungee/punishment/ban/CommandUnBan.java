@@ -57,7 +57,6 @@ class CommandUnBan extends Command implements TabExecutor {
             return;
         }
         banInfo.delete();
-        module.setBanned(matchedPlayers.get(0).getUniqueId(), null);
 
         BaseComponent[] adminComponents = new ComponentBuilder(sender.getName()).color(ChatColor.DARK_GREEN)
                 .append(" hat ").color(ChatColor.GREEN)

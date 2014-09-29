@@ -24,8 +24,8 @@ final class BanInfoFactory {
 
     }
 
-    public static BanInfo fetchByTarget(UUID target) {
-        List<BanInfo> results = fetch("target_uuid=?", target.toString());
+    public static BanInfo fetchByTarget(BanModule manager, UUID target) {
+        List<BanInfo> results = fetch(manager, "target_uuid=?", target.toString());
 
         if (results.size() == 0) {
             return null;
@@ -34,12 +34,12 @@ final class BanInfoFactory {
         }
     }
 
-    public static List<BanInfo> fetchBySource(UUID source) {
-        return fetch("source_uuid=?", source.toString());
+    public static List<BanInfo> fetchBySource(BanModule manager, UUID source) {
+        return fetch(manager, "source_uuid=?", source.toString());
     }
 
-    public static BanInfo fetchLastIssuedBy(UUID source) {
-        List<BanInfo> results = fetch("source_uuid=? ORDER BY timestamp DESC LIMIT 1", source.toString());
+    public static BanInfo fetchLastIssuedBy(BanModule manager, UUID source) {
+        List<BanInfo> results = fetch(manager, "source_uuid=? ORDER BY timestamp DESC LIMIT 1", source.toString());
 
         if (results.size() == 0) {
             return null;
@@ -48,20 +48,20 @@ final class BanInfoFactory {
         }
     }
 
-    private static List<BanInfo> fetch(String where, Object whereParam) {
+    private static List<BanInfo> fetch(BanModule manager, String where, Object whereParam) {
         ImmutableList.Builder<BanInfo> results = ImmutableList.builder();
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult(
                 "SELECT target_uuid,source_uuid,reason,source_server,timestamp,expiry_time FROM " +
                         BanInfo.BAN_TABLE_NAME + " WHERE " + where, whereParam).vouchForResultSet()) {
             while (qr.rs().next()) {
                 results.add(new BanInfo(
+                        manager,
                         UUID.fromString(qr.rs().getString("target_uuid")),
                         UUID.fromString(qr.rs().getString("source_uuid")),
                         qr.rs().getString("reason"),
                         qr.rs().getString("source_server"),
                         qr.rs().getTimestamp("timestamp"),
-                        qr.rs().getTimestamp("expiry_time")
-                ));
+                        qr.rs().getTimestamp("expiry_time")));
             }
         } catch (SQLException e) {
             throw new IllegalStateException(e);
@@ -70,13 +70,13 @@ final class BanInfoFactory {
         return results.build();
     }
 
-    public static BanInfo create(UUID targetId, UUID sourceId, Server sourceServer, String reason, @Nullable Date expiryDate) {
-        return create(targetId, sourceId,
+    public static BanInfo create(BanModule manager, UUID targetId, UUID sourceId, Server sourceServer, String reason, @Nullable Date expiryDate) {
+        return create(manager, targetId, sourceId,
                 sourceServer == null ? "CONSOLE" : sourceServer.getInfo().getName(),
                 reason, expiryDate);
     }
 
-    public static BanInfo create(UUID targetId, UUID sourceId, String sourceServerName, String reason, @Nullable Date expiryDate) {
+    public static BanInfo create(BanModule manager, UUID targetId, UUID sourceId, String sourceServerName, String reason, @Nullable Date expiryDate) {
         Timestamp expiryTimestamp = expiryDate == null ? null : new Timestamp(expiryDate.getTime());
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + BanInfo.BAN_TABLE_NAME + " SET " +
                         "target_uuid=?,source_uuid=?,reason=?,source_server=?,expiry_time=? ON DUPLICATE KEY UPDATE " +
@@ -84,10 +84,9 @@ final class BanInfoFactory {
                 targetId.toString(), sourceId.toString(), reason, sourceServerName, expiryTimestamp,
                 sourceId.toString(), reason, sourceServerName, expiryTimestamp);
 
-        return new BanInfo(
-                targetId, sourceId, reason, sourceServerName,
-                new Timestamp(System.currentTimeMillis()), expiryTimestamp
-        );
+        return new BanInfo( manager, targetId, sourceId, reason,
+                sourceServerName, new Timestamp(System.currentTimeMillis()),
+                expiryTimestamp);
     }
 
     public static void save(BanInfo banInfo) {

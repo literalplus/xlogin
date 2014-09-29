@@ -1,10 +1,13 @@
 package io.github.xxyy.xlogin.bungee;
 
+import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.commons.lang.Validate;
 
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
+import io.github.xxyy.xlogin.common.api.punishments.BanManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 
@@ -15,6 +18,13 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
  * @since 28.8.14
  */ //sorry for the name
 public abstract class XLoginBungee extends Plugin implements ApiConsumer { //Please don't kill me for this
+    @Getter
+    private BanManager banManager;
+
+    public void setBanManager(BanManager newBanManager) {
+        Validate.isTrue(banManager == null, "Cannot override singleton banManager!");
+        this.banManager = newBanManager;
+    }
 
     public abstract XLoginConfig getConfig();
 
