@@ -12,6 +12,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import org.apache.commons.lang3.StringUtils;
 
+import io.github.xxyy.common.XycConstants;
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.CommandHelper;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
@@ -236,7 +237,8 @@ class CommandDeleteWarn extends Command implements TabExecutor {
                 }
             }
 
-            if (!sender.hasPermission("xlogin.delwarn.others") && !warningInfo.getSourceId().equals(ChatHelper.getSenderId(sender))) {
+            if (!sender.hasPermission("xlogin.delwarn.others") && !warningInfo.getSourceId().equals(ChatHelper.getSenderId(sender))
+                    && !warningInfo.getSourceId().equals(XycConstants.NIL_UUID)) { //allow everyone to delete automatic warns since they tend to be inaccurate
                 sender.sendMessage(new ComponentBuilder("Du darfst keine Verwarnungen Anderer löschen!").color(ChatColor.RED).create());
                 return false;
             }
