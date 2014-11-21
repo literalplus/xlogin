@@ -123,10 +123,24 @@ public class AuthtopiaHelper {
 
         FutureCallback<Boolean> sqlQueryCallback = new FutureCallback<Boolean>() {
             @Override
-            public void onSuccess(@NotNull final Boolean queryMojang) {
+            public void onSuccess(final Boolean queryMojang) {
                 boolean onlineMode = false; //auth_list cracked override
                 if (queryMojang) {
-                    Profile[] profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
+                    Profile[] profiles;
+                    try {
+                        profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
+                    } catch (IllegalStateException e) {
+                        plugin.getLogger().warning(String.format("Mojang failed auth for %s: %s",
+                                evt.getConnection().getName(), e.getCause().getMessage()));
+                        evt.setCancelReason("§4Mojang's Sitzungsserver sind momentan down.\n" +
+                                "§eDaher können wir nicht herausfinden, ob du Premium bist.\n\n" +
+                                "§aMehr Info: http://xpaw.ru/mcstatus https://help.mojang.com/\n" +
+                                "§6Das Wichtigste: §oKeine Panik! :)\n" +
+                                "§eBitte versuche es später erneut.");
+                        evt.setCancelled(true);
+                        evt.completeIntent(plugin);
+                        return;
+                    }
 
                     if (profiles.length == 1 && !profiles[0].isDemo()) {
                         onlineMode = true;
