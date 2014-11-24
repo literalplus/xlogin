@@ -2,7 +2,6 @@ package io.github.xxyy.xlogin.bungee.punishment.warn;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.github.xxyy.common.XycConstants;
 import io.github.xxyy.common.bungee.ChatHelper;
-import io.github.xxyy.common.util.CommandHelper;
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
@@ -198,7 +197,7 @@ class CommandDeleteWarn extends Command implements TabExecutor {
             int amount = 1;
             if (args.length >= argStartIndex + 2) {
                 if (!StringUtils.isNumeric(args[argStartIndex + 1])) {
-                    throw new IllegalArgumentException("Parameter 2 für -i muss eine Zahl sein! (Gefunden: " + args[argStartIndex + 1] + ")");
+                    throw new IllegalArgumentException("Parameter 2 muss eine Zahl sein! (Gefunden: " + args[argStartIndex + 1] + ")");
                 }
                 amount = Integer.parseInt(args[argStartIndex + 1]);
             }
@@ -207,8 +206,9 @@ class CommandDeleteWarn extends Command implements TabExecutor {
             if (matchedPlayers.isEmpty()) {
                 throw new IllegalArgumentException("Keine Spieler mit diesem Namen/dieser UUID gefunden!");
             } else if (matchedPlayers.size() > 1) {
-                throw new IllegalArgumentException("Zu viele Spieler mit diesem Namen/dieser UUID gefunden: " +
-                        matchedPlayers.size() + " => " + CommandHelper.CSCollectionShort(Lists.newArrayList(matchedPlayers))); //TODO: UX
+                JSONChatHelper.listPossiblePlayers(sender, matchedPlayers, module.getPlugin(),
+                        "Hier klicken, um " + amount + " Verwarnungen\ndieses Spielers zu bearbeiten.",
+                        String.format("dw %s%%s %d", getFlagString(), amount)); //getFlagString() may return an empty string
             }
 
             List<WarningInfo> warnings = module.getWarningsByTarget(matchedPlayers.get(0).getUniqueId());
@@ -248,6 +248,20 @@ class CommandDeleteWarn extends Command implements TabExecutor {
 
         public EnumSet<DelWarnFlag> getFlags() {
             return flags;
+        }
+
+        public String getFlagString() {
+            if (flags.isEmpty()) {
+                return "";
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            for (DelWarnFlag flag : flags) {
+                stringBuilder.append(flag.getFlag()).append(" ");
+            }
+
+            return stringBuilder.toString();
         }
     }
 }

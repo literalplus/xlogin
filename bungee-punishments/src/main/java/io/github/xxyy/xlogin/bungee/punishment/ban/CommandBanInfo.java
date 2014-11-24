@@ -11,6 +11,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.HashSet;
@@ -48,8 +49,8 @@ class CommandBanInfo extends Command implements TabExecutor {
             sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
             return;
         } else if (matchedPlayers.size() > 1) {
-            sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
-                    .color(ChatColor.RED).create());
+            JSONChatHelper.listPossiblePlayers(sender, matchedPlayers, module.getPlugin(), "Hier klicken für Informationen\nzu diesem Spieler!",
+                    "/bi %s");
             return;
         }
 

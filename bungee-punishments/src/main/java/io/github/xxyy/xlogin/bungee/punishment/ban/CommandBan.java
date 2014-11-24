@@ -11,6 +11,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.HashSet;
@@ -37,17 +38,18 @@ class CommandBan extends Command implements TabExecutor {
         if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
             sender.sendMessage(new ComponentBuilder("/ban <Spieler> <Grund>").color(ChatColor.YELLOW).create());
         } else {
+            String reason = StringHelper.varArgsString(args, 1, true);
+
             List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
             if (matchedPlayers.isEmpty()) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
                 return;
             } else if (matchedPlayers.size() > 1) {
-                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
-                        .color(ChatColor.RED).create());
+                JSONChatHelper.listPossiblePlayers(sender, matchedPlayers, module.getPlugin(), "Hier klicken, um\ndiesen Spieler zu bannen!",
+                        "/ban %s " + reason.replace('§', '&'));
                 return;
             }
 
-            String reason = StringHelper.varArgsString(args, 1, true);
             BanInfo banInfo = module.setBanned(matchedPlayers.get(0).getUniqueId(), ChatHelper.getSenderId(sender),
                     sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : null,
                     reason, null);

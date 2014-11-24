@@ -11,6 +11,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.Date;
@@ -41,13 +42,14 @@ class CommandTimeBan extends Command implements TabExecutor {
             sender.sendMessage(new ComponentBuilder("Zeitraum: y=Jahr, M=Monat, d=Tag, h=Stunde, m=Minute, s=Sekunde").color(ChatColor.YELLOW).create());
             sender.sendMessage(new ComponentBuilder("Bsp: /tempban urmom 5y3M42m <Grund> -> Bannt 'urmom' 5 Jahre, 3 Monate und 42 Minuten lang.").color(ChatColor.YELLOW).create());
         } else {
+            String reason = StringHelper.varArgsString(args, 2, true);
             List<AuthedPlayer> matchedPlayers = module.getPlugin().getRepository().getProfiles(args[0]);
             if (matchedPlayers.isEmpty()) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
                 return;
             } else if (matchedPlayers.size() > 1) {
-                sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
-                        .color(ChatColor.RED).create());
+                JSONChatHelper.listPossiblePlayers(sender, matchedPlayers, module.getPlugin(), "Hier klicken, um diesen\nSPieler temporär zu bannen!",
+                        String.format("/tb %%s %s %s", args[1], reason.replace('§', '&'))); //TODO: This should actually just implode the args
                 return;
             }
 
@@ -65,7 +67,6 @@ class CommandTimeBan extends Command implements TabExecutor {
                 return;
             }
 
-            String reason = StringHelper.varArgsString(args, 2, true);
             BanInfo banInfo = module.setBanned(matchedPlayers.get(0).getUniqueId(), ChatHelper.getSenderId(sender),
                     sender instanceof ProxiedPlayer ? ((ProxiedPlayer) sender).getServer().getInfo().getName() : null,
                     reason,

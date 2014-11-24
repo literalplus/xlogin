@@ -13,6 +13,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
@@ -47,6 +48,8 @@ class CommandListWarns extends Command implements TabExecutor {
             if (matchedPlayers.isEmpty()) {
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium ist uns kein Benutzer bekannt!").color(ChatColor.RED).create());
             } else if (matchedPlayers.size() > 1) {
+                JSONChatHelper.listPossiblePlayers(sender, matchedPlayers, module.getPlugin(), "Hier klicken, um die Verwarnungen\n dieses Spielers zu zeigen",
+                        "/warns %s");
                 sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium sind zu viele Benutzer vorhanden: " + matchedPlayers.size())
                         .color(ChatColor.RED).create());
             } else {

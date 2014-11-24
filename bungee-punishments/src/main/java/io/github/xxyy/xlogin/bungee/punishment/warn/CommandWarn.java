@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
+import io.github.xxyy.xlogin.JSONChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
@@ -29,7 +30,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static net.md_5.bungee.api.ChatColor.GOLD;
 import static net.md_5.bungee.api.ChatColor.RED;
 import static net.md_5.bungee.api.ChatColor.YELLOW;
 
@@ -72,6 +72,8 @@ class CommandWarn extends Command implements TabExecutor {
             multiplier = 15;
         }
 
+        String reason = StringHelper.varArgsString(args, reasonStartIndex, true);
+
         ProxiedPlayer target = plugin.getProxy().getPlayer(args[0]);
         UUID uuid;
         String name;
@@ -81,10 +83,8 @@ class CommandWarn extends Command implements TabExecutor {
                 plugin.getMessages().sendMessageWithPrefix("§eSorry, so einen Spieler kennen wir nicht.", sender);
                 return;
             } else if (players.size() > 1) {
-                plugin.getMessages().sendMessageWithPrefix("§cIch habe mehrere Spieler gefunden. Meintest du:", sender);
-                for (AuthedPlayer authedPlayer : players) {
-                    sender.sendMessage(new ComponentBuilder(authedPlayer.getName()).color(GOLD).create());
-                }
+                JSONChatHelper.listPossiblePlayers(sender, players, plugin, "Hier klicken, um diesen Spieler zu verwarnen!",
+                        String.format("/warn %%s %d %s", multiplier, reason.replace('§', '&')));
                 return;
             } else {
                 uuid = players.get(0).getUniqueId();
@@ -94,8 +94,6 @@ class CommandWarn extends Command implements TabExecutor {
             uuid = target.getUniqueId();
             name = target.getName();
         }
-
-        String reason = StringHelper.varArgsString(args, reasonStartIndex, true);
 
         if (rateLimitPlayers.contains(uuid)) {
             plugin.getMessages().sendMessageWithPrefix("Bitte warte 20 Sekunden, bevor du diesen Spieler erneut warnst!", sender);
