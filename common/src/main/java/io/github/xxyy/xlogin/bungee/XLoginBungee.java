@@ -30,7 +30,7 @@ public abstract class XLoginBungee extends Plugin implements ApiConsumer { //Ple
     }
 
     public void setWarningManager(WarningManager newWarningManager) {
-        Validate.isTrue(banManager == null, "Cannot override singleton warningManager!");
+        Validate.isTrue(warningManager == null, "Cannot override singleton warningManager!");
         this.warningManager = newWarningManager;
     }
 
