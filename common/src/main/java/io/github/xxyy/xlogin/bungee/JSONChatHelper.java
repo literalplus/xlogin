@@ -1,11 +1,10 @@
-package io.github.xxyy.xlogin;
+package io.github.xxyy.xlogin.bungee;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
-import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.Collection;
@@ -13,6 +12,7 @@ import java.util.Collection;
 import static net.md_5.bungee.api.ChatColor.GOLD;
 import static net.md_5.bungee.api.ChatColor.GREEN;
 import static net.md_5.bungee.api.ChatColor.RED;
+import static net.md_5.bungee.api.ChatColor.YELLOW;
 
 /**
  * Provides static utility methods to help daling with JSON chat.
@@ -43,9 +43,11 @@ public final class JSONChatHelper {
             HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     new ComponentBuilder("UUID: " + authedPlayer.getUniqueId() + "\n"+actionText).create());
             ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format(suggestedCommand, authedPlayer.getUniqueId()));
-            receiver.sendMessage(new ComponentBuilder(authedPlayer.getName() + " / ").color(GOLD)
+            receiver.sendMessage(new ComponentBuilder(authedPlayer.getName() + " / ").color(GOLD).underlined(true)
                     .event(hoverEvent).event(clickEvent)
-                    .append(authedPlayer.isPremium() ? "Premium" : "Cracked").color(authedPlayer.isPremium() ? GREEN : RED)
+                    .append(authedPlayer.isPremium() ? "Premium" : "Cracked").color(authedPlayer.isPremium() ? GREEN : RED).underlined(true)
+                    .event(hoverEvent).event(clickEvent)
+                    .append(" (klick!)").color(YELLOW).underlined(true)
                     .event(hoverEvent).event(clickEvent)
                     .create());
         }

@@ -13,7 +13,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
-import io.github.xxyy.xlogin.JSONChatHelper;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 

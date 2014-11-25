@@ -11,7 +11,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
-import io.github.xxyy.xlogin.JSONChatHelper;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.HashSet;

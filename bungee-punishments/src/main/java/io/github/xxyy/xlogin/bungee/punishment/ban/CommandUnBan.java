@@ -10,7 +10,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import io.github.xxyy.xlogin.JSONChatHelper;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.HashSet;

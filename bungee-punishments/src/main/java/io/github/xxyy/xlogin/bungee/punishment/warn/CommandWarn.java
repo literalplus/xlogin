@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.util.StringHelper;
-import io.github.xxyy.xlogin.JSONChatHelper;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
