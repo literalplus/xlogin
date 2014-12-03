@@ -1,11 +1,12 @@
 package io.github.xxyy.xlogin.spigot.commands;
 
-import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 
 /**
  * Teleports players to spawn. wow.
@@ -22,6 +23,11 @@ public class CommandSpawn implements CommandExecutor {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
+        if(!plugin.isSpawnEnabled()) {
+            sender.sendMessage("§c/spawn ist auf diesem Server nicht erlaubt.");
+            return true;
+        }
+
         if (args.length > 0 && args[0].equalsIgnoreCase("help")) {
             return false;
         }

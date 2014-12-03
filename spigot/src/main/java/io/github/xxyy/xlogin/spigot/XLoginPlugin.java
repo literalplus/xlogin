@@ -47,6 +47,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     private Location spawnLocation;
     @Getter
     private String serverName;
+    @Getter
+    private boolean lastLocationsEnabled;
+    @Getter
+    private boolean spawnEnabled;
 
     @Override
     public void onDisable() {
@@ -126,6 +130,8 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         this.getConfig().addDefault("sql.db", "bungeecord");
         this.getConfig().addDefault("sql.password", "");
         this.getConfig().addDefault("sql.host", "jdbc:mysql://localhost:3306/bungeecord");
+        this.getConfig().addDefault("config.enable-last-locations", true);
+        this.getConfig().addDefault("config.enable-spawn", true);
         this.saveConfig();
 
         spawnLocation = null;
@@ -145,6 +151,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         if (serverName == null) {
             getLogger().info("No server name given! Locations will be saved once BungeeCord responds to our query.");
         }
+
+        lastLocationsEnabled = this.getConfig().getBoolean("config.enable-last-locations", true);
+        spawnEnabled = this.getConfig().getBoolean("config.enable-spawn", true);
     }
 
     public void updateSpawnLocation(Location location) {
@@ -158,6 +167,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void teleportToLastLocation(Player plr) {
+        if(!lastLocationsEnabled) {
+            return;
+        }
+
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId());
 
         if (getServerName() == null) {
@@ -200,6 +213,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void saveLocation(Player plr, boolean async) {
+        if(!lastLocationsEnabled) {
+            return;
+        }
+
         final UUID uuid = plr.getUniqueId();
         final Location loc = plr.getLocation();
 
