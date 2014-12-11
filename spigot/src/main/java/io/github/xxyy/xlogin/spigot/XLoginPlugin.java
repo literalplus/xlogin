@@ -106,6 +106,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             }
         }, 20 * 60 * 5L, 20 * 60 * 5L);
 
+        getLogger().info("Last locations: " + lastLocationsEnabled + ", spawn: " + spawnEnabled);
         getLogger().info("xLogin " + VERSION + " enabled!");
     }
 
@@ -167,7 +168,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void teleportToLastLocation(Player plr) {
-        if(!lastLocationsEnabled) {
+        if (!lastLocationsEnabled) {
             return;
         }
 
@@ -213,7 +214,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     public void saveLocation(Player plr, boolean async) {
-        if(!lastLocationsEnabled) {
+        if (!lastLocationsEnabled) {
             return;
         }
 
