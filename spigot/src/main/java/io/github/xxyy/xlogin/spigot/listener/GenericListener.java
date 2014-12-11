@@ -128,8 +128,9 @@ public class GenericListener implements Listener {
         plugin.getServer().getScheduler().runTaskLater(plugin,
                 new Runnable() {
                     public void run() {
-                        plr.teleport(plugin.getSpawnLocation());
-
+                        if(plugin.isSpawnEnabled()) {
+                            plr.teleport(plugin.getSpawnLocation());
+                        }
 
                         if (plugin.getServerName() == null) { //Requesting in here because Bukkit is a bit weird with initializing its stuffs
                             plugin.sendAPIMessage(plr, "server-name"); //Request server name - there might not have been any players online at startup
