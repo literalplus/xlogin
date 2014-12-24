@@ -66,7 +66,7 @@ public interface Punishment {
     String getSourceServerName();
 
     /**
-     * @return whether this punishment is still valid, i.e. counts to the total number of punishments of this kind.
+     * @return whether this punishment is still valid, that means that it still exists in database.
      */
     boolean isValid();
 
