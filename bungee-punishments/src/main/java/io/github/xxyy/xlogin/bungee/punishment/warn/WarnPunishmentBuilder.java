@@ -5,6 +5,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -22,11 +24,11 @@ final class WarnPunishmentBuilder {
 
     }
 
-    public static void compute(WarnModule module, ProxiedPlayer target, UUID targetId, String targetName) { //#spigot [0509] <Akkarin> there is no real limit afaik (apart from the packet limits)
+    public static void compute(WarnModule module, ProxiedPlayer target, UUID targetId, String targetName) { //#spigot [0509] <Akkarin> there is no real limit afaik (apart from the packet limits) [for quit message length]
         List<WarningInfo> dbWarnings = module.getWarningsByTarget(targetId);
         List<WarningInfo> warnings = new ArrayList<>();
         for (WarningInfo warn : dbWarnings) {
-            if (warn.isValid()) {
+            if (warn.getState() == XLoginWarning.WarningState.VALID) {
                 warnings.add(warn);
             }
         }
