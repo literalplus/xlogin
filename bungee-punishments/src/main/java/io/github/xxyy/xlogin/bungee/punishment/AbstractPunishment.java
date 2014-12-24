@@ -26,11 +26,11 @@ public abstract class AbstractPunishment implements Punishment {
     private final Timestamp timestamp;
     @Nullable
     private final String sourceServerName;
-    @Nullable
+    @NotNull
     private String reason;
 
     public AbstractPunishment(@NotNull UUID targetId, @NotNull UUID sourceId, @NotNull Timestamp timestamp,
-                              @Nullable String sourceServerName, @Nullable String reason) {
+                              @Nullable String sourceServerName, @NotNull String reason) {
         this.targetId = targetId;
         this.sourceId = sourceId;
         this.timestamp = timestamp;
@@ -78,7 +78,7 @@ public abstract class AbstractPunishment implements Punishment {
         return timestamp;
     }
 
-    @Override @Nullable
+    @Override @NotNull
     public String getReason() {
         return reason;
     }
