@@ -13,6 +13,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,10 @@ public class XLoginConfig extends Config {
 
     @Comment("Whether to allow users to skip logging in when they connect using the same IP again. (Can be turned off at a per-user basis too)")
     private boolean enableSessions = true;
+
+    @Path("dynlist")
+    @Comment("Entries of the dynamic whitelist. Format: name/regex (e.g. tm/tm[1-9])")
+    private List<String> dynlistEntries = new ArrayList<>();
 
     public XLoginConfig(Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
