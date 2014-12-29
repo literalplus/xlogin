@@ -4,6 +4,7 @@ import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -29,17 +30,30 @@ public class DynlistListener implements Listener {
             return;
         }
 
-        List<DynlistEntry> matches = manager.getMatches(evt.getTarget());
+        if (isBlocked(evt.getTarget(), evt.getPlayer())) {
+            evt.getPlayer().sendMessage(new ComponentBuilder("Du darfst diesen Server momentan nicht betreten!").color(ChatColor.RED).create());
+            sendToFallbackServer(evt);
+            evt.setCancelled(true); //We reconnect so that we can watch for errors while connecting
+        }
+    }
+
+    public boolean isBlocked(ServerInfo target, ProxiedPlayer player) {
+        List<DynlistEntry> matches = manager.getMatches(target);
         if (!matches.isEmpty()) {
-            for (DynlistEntry match : matches) {
-                if (!evt.getPlayer().hasPermission("xlogin.dlby." + match.getName())) {
-                    evt.getPlayer().sendMessage(new ComponentBuilder("Du darfst diesen Server momentan nicht betreten!").color(ChatColor.RED).create());
-                    sendToFallbackServer(evt);
-                    evt.setCancelled(true); //We reconnect so that we can watch for errors while connecting
-                    return;
-                }
+            return false;
+        }
+
+        if (player == null) {
+            return true;
+        }
+
+        for (DynlistEntry match : matches) {
+            if (player.hasPermission("xlogin.dlby." + match.getName())) {
+                return true;
             }
         }
+
+        return false;
     }
 
     private boolean sendToFallbackServer(final ServerConnectEvent evt) {
