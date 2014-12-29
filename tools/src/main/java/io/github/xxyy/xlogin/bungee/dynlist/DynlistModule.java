@@ -6,6 +6,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.module.XLoginModule;
 import io.github.xxyy.xlogin.common.module.annotation.CanHasPotato;
+import io.github.xxyy.xlogin.common.module.annotation.Module;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 28/12/14
  */
+@Module(enableByDefault = true)
 public class DynlistModule extends XLoginModule {
     @Getter
     private final List<DynlistEntry> entries = new ArrayList<>();
