@@ -21,6 +21,7 @@ import io.github.xxyy.xlogin.bungee.command.CommandSessions;
 import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
+import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
 import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
@@ -99,7 +100,7 @@ public class XLoginPlugin extends XLoginBungee {
         PreferencesHolder.setConsumer(this);
 
         //Enable modules
-        new ModuleManager(this).enable(WarnModule.class, BanModule.class);
+        new ModuleManager(this).enable(WarnModule.class, BanModule.class, DynlistModule.class);
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }

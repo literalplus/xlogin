@@ -16,6 +16,7 @@
         <module>bootstrap</module>
         <module>api</module>
         <module>bungee-punishments</module>
+        <module>tools</module>
     </modules>
 
     <ciManagement>
@@ -79,6 +80,11 @@
             <dependency>
                 <groupId>io.github.xxyy.xlogin</groupId>
                 <artifactId>xlogin-spigot</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xxyy.xlogin</groupId>
+                <artifactId>xlogin-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

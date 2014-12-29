@@ -27,6 +27,10 @@
             <artifactId>xlogin-bungee-punishments</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.xxyy.xlogin</groupId>
+            <artifactId>xlogin-tools</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
         </dependency>
