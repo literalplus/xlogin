@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.bungee.dynlist;
 
 import lombok.Getter;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
@@ -81,6 +82,15 @@ public class DynlistModule extends XLoginModule {
             }
         }
 
+        if(removed != null) {
+            plugin.getConfig().getDynlistEntries().remove(removed.serialize());
+            try {
+                plugin.getConfig().save();
+            } catch (InvalidConfigurationException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
         return removed;
     }
 
@@ -88,6 +98,13 @@ public class DynlistModule extends XLoginModule {
         DynlistEntry entry = new DynlistEntry(name, Pattern.compile(regex));
         entries.add(entry);
         plugin.getConfig().getDynlistEntries().add(entry.serialize());
+
+        try {
+            plugin.getConfig().save();
+        } catch (InvalidConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
+
         return entry;
     }
 
