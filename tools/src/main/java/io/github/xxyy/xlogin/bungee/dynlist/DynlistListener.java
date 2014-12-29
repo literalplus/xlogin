@@ -5,11 +5,17 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Listens for events related to Dynlist, xLogin's dynamic whitelist system.
@@ -19,15 +25,67 @@ import java.util.List;
  */
 public class DynlistListener implements Listener {
     private final DynlistModule manager;
+    private boolean fullBypass = false;
+    private Map<UUID, String> bypasses = new HashMap<>();
 
     public DynlistListener(DynlistModule manager) {
         this.manager = manager;
     }
 
+    @EventHandler //Summon compatibility (/send)
+    public void onCommand(ChatEvent evt) {
+        if (!evt.getMessage().startsWith("/send ")) {
+            return;
+        }
+
+        String[] args = evt.getMessage().split(" ");
+        if (args.length != 2) {
+            return;
+        }
+
+        if (!isBlocked(args[2], null)) {
+            return;
+        }
+
+        if (args[0].equalsIgnoreCase("all") || args[0].equalsIgnoreCase("current")) {
+            manager.getPlugin().getProxy().getScheduler().schedule(manager.getPlugin(),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            fullBypass = false;
+                        }
+                    }, 1, TimeUnit.SECONDS);
+            fullBypass = true;
+            if (evt.getSender() instanceof CommandSender) {
+                ((CommandSender) evt.getSender()).sendMessage("§aBypassing Dynlist for your /send command!");
+            }
+        } else {
+            final ProxiedPlayer plr = manager.getPlugin().getProxy().getPlayer(args[1]);
+            if(plr != null) {
+                bypasses.put(plr.getUniqueId(), args[2]);
+                manager.getPlugin().getProxy().getScheduler().schedule(manager.getPlugin(),
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                bypasses.remove(plr.getUniqueId());
+                            }
+                        }, 1, TimeUnit.SECONDS);
+            }
+            if (evt.getSender() instanceof CommandSender) {
+                ((CommandSender) evt.getSender()).sendMessage("§aBypassing Dynlist for your /send command!");
+            }
+        }
+    }
+
     @EventHandler
     public void onServerSwitch(ServerConnectEvent evt) {
-        if (evt.getPlayer().hasPermission("xlogin.dynlist")) {
+        if (evt.getPlayer().hasPermission("xlogin.dynlist") || fullBypass ) {
             return;
+        }
+
+        if(bypasses.containsKey(evt.getPlayer().getUniqueId()) &&
+                evt.getTarget().getName().equalsIgnoreCase(bypasses.get(evt.getPlayer().getUniqueId()))) {
+            bypasses.remove(evt.getPlayer().getUniqueId());
         }
 
         if (isBlocked(evt.getTarget(), evt.getPlayer())) {
@@ -38,7 +96,11 @@ public class DynlistListener implements Listener {
     }
 
     public boolean isBlocked(ServerInfo target, ProxiedPlayer player) {
-        List<DynlistEntry> matches = manager.getMatches(target);
+        return isBlocked(target.getName(), player);
+    }
+
+    public boolean isBlocked(String targetName, ProxiedPlayer player) {
+        List<DynlistEntry> matches = manager.getMatches(targetName);
         if (!matches.isEmpty()) {
             return false;
         }
