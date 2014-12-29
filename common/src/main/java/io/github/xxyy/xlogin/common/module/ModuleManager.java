@@ -110,6 +110,8 @@ public class ModuleManager {
                 return false;
             }
             plugin.getLogger().info("[" + clazz.getSimpleName() + "] Successfully enabled!");
+        } else {
+            plugin.getLogger().info("[" + clazz.getSimpleName() + "] Disabled in config, skipping!");
         }
 
         return true; //Was about time
