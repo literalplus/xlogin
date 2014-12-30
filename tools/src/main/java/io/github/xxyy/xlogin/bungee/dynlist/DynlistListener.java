@@ -101,16 +101,13 @@ public class DynlistListener implements Listener {
 
     public boolean isBlocked(String targetName, ProxiedPlayer player) {
         List<DynlistEntry> matches = manager.getMatches(targetName);
-        if (!matches.isEmpty()) {
-            return false;
-        }
 
         if (player == null) {
-            return true;
+            return !matches.isEmpty();
         }
 
         for (DynlistEntry match : matches) {
-            if (player.hasPermission("xlogin.dlby." + match.getName())) {
+            if (!player.hasPermission("xlogin.dlby." + match.getName())) {
                 return true;
             }
         }
