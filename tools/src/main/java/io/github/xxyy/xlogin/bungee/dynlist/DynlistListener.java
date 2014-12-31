@@ -125,6 +125,11 @@ public class DynlistListener implements Listener {
             }
             return false;
         }
+
+        if(evt.getPlayer().getServer().getInfo().getName().equals(fallbackServerName)) {
+            return true;
+        }
+
         ServerInfo info = manager.getPlugin().getProxy().getServerInfo(fallbackServerName);
         if (info == null) {
             evt.getPlayer().disconnect(
