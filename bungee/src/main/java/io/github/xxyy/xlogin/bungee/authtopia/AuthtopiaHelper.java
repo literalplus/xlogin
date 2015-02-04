@@ -46,30 +46,6 @@ public class AuthtopiaHelper {
      */
     public AuthtopiaHelper(final XLoginPlugin plugin) {
         this.plugin = plugin;
-//        ConfigurationAdapter config = plugin.getProxy().getConfigurationAdapter();
-//        this.connect(host, port, user, pass, db, new FutureCallback<Boolean>() {
-//            @Override
-//            public void onSuccess(@NotNull Boolean result) {
-//                if (result) {
-//                    plugin.getLogger().info("[Authtopia|SQL] Successfully connected to MySQL");
-//                    AuthtopiaHelper.this.createTables();
-//                } else {
-//                    plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
-//                            {
-//                                    host, port, db
-//                            });
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NotNull Throwable thrwbl) {
-//                thrwbl.printStackTrace();
-//                plugin.getLogger().log(Level.SEVERE, "[Authtopia|SQL] Could not connect to SQL at {0}:{1}/{2} !", new Object[]
-//                        {
-//                                host, port, db
-//                        });
-//            }
-//        });
         plugin.getProxy().registerChannel(CHANNEL_NAME);
         plugin.getLogger().log(Level.INFO, "[Authopia] Loaded BungeeCord hook.");
     }
@@ -107,12 +83,18 @@ public class AuthtopiaHelper {
      * @param name     Player to check for
      * @param callback Code to execute once the check is complete.
      */
-    public void isSimulateCracked(final String name, FutureCallback<Boolean> callback) {
-        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
-            callback.onSuccess(!(qr.rs().next() && qr.rs().getInt("cnt") > 0));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void isSimulateCracked(final String name, final FutureCallback<Boolean> callback) {
+        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() { //Run async because EventHandler#post(..) blocks all other events
+            @Override
+            public void run() {
+                try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult(
+                        "SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
+                    callback.onSuccess(!(qr.rs().next() && qr.rs().getInt("cnt") > 0));
+                } catch (SQLException e) {
+                    callback.onFailure(e);
+                }
+            }
+        });
     }
 
     /**
