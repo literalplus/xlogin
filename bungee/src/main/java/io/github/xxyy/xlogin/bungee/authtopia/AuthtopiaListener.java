@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AuthtopiaListener implements Listener { //FIXME DoS detection is a brute-force approach #379
     public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
-    private final int MAX_JOINS_PER_INTERVAL = 10; //Should automatically adapt to load
+    public static int maxJoinsPerInterval = 30; //Should automatically adapt to load
     private final AtomicInteger joinAttempts = new AtomicInteger(); //Gets reset automatically every x seconds
     private final XLoginPlugin plugin;
 
@@ -37,7 +37,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
             @Override
             public void run() {
                 int previousCount = joinAttempts.getAndSet(0);
-                if (previousCount > MAX_JOINS_PER_INTERVAL) { //TODO: Intelligent detection of same IPs
+                if (previousCount > maxJoinsPerInterval) { //TODO: Intelligent detection of same IPs
                     plugin.getLogger().severe(String.format("[POSSIBLE ATTACK] %d players tried to join in %d!!!",
                             previousCount, JOIN_LIMIT_RESET_INTERVAL));
                 }
@@ -47,7 +47,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
-        if(joinAttempts.incrementAndGet() > MAX_JOINS_PER_INTERVAL) {
+        if(joinAttempts.incrementAndGet() > maxJoinsPerInterval) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
                     "Bitte versuche es in 5 Minuten erneut.");
