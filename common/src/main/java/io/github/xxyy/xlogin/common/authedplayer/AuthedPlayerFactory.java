@@ -35,7 +35,7 @@ public final class AuthedPlayerFactory {
             return new AuthedPlayer[0];
         }
 
-        String query = "SELECT uuid,username,password,salt,user_lastip,premium,ign_p_msg,reg_date,x,y,z,world,sessions_enabled FROM " +
+        String query = "SELECT uuid,username,password,salt,user_lastip,premium,ign_p_msg,reg_date,sessions_enabled FROM " +
                 AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE ";
 
         if (input.startsWith("/")) {
