@@ -114,7 +114,7 @@ public class AuthtopiaHelper {
                     } catch (IllegalStateException e) {
                         plugin.getLogger().warning(String.format("Mojang failed auth for %s: %s",
                                 evt.getConnection().getName(), e.getCause().getMessage()));
-                        evt.setCancelReason("§4Mojang's Sitzungsserver sind momentan down.\n" +
+                        evt.setCancelReason("§4Mojang's API-Server sind momentan down.\n" +
                                 "§eDaher können wir nicht herausfinden, ob du Premium bist.\n\n" +
                                 "§aMehr Info: http://xpaw.ru/mcstatus https://help.mojang.com/\n" +
                                 "§6Das Wichtigste: §oKeine Panik! :)\n" +
