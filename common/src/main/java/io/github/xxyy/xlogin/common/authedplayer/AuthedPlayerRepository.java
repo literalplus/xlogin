@@ -24,6 +24,10 @@ import java.util.UUID;
  * Handles the creation of {@link AuthedPlayer}s.
  * Either creates them newly or gets them from database.
  * New players are written to database immediately.
+ * <p>
+ * <b>Warning: This class is not particularly thread-safe and will overwrite any remote changes with local data
+ * in various cases. Proceed with care.</b>
+ * </p>
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 15.5.14
@@ -34,8 +38,33 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
     private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
     private UUIDRepository parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
+    private final boolean readOnly;
 
-//////////////////////// XLOGIN REPO API METHODS ///////////////////////////////////////////////////////////////////////
+    /**
+     * Constructs a new repository. If read-only, no data will be written back to database which has been retrieved from
+     * here. This is mainly intended to unwanted async modifications.
+     *
+     * @param readOnly whether this repository's data is read-only
+     */
+    public AuthedPlayerRepository(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
+     * Checks if this repository has been marked as read-only. Read-only repositories will not allow any data retrieved
+     * from them to be written back to database. This is a security measure which ensures that if you only want to retrieve data,
+     * you won't accidentally write anything, thus possibly creating undefined behaviour because full-access repositories
+     * expect data in the database not to change. Additionally, you might write back some outdated data which has already
+     * been updated by full-access repositories. Respecting this setting is one of the Three Laws statically programmed
+     * into every single {@link AuthedPlayerFactory}.
+     *
+     * @return whether this repository is read-only.
+     */
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    //////////////////////// XLOGIN REPO API METHODS ///////////////////////////////////////////////////////////////////////
 
     @Override
     public boolean isPlayerKnown(@NotNull UUID uuid) {
@@ -62,7 +91,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
         List<AuthedPlayer> result = nameProfilesCache.get(name);
 
         if (result == null) {
-            result = AuthedPlayerFactory.getProfilesByName(name);
+            result = AuthedPlayerFactory.getProfilesByName(name, this);
 
 
             if (result.size() == 1) {
@@ -128,7 +157,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
         AuthedPlayer authedPlayer = idProfileCache.get(uuid);
 
         if (authedPlayer == null) {
-            authedPlayer = AuthedPlayerFactory.get(uuid, name);
+            authedPlayer = AuthedPlayerFactory.get(uuid, name, this);
 
             if (!authedPlayer.getName().equals(name)) {
                 authedPlayer.setName(name);
@@ -154,7 +183,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
             forgetProfile(oldPlayer);
         }
 
-        AuthedPlayer refreshedPlayer = AuthedPlayerFactory.get(uuid, name);
+        AuthedPlayer refreshedPlayer = AuthedPlayerFactory.get(uuid, name, this);
 
         updateProfile(refreshedPlayer);
 
@@ -165,7 +194,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private AuthedPlayer overrideProfile(UUID uuid) {
         AuthedPlayer result;
 
-        result = AuthedPlayerFactory.getProfile(uuid);
+        result = AuthedPlayerFactory.getProfile(uuid, this);
         idProfileCache.put(uuid, result);
 
         return result;

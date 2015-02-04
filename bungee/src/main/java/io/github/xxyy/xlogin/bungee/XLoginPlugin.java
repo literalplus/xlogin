@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 public class XLoginPlugin extends XLoginBungee {
     public static final String PLUGIN_VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
-    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository(false);
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY); //TODO clear every 5m or so
     @Getter
     private XLoginConfig config;

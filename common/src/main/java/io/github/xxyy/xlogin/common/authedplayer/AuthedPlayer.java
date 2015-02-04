@@ -23,6 +23,7 @@ import java.util.UUID;
 public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     public static final String AUTH_DATA_TABLE_NAME = "mt_main.xlogin_data";
 
+    private final AuthedPlayerRepository repository;
     private String uuid;
     private UUID uniqueId;
 
@@ -40,9 +41,10 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     private AuthenticationProvider authenticationProvider = null;
     private boolean authenticated = false;
 
-    protected AuthedPlayer(String uuid, String name, String password, String salt, String lastIp,
-                        boolean premium, boolean disabledPremiumMessage, Timestamp registrationDate,
-                        boolean sessionsEnabled) {
+    protected AuthedPlayer(AuthedPlayerRepository repository, String uuid, String name, String password, String salt, String lastIp,
+                           boolean premium, boolean disabledPremiumMessage, Timestamp registrationDate,
+                           boolean sessionsEnabled) {
+        this.repository = repository;
         this.uuid = uuid;
         this.uniqueId = UUID.fromString(uuid);
         this.name = name;
@@ -217,6 +219,10 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
 
     public void setSessionsEnabled(boolean sessionsEnabled) {
         this.sessionsEnabled = sessionsEnabled;
+    }
+
+    public AuthedPlayerRepository getRepository() {
+        return repository;
     }
 
     public boolean isValid() {

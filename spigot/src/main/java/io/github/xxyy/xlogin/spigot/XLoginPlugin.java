@@ -39,7 +39,7 @@ import java.util.UUID;
  * @since 22.5.14
  */
 public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
-    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository();
+    public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository(true);
     public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
     public static final String VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();

@@ -58,7 +58,7 @@ public final class AuthedPlayerFactory {
             while (qr.rs().next()) {
                 AuthedPlayer authedPlayer = getCached(repository, qr.rs().getString("uuid"));
                 if (authedPlayer == null) {
-                    authedPlayer = getPlayerFromResultSet(qr.rs());
+                    authedPlayer = getPlayerFromResultSet(qr.rs(), repository);
                 }
                 rtrn.add(authedPlayer);
             }
@@ -69,23 +69,23 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    public static AuthedPlayer get(UUID uuid, String username) {
-        return get(uuid, username, true);
+    public static AuthedPlayer get(UUID uuid, String username, AuthedPlayerRepository repository) {
+        return get(uuid, username, true, repository);
     }
 
-    public static List<AuthedPlayer> getProfilesByName(String username) {
+    public static List<AuthedPlayer> getProfilesByName(String username, AuthedPlayerRepository repository) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE username = ? ORDER BY premium DESC", username).assertHasResultSet()) {
-            return getProfilesFromResultSet(qr.rs());
+            return getProfilesFromResultSet(qr.rs(), repository);
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    public static AuthedPlayer getProfile(UUID uuid) {
+    public static AuthedPlayer getProfile(UUID uuid, AuthedPlayerRepository repository) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE uuid = ? ORDER BY premium DESC", uuid.toString()).assertHasResultSet()) {
-            List<AuthedPlayer> profiles = getProfilesFromResultSet(qr.rs());
+            List<AuthedPlayer> profiles = getProfilesFromResultSet(qr.rs(), repository);
 
             if (profiles.isEmpty()) {
                 return null;
@@ -99,11 +99,11 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    private static List<AuthedPlayer> getProfilesFromResultSet(ResultSet rs) throws SQLException {
+    private static List<AuthedPlayer> getProfilesFromResultSet(ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
         ImmutableList.Builder<AuthedPlayer> builder = null;
 
         while (rs.next()) {
-            AuthedPlayer authedPlayer = getPlayerFromResultSet(rs);
+            AuthedPlayer authedPlayer = getPlayerFromResultSet(rs, repository);
 
             if (authedPlayer.isPremium()) {
                 return ImmutableList.of(authedPlayer);
@@ -119,21 +119,21 @@ public final class AuthedPlayerFactory {
         return builder == null ? ImmutableList.<AuthedPlayer>of() : builder.build();
     }
 
-    private static AuthedPlayer getPlayerFromResultSet(ResultSet rs) throws SQLException {
-        return new AuthedPlayer(rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
+    private static AuthedPlayer getPlayerFromResultSet(ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
+        return new AuthedPlayer(repository, rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
                 rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
                 rs.getTimestamp("reg_date"), rs.getBoolean("sessions_enabled"));
     }
 
-    public static AuthedPlayer get(UUID uuid, String username, boolean create) {
+    public static AuthedPlayer get(UUID uuid, String username, boolean create, AuthedPlayerRepository repository) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid = ?", uuid.toString())
                 .assertHasResultSet()) {
             if (qr.rs().next()) {
-                return getPlayerFromResultSet(qr.rs());
+                return getPlayerFromResultSet(qr.rs(), repository);
             } else if (create) {
 //                PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
 //                        "uuid=?, username=?", uuid.toString(), username);
-                return new AuthedPlayer(uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()), true);
+                return new AuthedPlayer(repository, uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()), true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -152,7 +152,8 @@ public final class AuthedPlayerFactory {
             return;
         }
 
-        Validate.isTrue(ap.isAuthenticated(), "Don't fucking save non-authed players, will you!!");
+        Validate.isTrue(!ap.getRepository().isReadOnly(), "This data has been marked read-only by its repository.");
+        Validate.isTrue(ap.isAuthenticated(), "Don't fucking save non-authed players, will you!");
 
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
