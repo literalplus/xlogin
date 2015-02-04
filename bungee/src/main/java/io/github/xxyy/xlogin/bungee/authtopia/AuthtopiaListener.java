@@ -1,6 +1,5 @@
 package io.github.xxyy.xlogin.bungee.authtopia;
 
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -18,6 +17,7 @@ import io.github.xxyy.xlogin.common.ips.IpAddress;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Listens for Authtopia-related events.
@@ -25,12 +25,35 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 10.5.14
  */
-@RequiredArgsConstructor
-public class AuthtopiaListener implements Listener {
+public class AuthtopiaListener implements Listener { //FIXME DoS detection is a brute-force approach #379
+    public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
+    private final int MAX_JOINS_PER_INTERVAL = 10; //Should automatically adapt to load
+    private final AtomicInteger joinAttempts = new AtomicInteger(); //Gets reset automatically every x seconds
     private final XLoginPlugin plugin;
+
+    public AuthtopiaListener(final XLoginPlugin plugin) {
+        this.plugin = plugin;
+        plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+            @Override
+            public void run() {
+                int previousCount = joinAttempts.getAndSet(0);
+                if (previousCount > MAX_JOINS_PER_INTERVAL) { //TODO: Intelligent detection of same IPs
+                    plugin.getLogger().severe(String.format("[POSSIBLE ATTACK] %d players tried to join in %d!!!",
+                            previousCount, JOIN_LIMIT_RESET_INTERVAL));
+                }
+            }
+        }, JOIN_LIMIT_RESET_INTERVAL, JOIN_LIMIT_RESET_INTERVAL, TimeUnit.SECONDS);
+    }
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
+        if(joinAttempts.incrementAndGet() > MAX_JOINS_PER_INTERVAL) {
+            evt.setCancelled(true);
+            evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
+                    "Bitte versuche es in 5 Minuten erneut.");
+            return;
+        }
+
         String playerName = evt.getConnection().getName();
 
         if (playerName.contains("/") //Possible to screw up some permission plugins with this
@@ -132,7 +155,7 @@ public class AuthtopiaListener implements Listener {
                     plugin.getRepository().updateProfile(authedPlayer);
                 }
 
-                if(!authed) {
+                if (!authed) {
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
                 }
 

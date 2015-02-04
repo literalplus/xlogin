@@ -201,63 +201,6 @@ public class AuthtopiaHelper {
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }
 
-//    /**
-//     * Connects to a SQL server.
-//     *
-//     * @param host     Hostname to use
-//     * @param port     Port to connect to
-//     * @param user     User to identify with
-//     * @param pass     Password to use
-//     * @param db       Database to query
-//     * @param callback Code to be executed once the connection has been
-//     *                 established.
-//     */
-//    private void connect(final String host, final int port, final String user, final String pass, final String db, FutureCallback<Boolean> callback) {
-//        ListenableFuture<Boolean> submit = service.submit(() -> {
-//            Properties p = new Properties(System.getProperties());
-//            p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
-//            p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "OFF");
-//            System.setProperties(p);
-//            dataSource = new ComboPooledDataSource();
-//            dataSource.setDriverClass("com.mysql.jdbc.Driver");
-//            dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db);
-//            dataSource.setUser(user);
-//            dataSource.setPassword(pass);
-//            dataSource.setMinPoolSize(1);
-//            dataSource.setMaxPoolSize(5);
-//            dataSource.setTestConnectionOnCheckout(true);
-//            dataSource.setCheckoutTimeout(3_000); // 3 seconds
-//            return true;
-//
-//        });
-//
-//        Futures.addCallback(submit, callback);
-//    }
-
-//    /**
-//     * Creates necessary tables.
-//     */
-//    private void createTables() {
-//        Statement stmt = null;
-//        Connection con = null;
-//        try {
-//            con = dataSource.getConnection();
-//            stmt = con.createStatement();
-//            String sql = "CREATE TABLE IF NOT EXISTS `auth_list` ("
-//                    + "`id` int(100) NOT NULL AUTO_INCREMENT,"
-//                    + "`name` varchar(16) NOT NULL,"
-//                    + "PRIMARY KEY (`id`),"
-//                    + "UNIQUE KEY `name` (`name`)"
-//                    + ")";
-//            stmt.execute(sql);
-//        } catch (SQLException ex) {
-//            ProxyServer.getInstance().getLogger().log(Level.SEVERE, "[Authopia|SQL] Could not create auth_list!", ex);
-//        } finally {
-//            tryClose(stmt);
-//            tryClose(con);
-//        }
-//    }
-
     /**
      * Destroys this object and cleans stuff up.
      */
