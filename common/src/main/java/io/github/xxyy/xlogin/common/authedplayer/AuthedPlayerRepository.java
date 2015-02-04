@@ -151,14 +151,10 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
         if (oldPlayer != null) {
             oldPlayer.setValid(false, false);
+            forgetProfile(oldPlayer);
         }
 
         AuthedPlayer refreshedPlayer = AuthedPlayerFactory.get(uuid, name);
-
-        if (!refreshedPlayer.getName().equals(name)) {
-            refreshedPlayer.setName(name);
-//            AuthedPlayerFactory.save(refreshedPlayer);
-        }
 
         updateProfile(refreshedPlayer);
 
@@ -187,6 +183,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     /**
      * Checks if a profile matching given UUID is currently cached.
+     *
      * @param uuid the uuid to find
      * @return true if a profile matching given UUID is cached
      */
