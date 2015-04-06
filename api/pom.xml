@@ -61,7 +61,7 @@
                         <![CDATA[Copyright ${project.inceptionYear} - ${maven.build.timestamp}, <a href="http://xxyy.github.io/">xxyy<a> (Philipp Nowak). Do not distribute or otherwise use without explicit written permission from the author.]]></bottom>
                     <defaultAuthor><![CDATA[<a href="http://xxyy.github.io/">probably xxyy</a>]]></defaultAuthor>
                     <detectLinks>true</detectLinks>
-                    <doctitle>xy_common ${project.version} API - Do not distribute!</doctitle>
+                    <doctitle>xLogin ${project.version} API - Do not distribute!</doctitle>
                     <reportOutputDirectory>${project.basedir}/target/site/apidocs</reportOutputDirectory>
                     <charset>UTF-8</charset>
                     <docencoding>UTF-8</docencoding>
