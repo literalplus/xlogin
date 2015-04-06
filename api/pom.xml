@@ -58,7 +58,7 @@
                 <configuration>
                     <excludePackageNames>*.lib.*</excludePackageNames>
                     <bottom>
-                        <![CDATA[Copyright ${project.inceptionYear} - ${maven.build.timestamp}, <a href="http://xxyy.github.io/">xxyy<a> (Philipp Nowak). Do not distribute or otherwise use without explicit written permission from the author.]]></bottom>
+                        <![CDATA[Copyright ${project.inceptionYear} - ${maven.build.timestamp}, <a href="https://xxyy.github.io/">xxyy<a> (Philipp Nowak). Do not distribute or otherwise use without explicit written permission from the author.]]></bottom>
                     <defaultAuthor><![CDATA[<a href="http://xxyy.github.io/">probably xxyy</a>]]></defaultAuthor>
                     <detectLinks>true</detectLinks>
                     <doctitle>xLogin ${project.version} API - Do not distribute!</doctitle>
