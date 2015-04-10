@@ -84,9 +84,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
                 getConfig().getString("sql.password"))));
 
 
-        if (Bukkit.getOnlinePlayers().length > 0) {
-            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "resend");
-            sendAPIMessage(Bukkit.getOnlinePlayers()[0], "server-name");
+        if (Bukkit.getOnlinePlayers().size() > 0) {
+            sendAPIMessage(Bukkit.getOnlinePlayers().stream().findAny().get(), "resend");
+            sendAPIMessage(Bukkit.getOnlinePlayers().stream().findAny().get(), "server-name");
             GenericListener.skip = true;
         }
 
