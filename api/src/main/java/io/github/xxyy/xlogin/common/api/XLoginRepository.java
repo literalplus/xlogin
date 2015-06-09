@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * A repository containing xLogin profiles.
- * Implementations also handle all tasks from {@link UUIDRepository} as a FREE BONUS!!
- * (only if you order today tho!!!)
+ * Specifies a repository for xLogin profiles which acts as an interface between xLogin API consumers and the xLogin
+ * database. Implementations may choose to implement caching.
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 8.7.14
@@ -20,38 +19,53 @@ public interface XLoginRepository extends UUIDRepository {
      * Checks whether a player specified by a given UUID is known to the database.
      * Will make a query, so make sure to execute this async wherever possible.
      *
-     * @param uuid Unique Id of the player to find
-     * @return Whether that UUID is mapped to a player in the database.
+     * @param uuid the unique id of the player to find
+     * @return whether that UUID is mapped to a player in the database.
      */
     boolean isPlayerKnown(@NotNull UUID uuid);
 
     /**
-     * Gets profiles that match the given user name. Premium players are returned first.
+     * Fetches profiles that match the given user name from the local xLogin database. This will never query external
+     * services, such as the Mojang Profiles API. If a player with Minecraft premium account is found, that one is
+     * returned instantly. If not, players without Minecraft premium accounts will be returned. The result may be
+     * cached by the local xLogin repository cache.
      *
-     * @param name Name of the player to get. Casing is ignored.
-     * @return List of known profiles for that criteria.
-     * @see #getProfiles(String)
+     * @param name the name of the player to get, case-insensitive
+     * @return a list of known profiles for that criteria
+     * @see #getProfiles(String) also accepts strings formatted like UUIDs
      */
     @NotNull
     List<? extends XLoginProfile> getProfilesByName(@NotNull String name);
 
     /**
-     * Gets profiles that match the given criteria. Premium players are returned first.
-     * If you are certain that the input is not a UUID, use {@link #getProfilesByName(String)}
+     * Fetches profiles that match the given criteria string from the local xLogin database. This will never query
+     * external services, such as the Mojang Profiles API. If a player with Minecraft premium account is found, that
+     * one is returned instantly. If not, players without Minecraft premium accounts will be returned. The result may
+     * be cached by the local xLogin repository cache.
+     * <p>
+     *     This method handles names as well as strings formatted like a UUID.
+     * </p>
      *
-     * @param input {Name of the player to get. Casing is ignored.} or {a valid UUID String}
-     * @return List of known profiles for that criteria.
+     * @param input the criteria string to match against
+     * @return a list of known profiles for that criteria string
+     * @see #getProfilesByName(String) checks for names only
      */
     @NotNull
     List<? extends XLoginProfile> getProfiles(@NotNull String input);
 
     /**
-     * Gets the profile for the given UUID.
+     * Fetches the local xLogin profile for a given UUID from the local xLogin database. This will never query external
+     * services, such as the Mojang Profiles API.
      *
-     * @param uuid UUID of the profile to get
-     * @return Profile info for requested UUID or NULL if there's no such profile.
+     * @param uuid the unique id of the profile to get
+     * @return the retrieved profile, or null if there is no profile for that unique id
      */
     XLoginProfile getProfile(@NotNull UUID uuid);
 
+    /**
+     * Forces the profile with given unique id to be fetched from database to the local xLogin repository cache,
+     * removing any previous entries. This is especially helpful if you know that the profile has changed.
+     * @param uuid the unique id of the profile to refresh
+     */
     void refreshProfile(UUID uuid);
 }
