@@ -6,13 +6,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.gag.annotation.remark.ShoutOutTo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PreLoginEvent;
-import org.jetbrains.annotations.NotNull;
 
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.ProfileRepository;
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.common.util.CommandHelper;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.Const;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
