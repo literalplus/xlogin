@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.common.module.annotation;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.module.XLoginModule;
 
 import java.lang.annotation.Documented;
@@ -18,7 +19,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Module {
-    Class<? extends XLoginModule>[] dependencies() default {};
+    @NotNull Class<? extends XLoginModule>[] dependencies() default {};
 
     boolean enableByDefault() default false;
 }

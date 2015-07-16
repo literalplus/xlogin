@@ -1,5 +1,7 @@
 package io.github.xxyy.xlogin.common.ips;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+
 /**
  * Represents an IP address stored in database.
  *
@@ -40,7 +42,7 @@ public class IpAddress {
      * Makes this object adapt the properties of the argument.
      * @param other Object to source properties from.
      */
-    public void adaptToProperties(IpAddress other) {
+    public void adaptToProperties(@NotNull IpAddress other) {
         this.maxUsers = other.getMaxUsers();
     }
 
@@ -51,8 +53,7 @@ public class IpAddress {
         if (!other.canEqual(this)) return false;
         final Object this$ip = this.getIp();
         final Object other$ip = other.getIp();
-        if (this$ip == null ? other$ip != null : !this$ip.equals(other$ip)) return false;
-        return true;
+        return !(this$ip == null ? other$ip != null : !this$ip.equals(other$ip));
     }
 
     public int hashCode() {

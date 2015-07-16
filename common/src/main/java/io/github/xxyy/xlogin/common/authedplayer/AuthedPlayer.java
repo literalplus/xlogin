@@ -1,10 +1,11 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import org.apache.commons.lang3.Validate;
-import org.jetbrains.annotations.NotNull;
 
 import io.github.xxyy.common.util.ToShortStringable;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.api.XLoginProfile;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
@@ -33,17 +34,19 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
 
     private String password; //Yes, encrypted...
     private String salt;
+    @Nullable
     private String lastIp;
     private Timestamp registrationDate;
     private boolean sessionsEnabled;
 
     private boolean valid = true;
+    @Nullable
     private AuthenticationProvider authenticationProvider = null;
     private boolean authenticated = false;
 
-    protected AuthedPlayer(AuthedPlayerRepository repository, String uuid, String name, String password, String salt, String lastIp,
-                           boolean premium, boolean disabledPremiumMessage, Timestamp registrationDate,
-                           boolean sessionsEnabled) {
+    protected AuthedPlayer(AuthedPlayerRepository repository, @NotNull String uuid, String name, String password,
+                           String salt, @Nullable String lastIp, boolean premium, boolean disabledPremiumMessage,
+                           Timestamp registrationDate, boolean sessionsEnabled) {
         this.repository = repository;
         this.uuid = uuid;
         this.uniqueId = UUID.fromString(uuid);
@@ -62,7 +65,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
      *
      * @return true if the user has opted in to use premium authentication and was logged in. False otherwise.
      */
-    public boolean authenticatePremium(String currentIp) {
+    public boolean authenticatePremium(@NotNull String currentIp) {
         if (this.isPremium()) {
             authenticate(AuthenticationProvider.MINECRAFT_PREMIUM, currentIp);
             return true;
@@ -80,7 +83,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
      * @param newIp    Current IP of this user
      * @return whether the authentication succeeded.
      */
-    public boolean authenticatePassword(String password, String newIp) {
+    public boolean authenticatePassword(@Nullable String password, @NotNull String newIp) {
         if (password == null || getPassword() == null ||
                 password.isEmpty() || getPassword().isEmpty() ||
                 !PasswordHelper.passwordsEqual(password, getSalt(), getPassword())) {
@@ -101,7 +104,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         return true;
     }
 
-    public boolean authenticateSession(IpAddress ipAddress) {
+    public boolean authenticateSession(@NotNull IpAddress ipAddress) {
         if (SessionHelper.hasValidSession(this, ipAddress)) {
             authenticate(AuthenticationProvider.XLOGIN_SESSION, ipAddress.getIp());
 
@@ -123,13 +126,14 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
      * @param serverName the name of the server to get the location for
      * @return the location or NULL if no location was saved for given server
      */
+    @Nullable
     public LocationInfo getLastLocation(String serverName) {
         Validate.notNull(serverName, "Cannot get location for null server name!");
 
         return LocationInfo.load(this, serverName);
     }
 
-    public void setLastLocation(LocationInfo toSave) {
+    public void setLastLocation(@NotNull LocationInfo toSave) {
         toSave.save();
     }
 
@@ -176,15 +180,16 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.salt = salt;
     }
 
+    @Nullable
     @Override
     public String getLastIp() {
         return this.lastIp;
     }
 
-    public void setLastIp(String newIpString) {
+    public void setLastIp(@Nullable String newIpString) {
         if (newIpString == null || !newIpString.equals(getLastIp())) {
             this.lastIp = newIpString;
-            if (IpAddressFactory.exists(newIpString)) {
+            if (newIpString != null && IpAddressFactory.exists(newIpString)) {
                 IpAddress oldIp = IpAddress.fromIpString(this.lastIp);
                 IpAddress newIp = IpAddress.fromIpString(newIpString);
                 newIp.adaptToProperties(oldIp); //TODO: Do we need the old IP here?
@@ -250,11 +255,12 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.setAuthenticationProvider(null); //to prevent cracked users from hijacking premium sessions.
     }
 
+    @Nullable
     public AuthenticationProvider getAuthenticationProvider() {
         return this.authenticationProvider;
     }
 
-    public void setAuthenticationProvider(AuthenticationProvider authenticationProvider) {
+    public void setAuthenticationProvider(@Nullable AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
 
@@ -266,6 +272,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.authenticated = authenticated;
     } //TODO used by recv msg
 
+    @NotNull
     @Override
     public String getId() {
         return getUuid();
@@ -276,7 +283,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         return !isPremium();
     }
 
-    public void registerPassword(String password, String ip) {
+    public void registerPassword(@NotNull String password, @NotNull String ip) {
         String salt = PasswordHelper.generateSalt();
 
         setSalt(salt);
@@ -317,6 +324,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         return other instanceof AuthedPlayer;
     }
 
+    @NotNull
     public String toString() {
         return "AuthedPlayer(uuid=" + this.getUuid() +
                 ", name=" + this.getName() + ", lastIp=" + this.getLastIp() + ", premium=" + this.isPremium() +
@@ -325,6 +333,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
                 ", authenticationProvider=" + this.getAuthenticationProvider() + ", authenticated=" + this.isAuthenticated() + ")";
     }
 
+    @NotNull
     @Override
     public String toShortString() {
         return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";

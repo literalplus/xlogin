@@ -1,6 +1,7 @@
 package io.github.xxyy.xlogin.common.ips;
 
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
@@ -17,7 +18,7 @@ public final class SessionHelper {
     private SessionHelper() {
     }
 
-    public static boolean hasValidSession(AuthedPlayer authedPlayer, IpAddress address) {
+    public static boolean hasValidSession(@NotNull AuthedPlayer authedPlayer, @NotNull IpAddress address) {
         Session session;
 
         try(QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM mt_main.xlogin_sessions WHERE user=?", authedPlayer.getUuid()).assertHasResultSet()) {
@@ -40,14 +41,14 @@ public final class SessionHelper {
         return valid;
     }
 
-    public static boolean isSessionValid(AuthedPlayer authedPlayer, Session session, IpAddress address) {
+    public static boolean isSessionValid(@NotNull AuthedPlayer authedPlayer, @NotNull Session session, @NotNull IpAddress address) {
         return authedPlayer.isSessionsEnabled() &&
                 session.getIp().getIp().equals(address.getIp()) &&
                 (System.currentTimeMillis() / 1000L) < session.getExpiryTime() &&
                 session.getUuid().equals(authedPlayer.getUuid());
     }
 
-    public static boolean start(AuthedPlayer authedPlayer) {
+    public static boolean start(@NotNull AuthedPlayer authedPlayer) {
         if(!authedPlayer.isAuthenticated() || !authedPlayer.isValid() || authedPlayer.isPremium()) {
             return false;
         }

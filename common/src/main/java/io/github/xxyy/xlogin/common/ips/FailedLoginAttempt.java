@@ -1,8 +1,13 @@
 package io.github.xxyy.xlogin.common.ips;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
@@ -63,6 +68,7 @@ public class FailedLoginAttempt { //FIXME
         this.timestamp = timestamp;
     }
 
+    @NotNull
     public String toString() {
         return "io.github.xxyy.xlogin.common.ips.FailedLoginAttempt(id=" + this.id + ", ip=" + this.ip + ", user=" + this.user + ", timestamp=" + this.timestamp + ")";
     }
@@ -71,12 +77,11 @@ public class FailedLoginAttempt { //FIXME
         if (o == this) return true;
         if (!(o instanceof FailedLoginAttempt)) return false;
         final FailedLoginAttempt other = (FailedLoginAttempt) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         if (this.getId() != other.getId()) return false;
         final Object this$ip = this.getIp();
         final Object other$ip = other.getIp();
-        if (this$ip == null ? other$ip != null : !this$ip.equals(other$ip)) return false;
-        return true;
+        return !(this$ip == null ? other$ip != null : !this$ip.equals(other$ip));
     }
 
     public int hashCode() {

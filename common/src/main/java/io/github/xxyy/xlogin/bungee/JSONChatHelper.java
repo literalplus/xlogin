@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 
 import java.util.Collection;
@@ -35,8 +36,8 @@ public final class JSONChatHelper {
      * @param actionText the text added to every player's tooltip, describing what happens when it is clicked
      * @param suggestedCommand the command to suggest upon click, where %s is being replaced by every player's UUID
      */
-    public static void listPossiblePlayers(CommandSender receiver, Collection<AuthedPlayer> matches, XLoginBungee plugin,
-                                           String actionText, String suggestedCommand) {
+    public static void listPossiblePlayers(@NotNull CommandSender receiver, @NotNull Collection<AuthedPlayer> matches, @NotNull XLoginBungee plugin,
+                                           String actionText, @NotNull String suggestedCommand) {
         plugin.getMessages().sendMessageWithPrefix("§cIch habe mehrere Spieler gefunden. Meintest du:", receiver);
 
         for (AuthedPlayer authedPlayer : matches) {

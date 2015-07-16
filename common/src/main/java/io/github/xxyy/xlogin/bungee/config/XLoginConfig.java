@@ -10,6 +10,7 @@ import net.cubespace.Yamler.Config.Path;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.io.File;
@@ -30,11 +31,13 @@ import java.util.Map;
 @SuppressWarnings("MismatchedReadAndWriteOfArray")
 public class XLoginConfig extends Config {
 
+    @NotNull
     @Comments({"A list of passwords which are considered unsafe and therefore will be prohibited from being used.",
             "Examples are: password, 1234"})
     @Path("unsafe-passwords")
     private List<String> unsafePasswords = Arrays.asList("password", "1234", "passwort");
 
+    @NotNull
     @Comments({"A list of names which will be prohibited from being used. Any name that contains any of these is blocked from joining.",
             "Examples are: chris301234, JoinHiveMc"})
     @Path("blocked-names")
@@ -48,17 +51,19 @@ public class XLoginConfig extends Config {
     @Path("max-users-per-ip")
     private int maxUsers = 4;
 
+    @NotNull
     @Comment("Enable specific modules here:")
     private Map<String, Boolean> enabledModules = new HashMap<>();
 
     @Comment("Whether to allow users to skip logging in when they connect using the same IP again. (Can be turned off at a per-user basis too)")
     private boolean enableSessions = true;
 
+    @NotNull
     @Path("dynlist")
     @Comment("Entries of the dynamic whitelist. Format: name/regex (e.g. tm/tm[1-9])")
     private List<String> dynlistEntries = new ArrayList<>();
 
-    public XLoginConfig(Plugin plugin) {
+    public XLoginConfig(@NotNull Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",
                 "xLogin is not free software and may not be used without explicit written permission",

@@ -1,5 +1,7 @@
 package io.github.xxyy.xlogin.common.module;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+
 /**
  * Represents a module of xLogin which can be enabled and disabled.
  *
@@ -7,6 +9,7 @@ package io.github.xxyy.xlogin.common.module;
  * @since 28.8.14
  */
 public abstract class XLoginModule {
+    @NotNull
     private final String name;
     boolean enabled = false;
 
@@ -14,6 +17,7 @@ public abstract class XLoginModule {
         this.name = getClass().getSimpleName();
     }
 
+    @NotNull
     public String getName() {
         return name;
     }

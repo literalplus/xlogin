@@ -174,6 +174,10 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
         AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId());
 
+        if (authedPlayer == null) {
+            return;
+        }
+
         if (getServerName() == null) {
             getLogger().severe("No server name!");
             plr.sendMessage("§c§lInterner Fehler: Kein Servername bekannt! Du konntest nicht zurückteleportiert werden!");

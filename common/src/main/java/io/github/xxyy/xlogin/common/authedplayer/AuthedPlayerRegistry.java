@@ -3,6 +3,7 @@ package io.github.xxyy.xlogin.common.authedplayer;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.Validate;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
     }
 
     @Override
-    public boolean isAuthenticated(UUID uuid){
+    public boolean isAuthenticated(@NotNull UUID uuid) {
         if (!authedPlayers.contains(uuid)) {
             return false;
         }
@@ -43,7 +44,7 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
         return true;
     }
 
-    public void registerAuthentication(AuthedPlayer authedPlayer){
+    public void registerAuthentication(@NotNull AuthedPlayer authedPlayer) {
         Validate.isTrue(authedPlayer.isAuthenticated(), "Tried to register non-authenticated player as authenticated!");
         Validate.isTrue(authedPlayer.isValid(), "Tried to register (literally) invalid player!");
 

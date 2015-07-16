@@ -1,5 +1,7 @@
 package io.github.xxyy.xlogin.common.ips;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+
 /**
  * Represents a session.
  *
@@ -61,6 +63,7 @@ public class Session {
         this.expiryTime = expiryTime;
     }
 
+    @NotNull
     public String toString() {
         return "io.github.xxyy.xlogin.common.ips.Session(id=" + this.id + ", user=" + this.uuid + ", ip=" + this.ip + ", expiryTime=" + this.expiryTime + ")";
     }
@@ -69,12 +72,11 @@ public class Session {
         if (o == this) return true;
         if (!(o instanceof Session)) return false;
         final Session other = (Session) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         if (this.getId() != other.getId()) return false;
         final Object this$ip = this.getIp();
         final Object other$ip = other.getIp();
-        if (this$ip == null ? other$ip != null : !this$ip.equals(other$ip)) return false;
-        return true;
+        return !(this$ip == null ? other$ip != null : !this$ip.equals(other$ip));
     }
 
     public int hashCode() {

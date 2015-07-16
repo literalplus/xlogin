@@ -5,6 +5,9 @@ import org.apache.commons.lang3.Validate;
 
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.Contract;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.sql.ResultSet;
@@ -30,7 +33,8 @@ public final class AuthedPlayerFactory {
      * @param repository the repository to use to get already loaded players
      * @return All AuthedPlayer that match given criteria.
      */
-    public static AuthedPlayer[] getByCriteria(String input, AuthedPlayerRepository repository) {
+    @NotNull
+    public static AuthedPlayer[] getByCriteria(@Nullable String input, AuthedPlayerRepository repository) {
         if (input == null) {
             return new AuthedPlayer[0];
         }
@@ -69,8 +73,10 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    public static AuthedPlayer get(UUID uuid, String username, AuthedPlayerRepository repository) {
-        return get(uuid, username, true, repository);
+    @NotNull
+    public static AuthedPlayer get(@NotNull UUID uuid, String username, AuthedPlayerRepository repository) {
+        //noinspection ConstantConditions
+        return get(uuid, username, true, repository); //_,_,true -> !null
     }
 
     public static List<AuthedPlayer> getProfilesByName(String username, AuthedPlayerRepository repository) {
@@ -82,7 +88,7 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    public static AuthedPlayer getProfile(UUID uuid, AuthedPlayerRepository repository) {
+    public static AuthedPlayer getProfile(@NotNull UUID uuid, AuthedPlayerRepository repository) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
                 " WHERE uuid = ? ORDER BY premium DESC", uuid.toString()).assertHasResultSet()) {
             List<AuthedPlayer> profiles = getProfilesFromResultSet(qr.rs(), repository);
@@ -99,7 +105,7 @@ public final class AuthedPlayerFactory {
         }
     }
 
-    private static List<AuthedPlayer> getProfilesFromResultSet(ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
+    private static List<AuthedPlayer> getProfilesFromResultSet(@NotNull ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
         ImmutableList.Builder<AuthedPlayer> builder = null;
 
         while (rs.next()) {
@@ -119,13 +125,15 @@ public final class AuthedPlayerFactory {
         return builder == null ? ImmutableList.<AuthedPlayer>of() : builder.build();
     }
 
-    private static AuthedPlayer getPlayerFromResultSet(ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
+    @NotNull
+    private static AuthedPlayer getPlayerFromResultSet(@NotNull ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
         return new AuthedPlayer(repository, rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
                 rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
                 rs.getTimestamp("reg_date"), rs.getBoolean("sessions_enabled"));
     }
 
-    public static AuthedPlayer get(UUID uuid, String username, boolean create, AuthedPlayerRepository repository) {
+    @Contract("_,_,true,_->!null")
+    public static AuthedPlayer get(@NotNull UUID uuid, String username, boolean create, AuthedPlayerRepository repository) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " WHERE uuid = ?", uuid.toString())
                 .assertHasResultSet()) {
             if (qr.rs().next()) {
@@ -147,7 +155,7 @@ public final class AuthedPlayerFactory {
      *
      * @param ap player to save
      */
-    public static void save(AuthedPlayer ap) {
+    public static void save(@Nullable AuthedPlayer ap) {
         if (ap == null) {
             return;
         }
@@ -172,7 +180,7 @@ public final class AuthedPlayerFactory {
      *
      * @param ap player
      */
-    public static void delete(AuthedPlayer ap) {
+    public static void delete(@Nullable AuthedPlayer ap) {
         if (ap == null) {
             return;
         }
@@ -181,7 +189,8 @@ public final class AuthedPlayerFactory {
                 ap.getUuid());
     }
 
-    private static AuthedPlayer getCached(AuthedPlayerRepository repository, String input) {
+    @Nullable
+    private static AuthedPlayer getCached(@Nullable AuthedPlayerRepository repository, String input) {
         if (repository != null) {
             UUID uuid = UtilUUID.getFromString(input);
             if (repository.hasCached(uuid)) {

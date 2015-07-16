@@ -1,5 +1,7 @@
 package io.github.xxyy.xlogin.common.module.annotation;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,5 +21,5 @@ public @interface CanHasPotato {
     /**
      * @return what kind of potato to can has or NULL to inject plugin potato
      */
-    Class<?> value();
+    @NotNull Class<?> value();
 }

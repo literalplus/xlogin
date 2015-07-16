@@ -1,20 +1,21 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.bukkit.plugin.ServicePriority;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import io.github.xxyy.common.collections.CaseInsensitiveMap;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
 import io.github.xxyy.common.shared.uuid.UUIDRepository;
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.XLoginRepository;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,13 @@ import java.util.UUID;
  */
 @SuppressWarnings("UnusedDeclaration") //API declarations are not used by xLogin internally
 public class AuthedPlayerRepository implements XLoginRepository {
+    @NotNull
     private Map<UUID, Boolean> knownPlayers = new HashMap<>();
+    @NotNull
     private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
+    @NotNull
     private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
+    @Nullable
     private UUIDRepository parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
     private final boolean readOnly;
 
@@ -112,7 +117,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
         if (result == null) {
             if (UtilUUID.isValidUUID(input)) {
                 //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
-                result = ImmutableList.of(getProfile(UtilUUID.getFromString(input)));
+                result = Collections.singletonList(getProfile(UtilUUID.getFromString(input)));
                 nameProfilesCache.put(input, result);
             } else {
                 result = getProfilesByName(input);
@@ -123,7 +128,9 @@ public class AuthedPlayerRepository implements XLoginRepository {
     }
 
     @Override
+    @Nullable
     public AuthedPlayer getProfile(@NotNull UUID uuid) {
+        Preconditions.checkNotNull(uuid, "uuid");
         AuthedPlayer result = idProfileCache.get(uuid);
 
         if (result == null) {
@@ -134,7 +141,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
     }
 
     @Override
-    public void refreshProfile(UUID uuid) {
+    public void refreshProfile(@NotNull UUID uuid) {
         AuthedPlayer profile = overrideProfile(uuid);
 
         if (profile == null) {
@@ -153,6 +160,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
      * @param name Name of the player to get
      * @return An AuthedPlayer instance corresponding to the arguments
      */
+    @Nullable
     public AuthedPlayer getProfile(@NotNull UUID uuid, @NotNull String name) {
         AuthedPlayer authedPlayer = idProfileCache.get(uuid);
 
@@ -175,6 +183,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
      * @param name Name of the player to get
      * @return An AuthedPlayer instance corresponding to the arguments
      */
+    @Nullable
     public AuthedPlayer refreshPlayer(@NotNull UUID uuid, @NotNull String name) {
         AuthedPlayer oldPlayer = idProfileCache.get(uuid);
 
@@ -191,10 +200,10 @@ public class AuthedPlayerRepository implements XLoginRepository {
     }
 
     //Gets a profile and overrides cache, if existent.
-    private AuthedPlayer overrideProfile(UUID uuid) {
-        AuthedPlayer result;
-
-        result = AuthedPlayerFactory.getProfile(uuid, this);
+    @Nullable
+    private AuthedPlayer overrideProfile(@NotNull UUID uuid) {
+        Preconditions.checkNotNull(uuid, "uuid");
+        AuthedPlayer result = AuthedPlayerFactory.getProfile(uuid, this);
         idProfileCache.put(uuid, result);
 
         return result;
@@ -239,13 +248,13 @@ public class AuthedPlayerRepository implements XLoginRepository {
         }
     }
 
-    public void forgetProfile(AuthedPlayer profile) {
+    public void forgetProfile(@NotNull AuthedPlayer profile) {
         this.knownPlayers.remove(profile.getUniqueId());
         this.idProfileCache.remove(profile.getUniqueId());
         this.nameProfilesCache.remove(profile.getName());
     }
 
-    public void updateProfile(AuthedPlayer profile) {
+    public void updateProfile(@NotNull AuthedPlayer profile) {
         this.knownPlayers.put(profile.getUniqueId(), true);
         this.idProfileCache.put(profile.getUniqueId(), profile);
         //If we have a casing of the name, keep that to prevent inconsistencies
@@ -256,7 +265,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     @Nullable
     @Override
-    public UUID forName(String name) {
+    public UUID forName(@NotNull String name) {
         List<AuthedPlayer> profiles = getProfilesByName(name);
 
         if (profiles.size() == 0) {
@@ -268,7 +277,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     @NotNull
     @Override
-    public UUID forNameChecked(String name) throws UnknownKeyException, InvalidResultException {
+    public UUID forNameChecked(@NotNull String name) throws UnknownKeyException, InvalidResultException {
         List<AuthedPlayer> profiles = getProfilesByName(name);
 
         if (profiles.size() == 0) {
@@ -282,18 +291,20 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     @Nullable
     @Override
-    public String getName(UUID uuid) {
-        return getProfile(uuid).getName();
+    public String getName(@NotNull UUID uuid) {
+        AuthedPlayer profile = getProfile(uuid);
+        return profile == null ? null : profile.getName();
     }
 
     @NotNull
     @Override
     public UUIDRepository getParent() {
-        return parentUUIDRepo;
+        //noinspection ConstantConditions
+        return parentUUIDRepo; //this won't ever be null, I promise
     }
 
     @Override
-    public void setParent(UUIDRepository newParent) {
+    public void setParent(@Nullable UUIDRepository newParent) {
         if (newParent == null) {
             parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
         } else {
@@ -301,6 +312,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
         }
     }
 
+    @NotNull
     @Override
     public ServicePriority getPriority() {
         return ServicePriority.High;

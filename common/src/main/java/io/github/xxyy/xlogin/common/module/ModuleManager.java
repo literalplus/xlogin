@@ -1,7 +1,7 @@
 package io.github.xxyy.xlogin.common.module;
 
-import org.jetbrains.annotations.NotNull;
 
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.module.annotation.CanHasPotato;
@@ -31,13 +31,13 @@ public class ModuleManager {
     }
 
     @SafeVarargs
-    public final void enable(Class<? extends XLoginModule>... moduleClasses) {
+    public final void enable(@io.github.xxyy.lib.intellij_annotations.NotNull Class<? extends XLoginModule>... moduleClasses) {
         for (Class<? extends XLoginModule> clazz : moduleClasses) {
             enableModule(clazz, null);
         }
     }
 
-    public XLoginModule getModule(Class<? extends XLoginModule> clazz) {
+    public XLoginModule getModule(@io.github.xxyy.lib.intellij_annotations.NotNull Class<? extends XLoginModule> clazz) {
         return getModule(clazz.getSimpleName());
     }
 
@@ -118,7 +118,7 @@ public class ModuleManager {
     }
 
     @SuppressWarnings("unchecked")
-    private void injectPotato(Field field, XLoginModule instance, List<Class<? extends XLoginModule>> causedBy) {
+    private void injectPotato(@io.github.xxyy.lib.intellij_annotations.NotNull Field field, XLoginModule instance, List<Class<? extends XLoginModule>> causedBy) {
         if (!field.isAccessible()) {
             field.setAccessible(true);
         }
@@ -141,7 +141,7 @@ public class ModuleManager {
         }
     }
 
-    private XLoginModule obtainInstance(Class<? extends XLoginModule> clazz) {
+    private XLoginModule obtainInstance(@io.github.xxyy.lib.intellij_annotations.NotNull Class<? extends XLoginModule> clazz) {
         try {
             Constructor<? extends XLoginModule> constructor = clazz.getConstructor();
             if (!constructor.isAccessible()) {
@@ -150,7 +150,7 @@ public class ModuleManager {
             return constructor.newInstance();
         } catch (NoSuchMethodException e) {
             plugin.getLogger().warning("[" + clazz.getSimpleName() + "] Skipping: Could not create instance: Missing default constructor!");
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (@io.github.xxyy.lib.intellij_annotations.NotNull InvocationTargetException | InstantiationException | IllegalAccessException e) {
             plugin.getLogger().warning("[" + clazz.getSimpleName() + "] Skipping: Sorry, an error occurred while obtaining an instance:");
             e.printStackTrace();
         }

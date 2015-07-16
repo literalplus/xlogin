@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.sql.ResultSet;
@@ -22,8 +23,11 @@ import java.util.UUID;
 public class LocationInfo {
     public static final String TABLE_NAME = "mt_main.xlogin_locations";
 
+    @NotNull
     private final UUID playerId;
+    @NotNull
     private final String serverName;
+    @NotNull
     private final String worldName;
     private final double x;
     private final double y;
@@ -36,7 +40,7 @@ public class LocationInfo {
      * @param serverName   the server to get the location for
      * @return a LocationInfo representing the last location for given arguments or NULL if none.
      */
-    protected static LocationInfo load(AuthedPlayer authedPlayer, String serverName) {
+    protected static LocationInfo load(@NotNull AuthedPlayer authedPlayer, String serverName) {
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT * FROM " +
                 TABLE_NAME + " WHERE uuid=? AND server_name=?", authedPlayer.getUniqueId().toString(), serverName).vouchForResultSet()) {
             ResultSet rs = qr.rs();

@@ -1,6 +1,9 @@
 package io.github.xxyy.xlogin.common.ips;
 
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.Contract;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
+import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 
 import java.sql.ResultSet;
@@ -15,7 +18,8 @@ import java.util.Map;
 public class IpAddressFactory {
     private static final Map<String, IpAddress> cache = new HashMap<>();
 
-    public static IpAddress get(String ipString) {
+    @Contract("null -> null")
+    public static IpAddress get(@Nullable String ipString) {
         if(ipString == null) {
             return null;
         }
@@ -40,7 +44,7 @@ public class IpAddressFactory {
         }
     }
 
-    public static void save(IpAddress toSave) {
+    public static void save(@Nullable IpAddress toSave) {
         if(toSave == null) {
             return;
         }
@@ -59,7 +63,7 @@ public class IpAddressFactory {
         }
     }
 
-    public static void free(String ipString, int newSlotAmount) {
+    public static void free(@NotNull String ipString, int newSlotAmount) {
         IpAddress ip = get(ipString);
         ip.setMaxUsers(newSlotAmount);
         save(ip);
