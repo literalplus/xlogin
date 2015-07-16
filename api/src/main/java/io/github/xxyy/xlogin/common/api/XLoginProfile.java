@@ -1,8 +1,8 @@
 package io.github.xxyy.xlogin.common.api;
 
-import org.jetbrains.annotations.NotNull;
 
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 
 import java.util.UUID;
 

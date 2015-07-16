@@ -1,8 +1,8 @@
 package io.github.xxyy.xlogin.common.api;
 
-import org.jetbrains.annotations.NotNull;
 
 import io.github.xxyy.common.shared.uuid.UUIDRepository;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
