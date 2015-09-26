@@ -1,15 +1,16 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.Validate;
 
 import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.common.api.XLoginRegistry;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 public class AuthedPlayerRegistry implements XLoginRegistry {
     private static final Logger LOGGER = Logger.getLogger(AuthedPlayerRegistry.class.getName());
     private final AuthedPlayerRepository repository;
-    private final List<UUID> authedPlayers = new ArrayList<>();
+    private final Set<UUID> authedPlayers = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
 
     public AuthedPlayerRegistry(AuthedPlayerRepository repository) {
         this.repository = repository;
@@ -66,7 +67,7 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
      * @return a collection of all authenticated players' UUIDs
      */
     public Collection<UUID> getAuthenticatedPlayers() {
-        return ImmutableList.copyOf(authedPlayers);
+        return ImmutableSet.copyOf(authedPlayers);
     }
 
     public void clear() {

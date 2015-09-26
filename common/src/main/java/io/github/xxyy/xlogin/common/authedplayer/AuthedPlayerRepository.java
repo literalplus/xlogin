@@ -16,10 +16,10 @@ import io.github.xxyy.xlogin.common.api.XLoginRepository;
 
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles the creation of {@link AuthedPlayer}s.
@@ -36,11 +36,12 @@ import java.util.UUID;
 @SuppressWarnings("UnusedDeclaration") //API declarations are not used by xLogin internally
 public class AuthedPlayerRepository implements XLoginRepository {
     @NotNull
-    private Map<UUID, Boolean> knownPlayers = new HashMap<>();
+    private Map<UUID, Boolean> knownPlayers = new ConcurrentHashMap<>();
     @NotNull
-    private Map<String, List<AuthedPlayer>> nameProfilesCache = new CaseInsensitiveMap<>();
+    private Map<String, List<AuthedPlayer>> nameProfilesCache =
+            Collections.synchronizedMap(new CaseInsensitiveMap<List<AuthedPlayer>>());
     @NotNull
-    private Map<UUID, AuthedPlayer> idProfileCache = new HashMap<>();
+    private Map<UUID, AuthedPlayer> idProfileCache = new ConcurrentHashMap<>();
     @Nullable
     private UUIDRepository parentUUIDRepo = EmptyUUIDRepository.INSTANCE;
     private final boolean readOnly;
