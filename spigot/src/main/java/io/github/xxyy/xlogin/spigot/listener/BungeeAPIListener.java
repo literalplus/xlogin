@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.spigot.listener;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -31,10 +32,11 @@ public class BungeeAPIListener implements PluginMessageListener {
                 if (command.equalsIgnoreCase("tp")) {
                     //Teleports the target player to their last notation - DEPRECATED: Now handled in auth
                 } else if (command.equalsIgnoreCase("auth")) {
-                    UUID uuid = UUID.fromString(ds.readUTF());
+                    final UUID uuid = UUID.fromString(ds.readUTF());
 
                     final Player plr = Bukkit.getPlayer(uuid);
-                    AuthedPlayer.AuthenticationProvider authProvider = AuthedPlayer.AuthenticationProvider.values()[ds.readInt()];
+                    final AuthedPlayer.AuthenticationProvider authProvider =
+                            AuthedPlayer.AuthenticationProvider.values()[ds.readInt()];
 
                     if (plr == null) {
                         plugin.getLogger().info(String.format(
@@ -43,20 +45,21 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
-                    AuthedPlayer authedPlayer = plugin.getRepository().refreshPlayer(uuid, plr.getName());
-                    authedPlayer.setAuthenticationProvider(authProvider);
-                    authedPlayer.setAuthenticated(true);
-
-                    plugin.getRegistry().registerAuthentication(authedPlayer);
-                    plugin.getServer().getPluginManager().callEvent(new AuthenticationEvent(plr, authedPlayer));
-                    plugin.getLogger().info(String.format("Received auth for %s w/ %s using %s",
-                            plr.getName(), uuid, authProvider.name()));
-                    plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                    plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                         @Override
                         public void run() {
-                            plugin.teleportToLastLocation(plr);
+                            AuthedPlayer authedPlayer = plugin.getRepository().refreshPlayer(uuid, plr.getName());
+                            Preconditions.checkNotNull(authedPlayer, "authedPlayer");
+                            authedPlayer.setAuthenticationProvider(authProvider);
+                            authedPlayer.setAuthenticated(true);
+
+                            plugin.getRegistry().registerAuthentication(authedPlayer);
+                            plugin.getServer().getPluginManager().callEvent(new AuthenticationEvent(plr, authedPlayer));
+                            plugin.getLogger().info(String.format("Received auth for %s w/ %s using %s",
+                                    plr.getName(), uuid, authProvider.name()));
+                            plugin.teleportToLastLocation(plr, 10L);
                         }
-                    }, 10L);
+                    });
                 } else if (command.equalsIgnoreCase("register")) {
                     UUID uuid = UUID.fromString(ds.readUTF());
                     Player plr = Bukkit.getPlayer(uuid);

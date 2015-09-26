@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.spigot;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -167,37 +168,57 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         spawnLocation.getWorld().setSpawnLocation(spawnLocation.getBlockX(), spawnLocation.getBlockY(), spawnLocation.getBlockZ());
     }
 
-    public void teleportToLastLocation(Player plr) {
+    public void teleportToLastLocation(final Player plr) {
+        teleportToLastLocation(plr, 0L);
+    }
+
+    public void teleportToLastLocation(final Player plr, final long delay) {
+        Preconditions.checkNotNull(plr, "plr");
         if (!lastLocationsEnabled) {
             return;
         }
 
-        AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId());
+        getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                AuthedPlayer authedPlayer = AUTHED_PLAYER_REPOSITORY.getProfile(plr.getUniqueId());
 
-        if (authedPlayer == null) {
-            return;
-        }
+                if (authedPlayer == null) {
+                    return;
+                }
 
-        if (getServerName() == null) {
-            getLogger().severe("No server name!");
-            plr.sendMessage("§c§lInterner Fehler: Kein Servername bekannt! Du konntest nicht zurückteleportiert werden!");
-            return;
-        }
+                if (getServerName() == null) {
+                    getLogger().severe("No server name!");
+                    plr.sendMessage("§c§lInterner Fehler: Kein Servername! Du konntest nicht zurückteleportiert werden!");
+                    return;
+                }
 
-        LocationInfo lastLocation = authedPlayer.getLastLocation(getServerName());
+                LocationInfo lastLocation = authedPlayer.getLastLocation(getServerName());
+                Location tpLocation;
 
-        if (lastLocation == null) {
-            plr.teleport(spawnLocation);
-            getLogger().info("No previous location for " + plr.getName());
-        } else {
-            World world = getServer().getWorld(lastLocation.getWorldName());
-            if (world == null) {
-                world = spawnLocation.getWorld();
+                if (lastLocation == null) {
+                    tpLocation = spawnLocation;
+                    getLogger().info("No previous location for " + plr.getName());
+                } else {
+                    World world = getServer().getWorld(lastLocation.getWorldName());
+                    if (world == null) {
+                        world = spawnLocation.getWorld();
+                    }
+
+                    tpLocation = new Location(world, lastLocation.getX(),
+                            lastLocation.getY(), lastLocation.getZ());
+                }
+                final Location finalLocation = tpLocation;
+
+                getServer().getScheduler().runTaskLater(XLoginPlugin.this, new Runnable() {
+                    @Override
+                    public void run() {
+                        plr.teleport(finalLocation);
+                    }
+                }, delay);
             }
+        });
 
-            plr.teleport(new Location(world, lastLocation.getX(),
-                    lastLocation.getY(), lastLocation.getZ()));
-        }
     }
 
     public void sendAPIMessage(Player plr, String... data) {
