@@ -36,13 +36,12 @@ public class CommandPremium extends Command {
 
         ProxiedPlayer plr = (ProxiedPlayer) sender;
 
-        if (args.length > 0)
+        if (args.length > 0) {
             if (args[0].equalsIgnoreCase("help")) {
                 plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().commandPremiumUsage));
                 return;
-            } else if(args[0].equalsIgnoreCase("off")) {
-                //TODO /premium off
             }
+        }
 
         if(!plugin.getRegistry().isAuthenticated(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
