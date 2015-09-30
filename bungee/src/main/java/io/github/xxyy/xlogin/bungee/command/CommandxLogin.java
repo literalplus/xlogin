@@ -21,7 +21,9 @@ import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -73,13 +75,24 @@ public class CommandxLogin extends Command {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
+                Map<UUID, AuthedPlayer.AuthenticationProvider> providerMap = new HashMap<>();
+                for (UUID uuid : plugin.getRegistry().getAuthenticatedPlayers()) {
+                    AuthedPlayer plr = plugin.getRepository().getProfile(uuid);
+                    if (plr != null && plr.isAuthenticated()) {
+                        providerMap.put(uuid, plr.getAuthenticationProvider());
+                    }
+                }
                 plugin.getRepository().clear();
                 IpAddressFactory.clear();
                 plugin.resetIpOnlinePlayers();
                 plugin.reloadConfig();
 
-                for (UUID uuid : plugin.getRegistry().getAuthenticatedPlayers()) {
-                    plugin.getRepository().getProfile(uuid); //Registry removes players not in repo
+                for (Map.Entry<UUID, AuthedPlayer.AuthenticationProvider> entry : providerMap.entrySet()) {
+                    AuthedPlayer plr = plugin.getRepository().getProfile(entry.getKey()); //Registry removes players not in repo
+                    if (plr != null) {
+                        plr.setAuthenticated(true);
+                        plr.setAuthenticationProvider(entry.getValue());
+                    }
                 }
 
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
