@@ -1,16 +1,17 @@
 package io.github.xxyy.xlogin.bungee.command;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
+
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 
 /**
  * Marks a user to have a Mojang premium account.
@@ -23,7 +24,7 @@ public class CommandPremium extends Command {
     private final XLoginPlugin plugin;
 
     public CommandPremium(XLoginPlugin plugin) {
-        super("sessions", null, "sitzungen");
+        super("premium", null);
         this.plugin = plugin;
     }
 
