@@ -177,9 +177,11 @@ public class AuthtopiaHelper {
         AuthedPlayer authedPlayer = plugin.getRepository()
                 .getProfile(plr.getUniqueId(), plr.getName());
 
-        authedPlayer.setValid(false, authedPlayer.isPremium() && authedPlayer.isAuthenticated());
         plugin.getRegistry().forget(plr.getUniqueId());
-        plugin.getRepository().forgetProfile(authedPlayer);
+        if (authedPlayer != null) {
+            authedPlayer.setValid(false, authedPlayer.isPremium() && authedPlayer.isAuthenticated());
+            plugin.getRepository().forgetProfile(authedPlayer);
+        }
         plugin.getLogger().info("Player " + plr.getName() + " disconnected.");
     }
 

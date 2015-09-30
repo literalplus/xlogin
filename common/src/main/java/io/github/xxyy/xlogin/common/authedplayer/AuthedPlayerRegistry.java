@@ -36,9 +36,9 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
 
         AuthedPlayer authedPlayer = repository.getProfile(uuid);
         if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
-            this.authedPlayers.remove(uuid);
-//            LOGGER.info("Removing player from registry because null, invalid or something. " +
-//                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
+            this.authedPlayers.remove(uuid); //TODO: Does this actually every legitimately happen?
+            LOGGER.info("Removing player from registry because null, invalid or something. " +
+                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
             return false;
         }
 
@@ -56,9 +56,10 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
      * Forgets about the player represented by given UUID.
      * This action only affects local cache and does not persist to database.
      * This action, however, affects the associated {@link io.github.xxyy.xlogin.common.api.XLoginRepository}.
+     *
      * @param uuid UUID of the player to forget about.
      */
-    public void forget(UUID uuid){
+    public void forget(UUID uuid) {
         authedPlayers.remove(uuid);
         repository.forget(uuid);
     }
