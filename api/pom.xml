@@ -11,19 +11,6 @@
 
     <artifactId>xlogin-api</artifactId>
 
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://minotopia.de/ci/job/bungee~xlogin/</url>
-    </ciManagement>
-
-    <distributionManagement>
-        <downloadUrl>http://minotopia.de/ci/job/bungee~xlogin</downloadUrl>
-        <repository>
-            <id>xxyy-repo</id>
-            <url>http://server.nowak-at.net/repo/xxyy-private/</url>
-        </repository>
-    </distributionManagement>
-
     <dependencies>
         <dependency>
             <groupId>io.github.xxyy</groupId>
