@@ -21,7 +21,7 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +46,7 @@ import static net.md_5.bungee.api.ChatColor.YELLOW;
 public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
     public static final String PERMISSION = "xlogin.cmd";
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-dd hh:mm");
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014-2015 Literallie - https://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
@@ -254,14 +255,14 @@ public class CommandxLogin extends Command {
                         }
                         if (match.getRegistrationTimestamp() != null) {
                             sender.sendMessage(new XyComponentBuilder("Registriert am: ").color(GOLD)
-                                    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
-                                            new Date(match.getRegistrationTimestamp().getTime()).toInstant()
+                                    .append(SIMPLE_DATE_FORMAT.format(
+                                            new Date(match.getRegistrationTimestamp().getTime())
                                     ), YELLOW).create());
                         }
                         if (match.getLastLoginDate() != null) {
                             sender.sendMessage(new XyComponentBuilder("Letzter Login: ").color(GOLD)
-                                    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
-                                            new Date(match.getLastLoginDate().getTime()).toInstant()
+                                    .append(SIMPLE_DATE_FORMAT.format(
+                                            new Date(match.getLastLoginDate().getTime())
                                     ), YELLOW).create());
                         }
                     }
