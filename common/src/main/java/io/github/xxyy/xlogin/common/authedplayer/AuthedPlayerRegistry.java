@@ -20,9 +20,9 @@ import java.util.logging.Logger;
  * @since 11.5.14
  */
 public class AuthedPlayerRegistry implements XLoginRegistry {
-    private static final Logger LOGGER = Logger.getLogger(AuthedPlayerRegistry.class.getName());
-    private final AuthedPlayerRepository repository;
-    private final Set<UUID> authedPlayers = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
+    protected static final Logger LOGGER = Logger.getLogger(AuthedPlayerRegistry.class.getName());
+    protected final AuthedPlayerRepository repository;
+    protected final Set<UUID> authedPlayers = Collections.newSetFromMap(new ConcurrentHashMap<UUID, Boolean>());
 
     public AuthedPlayerRegistry(AuthedPlayerRepository repository) {
         this.repository = repository;
@@ -30,22 +30,19 @@ public class AuthedPlayerRegistry implements XLoginRegistry {
 
     @Override
     public boolean isAuthenticated(@NotNull UUID uuid) {
-        return authedPlayers.contains(uuid); //Let's assume that our api consumers remove players themselves when they lose auth
-        //Also registry should be more or less separate from repository
-        //If you turn this back, remember this will break auth in spigot pluginmessage receive!
-//        if (!authedPlayers.contains(uuid)) {
-//            return false;
-//        }
-//
-//        AuthedPlayer authedPlayer = repository.getProfile(uuid);
-//        if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
-//            this.authedPlayers.remove(uuid); //TO DO: Does this actually every legitimately happen?
-//            LOGGER.info("Removing player from registry because null, invalid or something. " +
-//                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
-//            return false;
-//        }
-//
-//        return true;
+        if (!authedPlayers.contains(uuid)) {
+            return false;
+        }
+
+        AuthedPlayer authedPlayer = repository.getProfile(uuid);
+        if (authedPlayer == null || !authedPlayer.isValid() || !authedPlayer.isAuthenticated()) {
+            this.authedPlayers.remove(uuid); //TODO: Does this actually every legitimately happen?
+            LOGGER.info("Removing player from registry because null, invalid or something. " +
+                    (authedPlayer == null ? "null" : authedPlayer.isValid() + ";a=" + authedPlayer.isAuthenticated()));
+            return false;
+        }
+
+        return true;
     }
 
     public void registerAuthentication(@NotNull AuthedPlayer authedPlayer) {
