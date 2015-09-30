@@ -21,14 +21,14 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://minotopia.de/ci/job/bungee~xlogin/</url>
+        <url>https://ci.minotopia.de/job/bungee~xlogin/</url>
     </ciManagement>
 
     <distributionManagement>
-        <downloadUrl>http://minotopia.de/ci/job/bungee~xlogin</downloadUrl>
+        <downloadUrl>https://ci.minotopia.me/job/bungee~xlogin</downloadUrl>
         <repository>
             <id>xxyy-repo</id>
-            <url>http://server.nowak-at.net/repo/xxyy-private/</url>
+            <url>https://repo.nowak-at.net/xxyy-private/</url>
         </repository>
     </distributionManagement>
 
