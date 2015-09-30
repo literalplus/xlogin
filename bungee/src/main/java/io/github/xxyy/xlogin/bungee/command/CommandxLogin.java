@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
@@ -20,7 +21,9 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -223,10 +226,14 @@ public class CommandxLogin extends Command {
                     }
 
                     for (AuthedPlayer match : matches) {
-                        sender.sendMessage(new ComponentBuilder("Name: ").color(GOLD)
-                                .append(match.getName()).color(YELLOW).create());
-                        sender.sendMessage(new ComponentBuilder("UUID: ").color(GOLD)
-                                .append(match.getUuid()).color(YELLOW).create());
+                        sender.sendMessage(new XyComponentBuilder("Name: ").color(GOLD)
+                                .append(match.getName(), YELLOW)
+                                .tooltip("Klicken zum Kopieren")
+                                .suggest(match.getName()).create());
+                        sender.sendMessage(new XyComponentBuilder("UUID: ").color(GOLD)
+                                .append(match.getUuid(), YELLOW)
+                                .tooltip("Klicken zum Kopieren")
+                                .suggest(match.getUuid()).create());
                         sender.sendMessage(new ComponentBuilder("Premium? ").color(GOLD)
                                 .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED).create());
                         sender.sendMessage(new ComponentBuilder("Authentifiziert: ").color(GOLD)
@@ -239,6 +246,18 @@ public class CommandxLogin extends Command {
                         if (ip != null) {
                             sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
                                     .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
+                        }
+                        if (match.getRegistrationTimestamp() != null) {
+                            sender.sendMessage(new XyComponentBuilder("Registriert am: ").color(GOLD)
+                                    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
+                                            new Date(match.getRegistrationTimestamp().getTime()).toInstant()
+                                    ), YELLOW).create());
+                        }
+                        if (match.getLastLoginDate() != null) {
+                            sender.sendMessage(new XyComponentBuilder("Letzter Login: ").color(GOLD)
+                                    .append(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
+                                            new Date(match.getLastLoginDate().getTime()).toInstant()
+                                    ), YELLOW).create());
                         }
                     }
                 }
