@@ -137,7 +137,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
                             plugin.notifyRegister(evt.getPlayer());
                         }
 
-                        AuthedPlayerFactory.save(authedPlayer);
+                        AuthedPlayerFactory.save(authedPlayer); //TODO: This should theoretically be obsolete since we're now saving on auth
                     }
                 } else if (!authed && plugin.getConfig().isEnableSessions()) { //**THIS** however authenticates sessions!
                     if (authedPlayer.authenticateSession(ipAddress)) {

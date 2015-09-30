@@ -37,6 +37,8 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     @Nullable
     private String lastIp;
     private Timestamp registrationDate;
+    @Nullable
+    private Timestamp lastLoginDate;
     private boolean sessionsEnabled;
 
     private boolean valid = true;
@@ -46,7 +48,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
 
     protected AuthedPlayer(AuthedPlayerRepository repository, @NotNull String uuid, String name, String password,
                            String salt, @Nullable String lastIp, boolean premium, boolean disabledPremiumMessage,
-                           Timestamp registrationDate, boolean sessionsEnabled) {
+                           Timestamp registrationDate, @Nullable Timestamp lastLoginDate, boolean sessionsEnabled) {
         this.repository = repository;
         this.uuid = uuid;
         this.uniqueId = UUID.fromString(uuid);
@@ -57,6 +59,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.premium = premium;
         this.disabledPremiumMessage = disabledPremiumMessage;
         this.registrationDate = registrationDate;
+        this.lastLoginDate = lastLoginDate;
         this.sessionsEnabled = sessionsEnabled;
     }
 
@@ -118,6 +121,8 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         setAuthenticationProvider(provider);
         setAuthenticated(true);
         setLastIp(currentIp);
+        setLastLoginDate(new Timestamp(System.currentTimeMillis()));
+        AuthedPlayerFactory.save(this); //refactor - too strong coupling of objects
     }
 
     /**
@@ -337,6 +342,15 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     @Override
     public String toShortString() {
         return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";
+    }
+
+    @Nullable
+    public Timestamp getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(@Nullable Timestamp lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
     }
 
     public enum AuthenticationProvider {

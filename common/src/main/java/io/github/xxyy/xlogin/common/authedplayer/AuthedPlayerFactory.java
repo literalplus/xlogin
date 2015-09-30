@@ -129,7 +129,7 @@ public final class AuthedPlayerFactory {
     private static AuthedPlayer getPlayerFromResultSet(@NotNull ResultSet rs, AuthedPlayerRepository repository) throws SQLException {
         return new AuthedPlayer(repository, rs.getString("uuid"), rs.getString("username"), rs.getString("password"),
                 rs.getString("salt"), rs.getString("user_lastip"), rs.getBoolean("premium"), rs.getBoolean("ign_p_msg"),
-                rs.getTimestamp("reg_date"), rs.getBoolean("sessions_enabled"));
+                rs.getTimestamp("reg_date"), rs.getTimestamp("last_login"), rs.getBoolean("sessions_enabled"));
     }
 
     @Contract("_,_,true,_->!null")
@@ -141,7 +141,8 @@ public final class AuthedPlayerFactory {
             } else if (create) {
 //                PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
 //                        "uuid=?, username=?", uuid.toString(), username);
-                return new AuthedPlayer(repository, uuid.toString(), username, null, null, null, false, false, new Timestamp(System.currentTimeMillis()), true);
+                return new AuthedPlayer(repository, uuid.toString(), username, null, null, null, false, false,
+                        new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()), true);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -165,13 +166,13 @@ public final class AuthedPlayerFactory {
 
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
-                        "sessions_enabled=?, uuid=? ON DUPLICATE KEY UPDATE " +
+                        "sessions_enabled=?, last_login=?, uuid=? ON DUPLICATE KEY UPDATE " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
-                        "sessions_enabled=?",
+                        "sessions_enabled=?, last_login=?",
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
-                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getUuid(),
+                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getLastLoginDate(), ap.getUuid(),
                 ap.getName(), ap.getPassword(), ap.getSalt(), ap.getLastIp(), ap.isPremium(),
-                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled()
+                ap.isDisabledPremiumMessage(), ap.isSessionsEnabled(), ap.getLastLoginDate()
         );
     }
 
