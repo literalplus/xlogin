@@ -205,7 +205,9 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private AuthedPlayer overrideProfile(@NotNull UUID uuid) {
         Preconditions.checkNotNull(uuid, "uuid");
         AuthedPlayer result = AuthedPlayerFactory.getProfile(uuid, this);
-        idProfileCache.put(uuid, result);
+        if (result != null) {
+            idProfileCache.put(uuid, result);
+        }
 
         return result;
     }
