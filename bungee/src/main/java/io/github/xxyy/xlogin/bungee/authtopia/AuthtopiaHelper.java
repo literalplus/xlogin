@@ -172,12 +172,12 @@ public class AuthtopiaHelper {
     }
 
     public void unregisterPremium(ProxiedPlayer plr) {
+        plugin.getRegistry().forget(plr.getUniqueId());
 //        this.premiumPlayers.remove(plr.getUniqueId());
 
         AuthedPlayer authedPlayer = plugin.getRepository()
                 .getProfile(plr.getUniqueId(), plr.getName());
 
-        plugin.getRegistry().forget(plr.getUniqueId());
         if (authedPlayer != null) {
             authedPlayer.setValid(false, authedPlayer.isPremium() && authedPlayer.isAuthenticated());
             plugin.getRepository().forgetProfile(authedPlayer);

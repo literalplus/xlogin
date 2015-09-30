@@ -44,9 +44,8 @@ public class GenericListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onKick(final PlayerKickEvent evt) {
-        plugin.saveLocation(evt.getPlayer(), true);
-
         plugin.getRegistry().forget(evt.getPlayer().getUniqueId());
+        plugin.saveLocation(evt.getPlayer(), true);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
