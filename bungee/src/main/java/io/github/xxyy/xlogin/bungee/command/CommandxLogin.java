@@ -43,7 +43,7 @@ public class CommandxLogin extends Command {
     public static final String PERMISSION = "xlogin.cmd";
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
-            new ComponentBuilder("Copyright (C) 2014 xxyy98 aka Literallie - http://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
+            new ComponentBuilder("Copyright (C) 2014-2015 Literallie - https://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(GOLD).append("Swiss Army Knife for xLogin :)").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo reload ").color(GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
