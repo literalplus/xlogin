@@ -241,11 +241,16 @@ public class CommandxLogin extends Command {
                         sender.sendMessage(new ComponentBuilder("Sessions? ").color(GOLD)
                                 .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
-                        sender.sendMessage(new ComponentBuilder("Letzte IP: ").color(GOLD)
-                                .append(ip == null ? "unbekannt" : match.getLastIp()).color(ip == null ? GRAY : YELLOW).create());
                         if (ip != null) {
+                            sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
+                                    .append(match.getLastIp(), YELLOW)
+                                    .tooltip("Klicken zum Kopieren")
+                                    .suggest(match.getLastIp().replace("/", "")).create());
                             sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
                                     .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
+                        } else {
+                            sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
+                                    .append("unbekannt", GRAY).create());
                         }
                         if (match.getRegistrationTimestamp() != null) {
                             sender.sendMessage(new XyComponentBuilder("Registriert am: ").color(GOLD)
