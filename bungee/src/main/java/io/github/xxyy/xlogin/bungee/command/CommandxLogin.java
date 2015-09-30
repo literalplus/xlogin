@@ -46,7 +46,7 @@ import static net.md_5.bungee.api.ChatColor.YELLOW;
 public class CommandxLogin extends Command {
     public static final HttpProfileRepository HTTP_PROFILE_REPOSITORY = new HttpProfileRepository("minecraft");
     public static final String PERMISSION = "xlogin.cmd";
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-dd hh:mm");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm");
     private static final BaseComponent[][] HELP_COMPONENTS = {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014-2015 Literallie - https://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
