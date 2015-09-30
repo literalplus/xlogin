@@ -20,9 +20,9 @@ import io.github.xxyy.xlogin.common.api.SpawnLocationHolder;
 import io.github.xxyy.xlogin.common.api.punishments.BanManager;
 import io.github.xxyy.xlogin.common.api.punishments.WarningManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.common.authedplayer.LocationInfo;
+import io.github.xxyy.xlogin.spigot.authedplayer.SpigotPlayerRegistry;
 import io.github.xxyy.xlogin.spigot.commands.CommandLocalXLo;
 import io.github.xxyy.xlogin.spigot.commands.CommandSpawn;
 import io.github.xxyy.xlogin.spigot.listener.BungeeAPIListener;
@@ -41,7 +41,7 @@ import java.util.UUID;
  */
 public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     public static final AuthedPlayerRepository AUTHED_PLAYER_REPOSITORY = new AuthedPlayerRepository(true);
-    public static final AuthedPlayerRegistry AUTHED_PLAYER_REGISTRY = new AuthedPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
+    public static final SpigotPlayerRegistry AUTHED_PLAYER_REGISTRY = new SpigotPlayerRegistry(AUTHED_PLAYER_REPOSITORY);
     public static final String API_CHANNEL_NAME = Const.API_CHANNEL_NAME;
     public static final String VERSION = PluginVersion.ofClass(XLoginPlugin.class).toString();
     @Getter
@@ -284,7 +284,7 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
     }
 
     @Override
-    public AuthedPlayerRegistry getRegistry() {
+    public SpigotPlayerRegistry getRegistry() {
         return AUTHED_PLAYER_REGISTRY;
     }
 

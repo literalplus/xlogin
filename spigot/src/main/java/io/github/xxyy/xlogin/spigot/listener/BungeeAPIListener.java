@@ -45,6 +45,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                         return;
                     }
 
+                    plugin.getRegistry().registerAuthentication(plr.getUniqueId()); //Register auth now to prevent noticeable delay and false "not logged in" messages
                     plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
                         @Override
                         public void run() {
@@ -53,7 +54,7 @@ public class BungeeAPIListener implements PluginMessageListener {
                             authedPlayer.setAuthenticationProvider(authProvider);
                             authedPlayer.setAuthenticated(true);
 
-                            plugin.getRegistry().registerAuthentication(authedPlayer);
+                            plugin.getRegistry().registerAuthentication(authedPlayer); //for style and the exceptions - doesn't mod set, but throws exceptions for invalid players
                             plugin.getServer().getPluginManager().callEvent(new AuthenticationEvent(plr, authedPlayer));
                             plugin.getLogger().info(String.format("Received auth for %s w/ %s using %s",
                                     plr.getName(), uuid, authProvider.name()));
