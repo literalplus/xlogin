@@ -126,7 +126,7 @@ public class DynlistListener implements Listener {
             return false;
         }
 
-        if(evt.getPlayer().getServer().getInfo().getName().equals(fallbackServerName)) {
+        if (evt.getPlayer().getServer() != null && evt.getPlayer().getServer().getInfo().getName().equals(fallbackServerName)) {
             return true;
         }
 
