@@ -6,6 +6,7 @@ import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.apache.commons.lang.Validate;
 
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
@@ -102,6 +103,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
                 if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     authedPlayer = plugin.getRepository()
                             .getProfile(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
+                    Validate.notNull(authedPlayer, "couldn't get profile for player in postlogin");
                     authedPlayer.setValid(true, false);
                 }
 
@@ -127,8 +129,8 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
 
                 //Make sure the user is in database
                 if (!knownBefore) { //This just notifies and registers, nothing authenticating here
-                    if (authedPlayer != null && authedPlayer.isAuthenticated() && authedPlayer.getAuthenticationProvider()
-                            .equals(AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM)) {
+                    if (authedPlayer != null && authedPlayer.isAuthenticated() &&
+                            AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider())) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
                         authedPlayer.setPremium(true); //TODO: Do we need this call?
