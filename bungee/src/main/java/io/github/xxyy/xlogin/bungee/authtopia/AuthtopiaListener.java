@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.bungee.authtopia;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
@@ -8,16 +9,18 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.apache.commons.lang.Validate;
 
-import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.bungee.limits.IpAccountLimitManager;
 import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
-import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 
-import java.sql.SQLException;
+import java.net.InetSocketAddress;
 import java.text.MessageFormat;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,22 +29,32 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 10.5.14
  */
-public class AuthtopiaListener implements Listener { //FIXME DoS detection is a brute-force approach #379
+public class AuthtopiaListener implements Listener {
     private final RateLimitManager rateLimiter;
+    private final IpAccountLimitManager accountLimiter;
     private final XLoginPlugin plugin;
 
     public AuthtopiaListener(final XLoginPlugin plugin) {
         this.plugin = plugin;
         rateLimiter = new RateLimitManager(plugin);
+        accountLimiter = new IpAccountLimitManager(plugin);
     }
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
-        if (rateLimiter.checkLimited(evt.getConnection().getAddress())) {
+        InetSocketAddress address = evt.getConnection().getAddress();
+        if (rateLimiter.checkLimited(address)) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
                     "Bitte versuche es in 5 Minuten erneut.");
             return;
+        }
+
+        if (plugin.getOnlineLimiter().checkOnlineLimit(address)) {
+            evt.setCancelReason(MessageFormat.format(
+                    plugin.getMessages().ipAccountLimitedReached,
+                    address.getAddress().toString()
+            ));
         }
 
         String playerName = evt.getConnection().getName();
@@ -69,6 +82,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
 
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
+        accountLimiter.requestAccountLimit(evt.getPlayer()); //schedules async task
         final boolean knownBefore = plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
         if (knownBefore) {
             plugin.getRepository().refreshPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
@@ -157,34 +171,38 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
     private IpAddress checkIp(PostLoginEvent evt) {
         String ipString = evt.getPlayer().getAddress().getAddress().toString();
         IpAddress ipAddress = IpAddress.fromIpString(ipString);
-        Integer maxUsers = ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();
-        int count = 0;
-
-        try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " + AuthedPlayer.AUTH_DATA_TABLE_NAME +
-                " WHERE user_lastip = ? AND uuid != ? AND username != ?", ipString, evt.getPlayer().getUniqueId(), evt.getPlayer().getName())) {
-            if (qr.rs().next()) {
-                count = qr.rs().getInt("cnt");
+        boolean accountLimitHit;
+        try {
+            Future<Boolean> accountLimitFuture = accountLimiter.getAccountLimitFuture(evt.getPlayer());
+            if (accountLimitFuture != null) {
+                accountLimitHit = accountLimitFuture.get();
+            } else {
+                evt.getPlayer().disconnect(new XyComponentBuilder(
+                        "Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
+                                "Accountlimit wurde nicht berechnet.\n" +
+                                "Bitte versuche es erneut."
+                ).color(ChatColor.RED).create());
+                return null;
             }
-        } catch (SQLException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            evt.getPlayer().disconnect(new XyComponentBuilder(
+                    "Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
+                            "Accountlimit konnte nicht berechnet werden: " + e.getClass().getSimpleName() + "\n" +
+                            "Bitte versuche es erneut."
+            ).color(ChatColor.RED).create());
             e.printStackTrace();
+            return null;
         }
 
-        if (count >= maxUsers) {
+        if (accountLimitHit) {
             evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
-                    plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
+                    plugin.getMessages().ipAccountLimitedReached,
+                    ipString, accountLimiter.getMaxUsers(ipAddress)
             ));
             return null;
         }
 
-        Integer onlinePlayers = plugin.getIpOnlinePlayers().get(ipString);
-        if (onlinePlayers != null && onlinePlayers >= maxUsers) {
-            evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
-                    plugin.getMessages().ipAccountLimitedReached, ipString, maxUsers
-            ));
-            return null;
-        }
-
-        plugin.registerOnlineIp(ipString, onlinePlayers);
+        plugin.getOnlineLimiter().registerOnlinePlayer(evt.getPlayer().getAddress());
 
         return ipAddress;
     }
@@ -200,16 +218,7 @@ public class AuthtopiaListener implements Listener { //FIXME DoS detection is a 
 
     @EventHandler
     public void onDisconnect(final PlayerDisconnectEvent evt) {
-        String ipString = evt.getPlayer().getAddress().getAddress().toString();
-        Integer onlinePlayers = plugin.getIpOnlinePlayers().get(ipString);
-        if (onlinePlayers != null) {
-            if (onlinePlayers == 1) {
-                plugin.getIpOnlinePlayers().remove(ipString);
-            } else {
-                plugin.getIpOnlinePlayers().put(ipString, onlinePlayers - 1);
-            }
-        }
-
+        plugin.getOnlineLimiter().recomputeOnlinePlayers(evt.getPlayer().getAddress());
         plugin.getAuthtopiaHelper().unregisterPremium(evt.getPlayer());
     }
 }

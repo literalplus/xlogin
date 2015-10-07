@@ -2,7 +2,6 @@ package io.github.xxyy.xlogin.bungee;
 
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -22,6 +21,7 @@ import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
+import io.github.xxyy.xlogin.bungee.limits.IpOnlineLimitManager;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
 import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
@@ -35,8 +35,6 @@ import io.github.xxyy.xlogin.common.module.ModuleManager;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,9 +53,9 @@ public class XLoginPlugin extends XLoginBungee {
     @Getter
     private AuthtopiaHelper authtopiaHelper;
     @Getter
-    private Map<String, Integer> ipOnlinePlayers = new HashMap<>();
-    @Getter
     private LocalisedMessageConfig messages;
+    @Getter
+    private IpOnlineLimitManager onlineLimiter = new IpOnlineLimitManager(this);
 
     @Override
     public void onEnable() {
@@ -87,13 +85,7 @@ public class XLoginPlugin extends XLoginBungee {
         this.getProxy().getScheduler().schedule(this, new Runnable() {
             @Override
             public void run() {
-                ipOnlinePlayers.clear();
-
-                for (ProxiedPlayer plr : ProxyServer.getInstance().getPlayers()) {
-                    String ipString = plr.getAddress().getAddress().toString();
-                    Integer onlinePlayers = ipOnlinePlayers.get(ipString);
-                    ipOnlinePlayers.put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
-                }
+                onlineLimiter.recomputeOnlinePlayers();
             }
         }, 5L, 5L, TimeUnit.MINUTES);
 
@@ -190,26 +182,6 @@ public class XLoginPlugin extends XLoginBungee {
         } catch (IOException ignore) {
             //oke what you're gonna do tho
         }
-    }
-
-    public void resetIpOnlinePlayers() {
-        Map<String, Integer> newMap = new HashMap<>(getProxy().getPlayers().size());
-
-        for (ProxiedPlayer plr : getProxy().getPlayers()) {
-            registerOnlineIp(plr);
-        }
-
-        this.ipOnlinePlayers = newMap;
-    }
-
-    public void registerOnlineIp(ProxiedPlayer plr) {
-        String ipString = plr.getAddress().getAddress().toString();
-        Integer onlinePlayers = getIpOnlinePlayers().get(ipString);
-        registerOnlineIp(ipString, onlinePlayers);
-    }
-
-    public void registerOnlineIp(String ipString, Integer onlinePlayers) {
-        getIpOnlinePlayers().put(ipString, onlinePlayers == null ? 1 : onlinePlayers + 1);
     }
 
     @Override

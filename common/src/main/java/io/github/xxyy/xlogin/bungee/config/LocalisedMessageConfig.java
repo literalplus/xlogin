@@ -93,6 +93,9 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     @Comment("param1: IP address the user joined with param2: max users allowed for that IP")
     public String ipAccountLimitedReached = "Für deine IP {0} gibt es bereits mehr als {1} Accounts!";
     @NotNull
+    @Comment("param1: IP address the user joined with")
+    public String ipOnlineLimitReached = "§c[xLogin] Mit deiner IP {0} sind schon zu viele Spieler online!";
+    @NotNull
     public String nameBlocked = "Diesen Namen kannst du leider nicht verwenden.";
 
     @NotNull

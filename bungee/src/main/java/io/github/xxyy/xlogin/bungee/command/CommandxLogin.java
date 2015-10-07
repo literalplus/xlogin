@@ -88,7 +88,7 @@ public class CommandxLogin extends Command {
                 }
                 plugin.getRepository().clear();
                 IpAddressFactory.clear();
-                plugin.resetIpOnlinePlayers();
+                plugin.getOnlineLimiter().recomputeOnlinePlayers();
                 plugin.reloadConfig();
 
                 for (Map.Entry<UUID, AuthedPlayer.AuthenticationProvider> entry : providerMap.entrySet()) {
