@@ -10,6 +10,7 @@ import org.apache.commons.lang.Validate;
 
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
@@ -18,7 +19,6 @@ import io.github.xxyy.xlogin.common.ips.IpAddress;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Listens for Authtopia-related events.
@@ -27,28 +27,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 10.5.14
  */
 public class AuthtopiaListener implements Listener { //FIXME DoS detection is a brute-force approach #379
-    public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
-    public static int maxJoinsPerInterval = 30; //Should automatically adapt to load
-    private final AtomicInteger joinAttempts = new AtomicInteger(); //Gets reset automatically every x seconds
+    private final RateLimitManager rateLimiter;
     private final XLoginPlugin plugin;
 
     public AuthtopiaListener(final XLoginPlugin plugin) {
         this.plugin = plugin;
-        plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
-            @Override
-            public void run() {
-                int previousCount = joinAttempts.getAndSet(0);
-                if (previousCount > maxJoinsPerInterval) { //TODO: Intelligent detection of same IPs
-                    plugin.getLogger().severe(String.format("[POSSIBLE ATTACK] %d players tried to join in %d!!!",
-                            previousCount, JOIN_LIMIT_RESET_INTERVAL));
-                }
-            }
-        }, JOIN_LIMIT_RESET_INTERVAL, JOIN_LIMIT_RESET_INTERVAL, TimeUnit.SECONDS);
+        rateLimiter = new RateLimitManager(plugin);
     }
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
-        if(joinAttempts.incrementAndGet() > maxJoinsPerInterval) {
+        if (rateLimiter.checkLimited(evt.getConnection().getAddress())) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
                     "Bitte versuche es in 5 Minuten erneut.");
