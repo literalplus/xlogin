@@ -187,7 +187,7 @@ public class AuthtopiaListener implements Listener {
         } catch (InterruptedException | ExecutionException e) {
             evt.getPlayer().disconnect(new XyComponentBuilder(
                     "Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
-                            "Accountlimit konnte nicht berechnet werden: " + e.getClass().getSimpleName() + "\n" +
+                            "Accountlimit konnte nicht berechnet werden.\n" +
                             "Bitte versuche es erneut."
             ).color(ChatColor.RED).create());
             e.printStackTrace();
