@@ -80,7 +80,7 @@ public class IpAccountLimitManager {
         int registeredCount = 0;
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " +
                         AuthedPlayer.AUTH_DATA_TABLE_NAME +
-                        "WHERE user_lastip=? AND uuid != ? AND username != ?",
+                        " WHERE user_lastip=? AND uuid != ? AND username != ?",
                 ipString, ignore.getUniqueId().toString(), ignore.getName())) {
             if (qr.rs().next()) {
                 registeredCount = qr.rs().getInt("cnt");
