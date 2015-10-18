@@ -259,18 +259,23 @@ public class CommandxLogin extends Command {
                             sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
                                     .append("unbekannt (" + match.getLastIp() + ")", GRAY).create());
                         }
+
+                        String registrationDateString = "unbekannt";
+                        String lastLoginDateString = "unbekannt";
                         if (match.getRegistrationTimestamp() != null) {
-                            sender.sendMessage(new XyComponentBuilder("Registriert am: ").color(GOLD)
-                                    .append(SIMPLE_DATE_FORMAT.format(
-                                            new Date(match.getRegistrationTimestamp().getTime())
-                                    ), YELLOW).create());
+                            registrationDateString = SIMPLE_DATE_FORMAT.format(
+                                    new Date(match.getRegistrationTimestamp().getTime())
+                            );
                         }
                         if (match.getLastLoginDate() != null) {
-                            sender.sendMessage(new XyComponentBuilder("Letzter Login: ").color(GOLD)
-                                    .append(SIMPLE_DATE_FORMAT.format(
-                                            new Date(match.getLastLoginDate().getTime())
-                                    ), YELLOW).create());
+                            lastLoginDateString = SIMPLE_DATE_FORMAT.format(
+                                    new Date(match.getLastLoginDate().getTime())
+                            );
                         }
+                        sender.sendMessage(new XyComponentBuilder("Registriert: ").color(GOLD)
+                                .append(registrationDateString, YELLOW)
+                                .append(" Login: ", GOLD)
+                                .append(lastLoginDateString, YELLOW).create());
                     }
                 }
                 return;
