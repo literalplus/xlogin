@@ -354,7 +354,7 @@ public class CommandxLogin extends Command {
                         sender.sendMessage(new XyComponentBuilder("xLogin: ").color(GOLD)
                                 .append("[Info]", YELLOW, UNDERLINE)
                                 .tooltip("Hier klicken für /xlo user ")
-                                .suggest("/xlo user " + uuid).create());
+                                .command("/xlo user " + uuid).create());
                     }
                     //TODO: offer name history
                 }
