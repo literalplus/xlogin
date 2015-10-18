@@ -230,7 +230,7 @@ public class CommandxLogin extends Command {
                     }
 
                     for (AuthedPlayer match : matches) {
-                        sender.sendMessage(new XyComponentBuilder("Name: ").color(GOLD)
+                        sender.sendMessage(new XyComponentBuilder("Benutzer: ").color(GOLD)
                                 .append(match.getName(), YELLOW)
                                 .tooltip("Klicken zum Kopieren")
                                 .suggest(match.getName()).create());
@@ -238,10 +238,9 @@ public class CommandxLogin extends Command {
                                 .append(match.getUuid(), YELLOW)
                                 .tooltip("Klicken zum Kopieren")
                                 .suggest(match.getUuid()).create());
-                        sender.sendMessage(new ComponentBuilder("Premium? ").color(GOLD)
-                                .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED).create());
-                        sender.sendMessage(new ComponentBuilder("Authentifiziert: ").color(GOLD)
-                                .append(String.valueOf(match.getAuthenticationProvider())).color(YELLOW).create());
+                        sender.sendMessage(new XyComponentBuilder("Premium? ").color(GOLD)
+                                .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED)
+                                .append(" ( " + match.getAuthenticationProvider() + ")", YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("Sessions? ").color(GOLD)
                                 .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
@@ -250,14 +249,15 @@ public class CommandxLogin extends Command {
                                     .append(match.getLastIp() + " ", YELLOW)
                                     .tooltip("Klicken zum Kopieren")
                                     .suggest(match.getLastIp().replace("/", ""))
+                                    .append(" (", GOLD)
+                                    .append(String.valueOf(ip.getMaxUsers()), YELLOW)
+                                    .append(" Slots)", GOLD)
                                     .append("[IP-Info]", DARK_GREEN, UNDERLINE)
                                     .tooltip("Klicken für /xlo user " + match.getLastIp())
                                     .command("/xlo user " + match.getLastIp()).create());
-                            sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
-                                    .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
                         } else {
                             sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
-                                    .append("unbekannt", GRAY).create());
+                                    .append("unbekannt (" + match.getLastIp() + ")", GRAY).create());
                         }
                         if (match.getRegistrationTimestamp() != null) {
                             sender.sendMessage(new XyComponentBuilder("Registriert am: ").color(GOLD)
