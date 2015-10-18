@@ -240,18 +240,18 @@ public class CommandxLogin extends Command {
                                 .suggest(match.getUuid()).create());
                         sender.sendMessage(new XyComponentBuilder("Premium? ").color(GOLD)
                                 .append(match.isPremium() ? "ja" : "nein").color(match.isPremium() ? GREEN : RED)
-                                .append(" ( " + match.getAuthenticationProvider() + ")", YELLOW).create());
+                                .append(" (" + match.getAuthenticationProvider() + ")", YELLOW).create());
                         sender.sendMessage(new ComponentBuilder("Sessions? ").color(GOLD)
                                 .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
                         if (ip != null) {
                             sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
-                                    .append(match.getLastIp() + " ", YELLOW)
+                                    .append(match.getLastIp(), YELLOW)
                                     .tooltip("Klicken zum Kopieren")
                                     .suggest(match.getLastIp().replace("/", ""))
                                     .append(" (", GOLD)
                                     .append(String.valueOf(ip.getMaxUsers()), YELLOW)
-                                    .append(" Slots)", GOLD)
+                                    .append(" Slots) ", GOLD)
                                     .append("[IP-Info]", DARK_GREEN, UNDERLINE)
                                     .tooltip("Klicken für /xlo user " + match.getLastIp())
                                     .command("/xlo user " + match.getLastIp()).create());
