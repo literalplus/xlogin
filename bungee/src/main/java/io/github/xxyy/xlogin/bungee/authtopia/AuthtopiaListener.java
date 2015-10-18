@@ -95,7 +95,7 @@ public class AuthtopiaListener implements Listener {
                     return;
                 }
 
-                IpAddress ipAddress = checkIp(evt);
+                IpAddress ipAddress = checkIp(evt); //ips are set and saved on auth
 
                 if (ipAddress == null) {
                     return; //Can't use that IP
@@ -108,12 +108,14 @@ public class AuthtopiaListener implements Listener {
                             .getProfile(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
                     Validate.notNull(authedPlayer, "couldn't get profile for player in postlogin");
                     authedPlayer.setValid(true, false);
+                    if (!evt.getPlayer().getName().equals(authedPlayer.getName())) {
+                        authedPlayer.setName(evt.getPlayer().getName()); //Relevant for premium players
+                    } //saved on auth
                 }
 
                 if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     authedPlayer.setPremium(true);
                 }
-
                 boolean authed = false;
 
                 if (evt.getPlayer().getPendingConnection().isOnlineMode() && //vvv **THIS** is where we authenticate premium players
