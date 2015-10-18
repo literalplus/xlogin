@@ -35,6 +35,7 @@ import static net.md_5.bungee.api.ChatColor.GOLD;
 import static net.md_5.bungee.api.ChatColor.GRAY;
 import static net.md_5.bungee.api.ChatColor.GREEN;
 import static net.md_5.bungee.api.ChatColor.RED;
+import static net.md_5.bungee.api.ChatColor.UNDERLINE;
 import static net.md_5.bungee.api.ChatColor.YELLOW;
 
 /**
@@ -56,6 +57,7 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("/xlo cpw [Name] [New password] ").color(GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo free [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with accounts that match given criteria.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo user [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo mojang [Name] ").color(GOLD).append("Gets Mojang user info for a name.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R]").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo forcecrack [Name]").color(GOLD).append("Adds a user to the `force cracked` list so that they can join with a cracked session on a premium account. Note that this changes the UUID and will remove ranks, inventories and similar.").color(ChatColor.GRAY).create(),
     };
@@ -314,6 +316,38 @@ public class CommandxLogin extends Command {
                             .append(" wird nun immer als Cracked erkannt. Der Account ist ").color(GOLD)
                             .append(premium ? "bei " : "nicht bei ").color(premium ? GREEN : RED)
                             .append(" Mojang gekauft.").color(GOLD).create());
+                }
+                return;
+            case "mojang":
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                    return;
+                }
+                Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
+
+                if (profiles.length == 0) {
+                    sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer bei Mojang gefunden.").color(RED).create());
+                    return;
+                }
+
+                for (Profile profile : profiles) {
+                    String uuid = profile.getUniqueId().toString();
+                    sender.sendMessage(new XyComponentBuilder("Name: ").color(GOLD)
+                            .append(profile.getName(), YELLOW)
+                            .tooltip("Klicken zum Kopieren")
+                            .suggest(profile.getName()).create());
+                    sender.sendMessage(new XyComponentBuilder("UUID: ").color(GOLD)
+                            .append(uuid, YELLOW)
+                            .tooltip("Klicken zum Kopieren")
+                            .suggest(uuid).create());
+                    AuthedPlayer xloginPlayer = plugin.getRepository().getProfile(profile.getUniqueId());
+                    if (xloginPlayer != null) {
+                        sender.sendMessage(new XyComponentBuilder("xLogin: ").color(GOLD)
+                                .append("[Info]", YELLOW, UNDERLINE)
+                                .tooltip("Hier klicken für /xlo user ")
+                                .suggest("/xlo user " + uuid).create());
+                    }
+                    //TODO: offer name history
                 }
                 return;
             case "debugp":
