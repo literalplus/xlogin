@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static net.md_5.bungee.api.ChatColor.DARK_GREEN;
 import static net.md_5.bungee.api.ChatColor.DARK_RED;
 import static net.md_5.bungee.api.ChatColor.GOLD;
 import static net.md_5.bungee.api.ChatColor.GRAY;
@@ -246,9 +247,12 @@ public class CommandxLogin extends Command {
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
                         if (ip != null) {
                             sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
-                                    .append(match.getLastIp(), YELLOW)
+                                    .append(match.getLastIp() + " ", YELLOW)
                                     .tooltip("Klicken zum Kopieren")
-                                    .suggest(match.getLastIp().replace("/", "")).create());
+                                    .suggest(match.getLastIp().replace("/", ""))
+                                    .append("[IP-Info]", DARK_GREEN, UNDERLINE)
+                                    .tooltip("Klicken für /xlo user " + match.getLastIp())
+                                    .command("/xlo user " + match.getLastIp()).create());
                             sender.sendMessage(new ComponentBuilder("IP-Slots: ").color(GOLD)
                                     .append(String.valueOf(ip.getMaxUsers())).color(YELLOW).create());
                         } else {
