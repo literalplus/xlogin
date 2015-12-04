@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.bungee.limits;
 
+import com.google.common.base.Preconditions;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -11,7 +12,6 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Manages join rate limits in order to protect from DoS attacks.
@@ -22,24 +22,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimitManager {
     public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
     public static final int IP_JOIN_THRESHOLD = 5;
-    private static int maxJoinsPerInterval = 30; //Should automatically adapt to load
-    private final AtomicInteger joinAttempts = new AtomicInteger(); //Gets reset automatically every x seconds
+    private final SimpleRateLimit joinLimit = new SimpleRateLimit(this,
+            "[POSSIBLE ATTACK] %d players tried to join in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
+            30);
+    private final SimpleRateLimit registerLimit = new SimpleRateLimit(this,
+            "[POSSIBLE ATTACK] %d players tried to register in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
+            5);
     private Map<String, Integer> ipJoins = new ConcurrentHashMap<>(); //Gets reset automatically every x seconds
     private final XLoginPlugin plugin;
+    private boolean started = false;
 
     public RateLimitManager(XLoginPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void start() {
+        Preconditions.checkState(!started, "Rate limit manager already started!");
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
             @Override
             public void run() {
-                int previousCount = joinAttempts.getAndSet(0);
-                if (previousCount > maxJoinsPerInterval) {
-                    sendNotice("[POSSIBLE ATTACK] %d players tried to join in %d!",
-                            previousCount, JOIN_LIMIT_RESET_INTERVAL);
-                }
+                joinLimit.reset();
+                registerLimit.reset();
                 Map<String, Integer> newIpJoins = new ConcurrentHashMap<>(); //keep overly infringing ips
                 for (Map.Entry<String, Integer> entry : ipJoins.entrySet()) {
-                    if (entry.getValue() > IP_JOIN_THRESHOLD) {
+                    if (entry.getValue() > IP_JOIN_THRESHOLD){
                         sendNotice("[POSSIBLE ATTACK] %d players tried to join from %s in %d!",
                                 entry.getValue(), entry.getKey(), JOIN_LIMIT_RESET_INTERVAL);
                         newIpJoins.put(entry.getKey(), entry.getValue() / 2);
@@ -48,6 +54,7 @@ public class RateLimitManager {
                 ipJoins = newIpJoins;
             }
         }, JOIN_LIMIT_RESET_INTERVAL, JOIN_LIMIT_RESET_INTERVAL, TimeUnit.SECONDS);
+        started = true;
     }
 
     /**
@@ -57,7 +64,7 @@ public class RateLimitManager {
      * @return whether a new connection should be blocked
      */
     public boolean checkGlobalLimit() {
-        return joinAttempts.incrementAndGet() > maxJoinsPerInterval;
+        return joinLimit.incrementAndCheck();
     }
 
     /**
@@ -92,7 +99,7 @@ public class RateLimitManager {
      * @param message   the message, using {@link String#format(String, Object...)} format for replacing arguments
      * @param arguments the arguments for the message
      */
-    private void sendNotice(String message, Object... arguments) {
+    public void sendNotice(String message, Object... arguments) {
         String mergedMessage = String.format(message, arguments);
         plugin.getLogger().warning(mergedMessage);
         BaseComponent[] jsonMessage = ArrayUtils.addAll(
@@ -100,9 +107,17 @@ public class RateLimitManager {
                 new TextComponent(mergedMessage)
         );
         for (ProxiedPlayer plr : plugin.getProxy().getPlayers()) {
-            if (plr.hasPermission("xlogin.admin")) {
+            if (plr.hasPermission("xlogin.admin")){
                 plr.sendMessage(jsonMessage);
             }
         }
+    }
+
+    public SimpleRateLimit getJoinLimit() {
+        return joinLimit;
+    }
+
+    public SimpleRateLimit getRegisterLimit() {
+        return registerLimit;
     }
 }

@@ -68,7 +68,13 @@ public class CommandRegister extends Command {
             return;
         }
 
+        if (plugin.getRateLimitManager().getRegisterLimit().incrementAndCheck()){
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().registerRateLimit));
+            return;
+        }
+
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
+        assert authedPlayer != null;
         authedPlayer.registerPassword(args[0], plr.getAddress().getAddress().toString());
         plugin.getRegistry().registerAuthentication(authedPlayer);
 

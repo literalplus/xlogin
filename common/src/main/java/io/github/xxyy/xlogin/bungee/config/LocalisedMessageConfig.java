@@ -39,6 +39,8 @@ public class LocalisedMessageConfig extends Config { //FIXME This impl is shitty
     public String notRegistered = "Du bist nicht registriert! Versuche §8/register§7!";
     @NotNull
     public String alreadyRegistered = "Du bist bereits registriert! Versuche §8/login <Passwort>§7!";
+    @NotNull
+    public String registerRateLimit = "Es registrieren sich gerade zu viele Leute. Bitte versuche es in Kürze erneut!";
 
     @NotNull
     @Comment("param1: Name of the user who just registered")

@@ -22,6 +22,7 @@ import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
 import io.github.xxyy.xlogin.bungee.limits.IpOnlineLimitManager;
+import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
 import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
@@ -56,6 +57,8 @@ public class XLoginPlugin extends XLoginBungee {
     private LocalisedMessageConfig messages;
     @Getter
     private IpOnlineLimitManager onlineLimiter = new IpOnlineLimitManager(this);
+    @Getter
+    private RateLimitManager rateLimitManager = new RateLimitManager(this);
 
     @Override
     public void onEnable() {
@@ -93,6 +96,8 @@ public class XLoginPlugin extends XLoginBungee {
 
         //Enable modules
         new ModuleManager(this).enable(WarnModule.class, BanModule.class, DynlistModule.class);
+
+        rateLimitManager.start();
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }

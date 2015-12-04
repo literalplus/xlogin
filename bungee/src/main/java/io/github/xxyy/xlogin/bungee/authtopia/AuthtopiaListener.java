@@ -12,7 +12,6 @@ import org.apache.commons.lang.Validate;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.bungee.limits.IpAccountLimitManager;
-import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
@@ -30,20 +29,18 @@ import java.util.concurrent.TimeUnit;
  * @since 10.5.14
  */
 public class AuthtopiaListener implements Listener {
-    private final RateLimitManager rateLimiter;
     private final IpAccountLimitManager accountLimiter;
     private final XLoginPlugin plugin;
 
     public AuthtopiaListener(final XLoginPlugin plugin) {
         this.plugin = plugin;
-        rateLimiter = new RateLimitManager(plugin);
         accountLimiter = new IpAccountLimitManager(plugin);
     }
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
         InetSocketAddress address = evt.getConnection().getAddress();
-        if (rateLimiter.checkLimited(address)) {
+        if (plugin.getRateLimitManager().checkLimited(address)){
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
                     "Bitte versuche es in 5 Minuten erneut.");
