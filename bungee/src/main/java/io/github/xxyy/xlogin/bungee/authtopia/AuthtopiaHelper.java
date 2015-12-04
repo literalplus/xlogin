@@ -69,7 +69,7 @@ public class AuthtopiaHelper {
     }
 
     public void tryRegisterAuth(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
-        if (authedPlayer.isAuthenticated()) {
+        if (authedPlayer.isAuthenticated()){
             plugin.sendAuthNotification(plr, authedPlayer);
             plugin.teleportToLastLocation(plr);
         }
@@ -107,7 +107,7 @@ public class AuthtopiaHelper {
             @Override
             public void onSuccess(final Boolean queryMojang) {
                 boolean onlineMode = false; //auth_list cracked override
-                if (queryMojang) {
+                if (queryMojang){
                     Profile[] profiles;
                     try {
                         profiles = PROFILE_REPOSITORY.findProfilesByNames(evt.getConnection().getName());
@@ -124,9 +124,9 @@ public class AuthtopiaHelper {
                         return;
                     }
 
-                    if (profiles.length == 1 && !profiles[0].isDemo()) {
+                    if (profiles.length == 1 && !profiles[0].isDemo()){
                         onlineMode = true;
-                    } else if (profiles.length != 0) {
+                    } else if (profiles.length != 0){
                         plugin.getLogger().info(String.format("Encountered multiple profiles for username %s: %s!",
                                 evt.getConnection().getName(),
                                 CommandHelper.CSCollection(Arrays.asList(profiles))));
@@ -136,7 +136,9 @@ public class AuthtopiaHelper {
                 }
 
                 evt.getConnection().setOnlineMode(onlineMode);
-                plugin.getLogger().info(evt.getConnection().getName() + ":premium=" + evt.getConnection().isOnlineMode());
+                plugin.getLogger().info(String.format("%s:premium=%s (%s)",
+                        evt.getConnection().getName(), evt.getConnection().isOnlineMode(),
+                        evt.getConnection().getAddress().getAddress().toString()));
 
                 evt.completeIntent(plugin);
             }
@@ -160,7 +162,7 @@ public class AuthtopiaHelper {
      * @param plr Target player
      */
     public boolean registerPremium(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
-        if (authedPlayer.authenticatePremium(plr.getAddress().getAddress().toString())) {
+        if (authedPlayer.authenticatePremium(plr.getAddress().getAddress().toString())){
             plugin.getRegistry().registerAuthentication(authedPlayer);
 
             plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());
@@ -178,7 +180,7 @@ public class AuthtopiaHelper {
         AuthedPlayer authedPlayer = plugin.getRepository()
                 .getProfile(plr.getUniqueId(), plr.getName());
 
-        if (authedPlayer != null) {
+        if (authedPlayer != null){
             authedPlayer.setValid(false, authedPlayer.isPremium() && authedPlayer.isAuthenticated());
             plugin.getRepository().forgetProfile(authedPlayer);
         }
