@@ -22,9 +22,9 @@ import java.util.concurrent.TimeUnit;
 public class RateLimitManager {
     public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
     public static final int IP_JOIN_THRESHOLD = 5;
-    private final SimpleRateLimit joinLimit = new SimpleRateLimit(this,
+    private final AdaptiveRateLimit joinLimit = new AdaptiveRateLimit(this,
             "[POSSIBLE ATTACK] %d players tried to join in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
-            30);
+            30, 0.75F, 10);
     private final SimpleRateLimit registerLimit = new SimpleRateLimit(this,
             "[POSSIBLE ATTACK] %d players tried to register in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
             5);
