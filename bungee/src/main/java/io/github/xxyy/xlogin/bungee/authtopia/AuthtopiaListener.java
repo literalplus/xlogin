@@ -111,7 +111,15 @@ public class AuthtopiaListener implements Listener {
                 }
 
                 if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
-                    authedPlayer.setPremium(true);
+                    assert authedPlayer != null;
+                    authedPlayer.setPremium(true);  //TODO: Do we need this call?
+                    if (plugin.getRateLimitManager().getRegisterLimit().incrementAndCheck()){
+                        evt.getPlayer().disconnect(
+                                new XyComponentBuilder(
+                                        "Es betreten leider gerade zu viele Spieler den Server!\n").color(ChatColor.RED)
+                                        .append("Bitte versuche es in einer Minute erneut! (moj)").color(ChatColor.GOLD).create());
+                        return;
+                    }
                 }
                 boolean authed = false;
 
@@ -135,7 +143,7 @@ public class AuthtopiaListener implements Listener {
                             AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider())) {
 
                         plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
-                        authedPlayer.setPremium(true); //TODO: Do we need this call?
+                        authedPlayer.setPremium(true);
 
                         if (evt.getPlayer().getServer() != null) {
                             plugin.notifyRegister(evt.getPlayer());
