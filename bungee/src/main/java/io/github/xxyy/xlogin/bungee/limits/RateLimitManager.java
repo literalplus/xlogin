@@ -83,7 +83,7 @@ public class RateLimitManager {
      * @return whether the new connection should be blocked
      */
     public boolean checkLimited(InetSocketAddress address) {
-        return checkGlobalLimit() && checkIpLimit(address);
+        return checkGlobalLimit() || checkIpLimit(address);
     }
 
     /**
