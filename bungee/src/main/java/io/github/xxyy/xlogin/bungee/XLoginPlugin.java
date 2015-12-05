@@ -32,6 +32,7 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.common.module.ModuleManager;
+import io.github.xxyy.xlogin.lib.quietcord.filter.PasswordFilter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -98,6 +99,8 @@ public class XLoginPlugin extends XLoginBungee {
         new ModuleManager(this).enable(WarnModule.class, BanModule.class, DynlistModule.class);
 
         rateLimitManager.start();
+
+        new PasswordFilter(this).inject();
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " enabled!");
     }
