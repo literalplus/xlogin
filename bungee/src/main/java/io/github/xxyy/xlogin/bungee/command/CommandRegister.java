@@ -10,6 +10,8 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Handles registering users.
  *
@@ -40,6 +42,7 @@ public class CommandRegister extends Command {
             this with a legit Vanilla client, we can kick them.
              */
             plr.disconnect(new XyComponentBuilder("Bist du ein Joinbot?").create());
+            plugin.getRateLimitManager().blockIpFor(plr.getAddress(), 24, TimeUnit.HOURS);
             return;
         }
 

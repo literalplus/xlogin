@@ -48,7 +48,7 @@ public class RateLimitManager {
                     if (entry.getValue() > IP_JOIN_THRESHOLD){
                         sendNotice("[POSSIBLE ATTACK] %d players tried to join from %s in %d!",
                                 entry.getValue(), entry.getKey(), JOIN_LIMIT_RESET_INTERVAL);
-                        newIpJoins.put(entry.getKey(), entry.getValue() / 2);
+                        newIpJoins.put(entry.getKey(), entry.getValue() - IP_JOIN_THRESHOLD);
                     }
                 }
                 ipJoins = newIpJoins;
@@ -111,6 +111,21 @@ public class RateLimitManager {
                 plr.sendMessage(jsonMessage);
             }
         }
+    }
+
+    /**
+     * Blocks an IP address from joining the server for a specified amount of time. Note that this is lost if the server
+     * is restarted.
+     *
+     * @param address the address to block
+     * @param amount  how long to block them
+     * @param unit    the unit of {@code amount}
+     */
+    public void blockIpFor(InetSocketAddress address, int amount, TimeUnit unit) {
+        //how many users would have to join for the ip to be limited for that time
+        long value = (unit.toSeconds(amount) * IP_JOIN_THRESHOLD) / JOIN_LIMIT_RESET_INTERVAL;
+        int intValue = value > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) value;
+        ipJoins.put(address.getAddress().toString(), intValue);
     }
 
     public SimpleRateLimit getJoinLimit() {
