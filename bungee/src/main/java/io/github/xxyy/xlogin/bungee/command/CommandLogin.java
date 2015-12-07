@@ -5,9 +5,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 import io.github.xxyy.common.bungee.ChatHelper;
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Handles the /login command.
@@ -30,6 +33,18 @@ public class CommandLogin extends Command {
         }
 
         ProxiedPlayer plr = (ProxiedPlayer) sender;
+
+        if (plr.getServer() == null){
+            /*
+            Legitimate players can't chat before they're connected to a server.
+            Some joinbots do, however, not wait until the connection has been
+            established before sending /register. Since there is no way to do
+            this with a legit Vanilla client, we can kick them.
+             */
+            plr.disconnect(new XyComponentBuilder("Bist du ein Joinbot?").create());
+            plugin.getRateLimitManager().blockIpFor(plr.getAddress(), 2, TimeUnit.HOURS);
+            return;
+        }
 
         if(!plugin.getRepository().isPlayerKnown(plr.getUniqueId())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
