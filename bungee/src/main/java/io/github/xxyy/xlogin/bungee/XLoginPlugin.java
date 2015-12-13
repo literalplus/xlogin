@@ -18,6 +18,7 @@ import io.github.xxyy.xlogin.bungee.command.CommandPremium;
 import io.github.xxyy.xlogin.bungee.command.CommandRegister;
 import io.github.xxyy.xlogin.bungee.command.CommandSessions;
 import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
+import io.github.xxyy.xlogin.bungee.command.CommandxLoginLimit;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
@@ -84,6 +85,7 @@ public class XLoginPlugin extends XLoginBungee {
         this.getProxy().getPluginManager().registerCommand(this, new CommandRegister(this));
         this.getProxy().getPluginManager().registerCommand(this, new CommandSessions(this));
         this.getProxy().getPluginManager().registerCommand(this, new CommandxLogin(this));
+        this.getProxy().getPluginManager().registerCommand(this, new CommandxLoginLimit(this));
         this.getProxy().registerChannel(API_CHANNEL_NAME);
         this.getProxy().registerChannel(AuthtopiaHelper.CHANNEL_NAME);
         this.getProxy().getScheduler().schedule(this, new Runnable() {
