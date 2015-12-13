@@ -53,7 +53,7 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
             new ComponentBuilder("Copyright (C) 2014-2015 Literallie - https://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
-            new ComponentBuilder("/xlo [help|reload|cpw|premium|free] ").color(GOLD).append("Swiss Army Knife for xLogin :)").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo ").color(GOLD).append("Swiss Army Knife for xLogin :)").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo reload ").color(GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo cpw [Name] [New password] ").color(GOLD).append("Changes password of a cracked account.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo free [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with accounts that match given criteria.").color(ChatColor.GRAY).create(),
