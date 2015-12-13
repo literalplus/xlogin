@@ -93,6 +93,7 @@ public class CommandxLoginLimit extends Command {
                                 .color(GRAY).italic(true).create());
                     }
                 }
+                plugin.getLogger().info(sender.getName() + "reset xLogin limits");
                 manager.getJoinLimit().reset();
                 if (manager.getRegisterLimit() instanceof AdaptiveRateLimit){
                     ((AdaptiveRateLimit) manager.getRegisterLimit()).resetThreshold();
