@@ -1,5 +1,6 @@
 package io.github.xxyy.xlogin.bungee;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
@@ -176,6 +177,7 @@ public class XLoginPlugin extends XLoginBungee {
     }
 
     public void sendAuthNotification(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
+        Preconditions.checkNotNull(authedPlayer.getAuthenticationProvider(), "autherPlayer.authenticationProvider");
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
