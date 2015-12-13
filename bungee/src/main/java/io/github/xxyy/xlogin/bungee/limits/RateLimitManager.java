@@ -23,10 +23,10 @@ public class RateLimitManager {
     public static final int JOIN_LIMIT_RESET_INTERVAL = 30;
     public static final int IP_JOIN_THRESHOLD = 5;
     private final AdaptiveRateLimit joinLimit = new AdaptiveRateLimit(this,
-            "[POSSIBLE ATTACK] %d players tried to join in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
+            "[POSSIBLE ATTACK] %d/%d players tried to join in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
             30, 0.75F, 10);
     private final SimpleRateLimit registerLimit = new SimpleRateLimit(this,
-            "[POSSIBLE ATTACK] %d players tried to register in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
+            "[POSSIBLE ATTACK] %d/%d players tried to register in " + JOIN_LIMIT_RESET_INTERVAL + "s!",
             5);
     private Map<String, Integer> ipJoins = new ConcurrentHashMap<>(); //Gets reset automatically every x seconds
     private final XLoginPlugin plugin;

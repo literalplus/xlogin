@@ -37,7 +37,7 @@ public class SimpleRateLimit {
         int previousCount = currentValue.getAndSet(0);
         if (previousCount > threshold){
             manager.sendNotice(hitMessage,
-                    previousCount);
+                    previousCount, threshold);
         }
         return previousCount;
     }
