@@ -59,6 +59,13 @@ public class AdaptiveRateLimit extends SimpleRateLimit {
         setThreshold(baseThreshold);
     }
 
+    /**
+     * Resets the threshold of this limit to the base threshold.
+     */
+    public void resetThreshold() {
+        setThreshold(baseThreshold);
+    }
+
     private void applyLoadFactor() {
         int newThreshold = (int) Math.ceil(getBaseThreshold() * loadFactor);
         if (newThreshold < minThreshold){

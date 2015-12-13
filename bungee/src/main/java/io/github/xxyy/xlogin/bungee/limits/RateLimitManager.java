@@ -128,6 +128,10 @@ public class RateLimitManager {
         ipJoins.put(address.getAddress().toString(), intValue);
     }
 
+    public Map<String, Integer> getIpJoins() {
+        return ipJoins;
+    }
+
     public SimpleRateLimit getJoinLimit() {
         return joinLimit;
     }
