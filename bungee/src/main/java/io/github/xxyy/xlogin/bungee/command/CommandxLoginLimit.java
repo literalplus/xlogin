@@ -65,7 +65,8 @@ public class CommandxLoginLimit extends Command {
                     return;
                 }
 
-                sender.sendMessage(new XyComponentBuilder("Current IP rate limits:").color(GOLD).create());
+                sender.sendMessage(new XyComponentBuilder("Current IP rate limits: (red = limited)").color(GOLD).create());
+                int i = 0;
                 for (Map.Entry<String, Integer> entry : manager.getIpJoins().entrySet()) {
                     if (entry.getValue() > 1){
                         sender.sendMessage(new XyComponentBuilder(" " + entry.getKey()).color(YELLOW)
@@ -73,7 +74,11 @@ public class CommandxLoginLimit extends Command {
                                 .append(String.valueOf(entry.getValue()),
                                         entry.getValue() > RateLimitManager.IP_JOIN_THRESHOLD ? RED : GREEN)
                                 .create());
+                        i++;
                     }
+                }
+                if (i == 0){
+                    sender.sendMessage(new XyComponentBuilder("(none)").color(DARK_GREEN).create());
                 }
                 return;
             case "reset":
