@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import io.github.xxyy.xlogin.bungee.punishment.ban.BanInfo;
 import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ final class WarnPunishmentBuilder {
                 warnings.add(warn);
             }
         }
+        BanInfo banInfo = module.getBanModule().getBanInfo(targetId);
         int warningsTotal = warnings.size();
 
         if (warningsTotal == 0) {
@@ -48,6 +50,10 @@ final class WarnPunishmentBuilder {
         if (warningsTotal <= 3 || module.getBanModule() == null) {
             cb.append("vom Server geworfen!\n").color(ChatColor.RED);
         } else if (warningsTotal >= 10) {
+            if (banInfo != null && banInfo.getExpiryTime() == null){
+                return;
+            }
+
             cb.append("permanent").color(ChatColor.DARK_RED).bold(true)
                     .append(" gebannt!\n").color(ChatColor.RED).bold(false);
             module.getBanModule().setBanned(targetId, mostRecentWarning.getSourceId(),
@@ -58,6 +64,13 @@ final class WarnPunishmentBuilder {
             cb.append("für " + banHours + " Stunden gebannt!\n").color(ChatColor.RED);
 
             Calendar cal = Calendar.getInstance();
+            if (banInfo != null){
+                if (banInfo.getExpiryTime() == null){
+                    return;
+                } else {
+                    cal.setTime(banInfo.getExpiryTime()); //just add to existing temporary ban
+                }
+            }
             cal.add(Calendar.HOUR_OF_DAY, banHours);
 
             module.getBanModule().setBanned(targetId, mostRecentWarning.getSourceId(), mostRecentWarning.getSourceServerName(),
