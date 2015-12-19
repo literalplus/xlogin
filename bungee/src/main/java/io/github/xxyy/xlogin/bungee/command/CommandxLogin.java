@@ -133,40 +133,40 @@ public class CommandxLogin extends Command {
                             .append(" wurde geändert.").color(GOLD).create());
                 }
                 return;
-            case "premium":
-                if (!sender.hasPermission("xlogin.admin")){
-                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
-                    return;
-                }
-
-                if (args.length < 2){
-                    sendAll(sender, HELP_COMPONENTS);
-                } else {
-                    Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
-                    if (profiles.length == 0 || profiles[0].isDemo()){
-                        sender.sendMessage(new ComponentBuilder("Für diesen Spieler wurde kein Premium-Account gefunden.").color(GOLD).create());
-                        return;
-                    } else if (profiles.length > 1){
-                        sender.sendMessage(new ComponentBuilder("Für diesen Namen gibt es mehrere Accounts. Das ist ein Problem.").color(ChatColor.RED).create());
-                        return;
-                    }
-
-                    AuthedPlayer authedPlayer = plugin.getRepository().getProfile(UtilUUID.getFromString(profiles[0].getId()), args[1]);
-                    authedPlayer.setPremium(true);
-                    authedPlayer.setSalt(null);
-                    authedPlayer.setPassword(null);
-                    AuthedPlayerFactory.save(authedPlayer);
-
-                    ProxiedPlayer player = plugin.getProxy().getPlayer(args[1]);
-                    if (player != null){
-                        player.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAdmin, sender.getName()));
-                    }
-
-                    sender.sendMessage(new ComponentBuilder("Der Account von ").color(GOLD)
-                            .append(String.format("%s {UUID=%s}", args[1], authedPlayer.getUuid())).color(ChatColor.YELLOW)
-                            .append(" wurde als Premium markiert.").color(GOLD).create());
-                }
-                return;
+//            case "premium": //Premium UUIDs will always be premium, cracked UUIDs always cracked. This command doesn't change anything.
+//                if (!sender.hasPermission("xlogin.admin")){
+//                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+//                    return;
+//                }
+//
+//                if (args.length < 2){
+//                    sendAll(sender, HELP_COMPONENTS);
+//                } else {
+//                    Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
+//                    if (profiles.length == 0 || profiles[0].isDemo()){
+//                        sender.sendMessage(new ComponentBuilder("Für diesen Spieler wurde kein Premium-Account gefunden.").color(GOLD).create());
+//                        return;
+//                    } else if (profiles.length > 1){
+//                        sender.sendMessage(new ComponentBuilder("Für diesen Namen gibt es mehrere Accounts. Das ist ein Problem.").color(ChatColor.RED).create());
+//                        return;
+//                    }
+//
+//                    AuthedPlayer authedPlayer = plugin.getRepository().getProfile(UtilUUID.getFromString(profiles[0].getId()), args[1]);
+//                    authedPlayer.setPremium(true);
+//                    authedPlayer.setSalt(null);
+//                    authedPlayer.setPassword(null);
+//                    AuthedPlayerFactory.save(authedPlayer);
+//
+//                    ProxiedPlayer player = plugin.getProxy().getPlayer(args[1]);
+//                    if (player != null){
+//                        player.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumAdmin, sender.getName()));
+//                    }
+//
+//                    sender.sendMessage(new ComponentBuilder("Der Account von ").color(GOLD)
+//                            .append(String.format("%s {UUID=%s}", args[1], authedPlayer.getUuid())).color(ChatColor.YELLOW)
+//                            .append(" wurde als Premium markiert.").color(GOLD).create());
+//                }
+//                return;
             case "free":
                 if (!sender.hasPermission("xlogin.free")){
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
