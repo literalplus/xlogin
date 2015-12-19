@@ -121,7 +121,7 @@ public class CommandxLogin extends Command {
                     }
                     authedPlayer.setSalt(PasswordHelper.generateSalt());
                     authedPlayer.setPassword(PasswordHelper.encrypt(args[2], authedPlayer.getSalt()));
-                    AuthedPlayerFactory.save(authedPlayer);
+                    AuthedPlayerFactory.save(authedPlayer, true);
 
                     ProxiedPlayer player = plugin.getProxy().getPlayer(args[1]);
                     if (player != null){
