@@ -172,7 +172,7 @@ public final class AuthedPlayerFactory {
         }
 
         Validate.isTrue(!ap.getRepository().isReadOnly(), "This data has been marked read-only by its repository.");
-        Validate.isTrue(!saveUnauthenticated && ap.isAuthenticated(), "Don't fucking save non-authed players, will you!");
+        Validate.isTrue(saveUnauthenticated || ap.isAuthenticated(), "Don't fucking save non-authed players, will you!");
 
         PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO " + AuthedPlayer.AUTH_DATA_TABLE_NAME + " SET " +
                         "username=?,password=?,salt=?,user_lastip=?,premium=?,ign_p_msg=?," +
