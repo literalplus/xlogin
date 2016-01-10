@@ -42,7 +42,7 @@ public class CommandLogin extends Command {
             this with a legit Vanilla client, we can kick them.
              */
             plr.disconnect(new XyComponentBuilder("Bist du ein Joinbot?").create());
-            plugin.getRateLimitManager().blockIpFor(plr.getAddress(), 2, TimeUnit.HOURS);
+            plugin.getRateLimitManager().blockIpFor(plr.getAddress(), 1, TimeUnit.HOURS);
             return;
         }
 
