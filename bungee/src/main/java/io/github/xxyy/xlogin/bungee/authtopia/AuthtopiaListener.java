@@ -47,6 +47,12 @@ public class AuthtopiaListener implements Listener {
             return;
         }
 
+        if (plugin.getProxyListManager().isBlockedProxy(evt.getConnection().getAddress())){
+            evt.setCancelled(true);
+            evt.setCancelReason("Entschuldige, aber Proxies können wir nicht erlauben.");
+            return;
+        }
+
         if (plugin.getOnlineLimiter().checkOnlineLimit(address)) {
             evt.setCancelReason(MessageFormat.format(
                     plugin.getMessages().ipAccountLimitedReached,

@@ -21,6 +21,7 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -386,6 +387,24 @@ public class CommandxLogin extends Command {
                     }
                 }
                 return;
+            case "addproxy":
+                if (!sender.hasPermission("xlogin.admin")){
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
+                if (args.length < 2){
+                    sender.sendMessage(new ComponentBuilder("/xlo addproxy <IP>").create());
+                } else {
+                    try {
+                        plugin.getProxyListManager().addProxy(args[1], new File(plugin.getProxyListDir(), "custom-proxies.txt"));
+                    } catch (IllegalStateException | IllegalArgumentException e) {
+                        e.printStackTrace();
+                        sender.sendMessage(new XyComponentBuilder("Konnte IP nicht hinzufügen: ").color(RED)
+                                .append(e.getClass().getSimpleName() + ": " + e.getMessage())
+                                .create());
+                    }
+                }
             default:
                 sendAll(sender, HELP_COMPONENTS);
         }

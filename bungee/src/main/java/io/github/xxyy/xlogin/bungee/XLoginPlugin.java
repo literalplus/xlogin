@@ -34,12 +34,16 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.common.module.ModuleManager;
+import io.github.xxyy.xlogin.common.module.ProxyListManager;
 import io.github.xxyy.xlogin.lib.quietcord.filter.PasswordFilter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  * Main class interfacing with the BungeeCord plugin API.
@@ -62,11 +66,31 @@ public class XLoginPlugin extends XLoginBungee {
     private IpOnlineLimitManager onlineLimiter = new IpOnlineLimitManager(this);
     @Getter
     private RateLimitManager rateLimitManager = new RateLimitManager(this);
+    @Getter
+    private ProxyListManager proxyListManager;
+    @Getter
+    private File proxyListDir;
 
     @Override
     public void onEnable() {
         //Initialise configuration file
         reloadConfig();
+
+        //Load proxy list
+        proxyListManager = new ProxyListManager();
+        proxyListDir = new File(getDataFolder(), "proxy-lists");
+        if (proxyListDir.isDirectory() || !proxyListDir.mkdirs()){
+            getLogger().warning("Couldn't create " + proxyListDir.getAbsolutePath() + "!");
+        }
+        File defaultProxyListFile = new File(proxyListDir, "default-proxy-list.txt");
+        if (!defaultProxyListFile.isFile()){
+            try {
+                Files.copy(getResourceAsStream("default-proxy-list.txt"), defaultProxyListFile.toPath());
+            } catch (IOException e) {
+                getLogger().log(Level.WARNING, "Couldn't save default-proxy-list.txt!", e);
+            }
+        }
+        proxyListManager.loadFromDirectory(proxyListDir, getLogger());
 
         //Establish database connection
         this.authtopiaHelper = new AuthtopiaHelper(this);
