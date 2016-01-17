@@ -79,7 +79,7 @@ public class XLoginPlugin extends XLoginBungee {
         //Load proxy list
         proxyListManager = new ProxyListManager();
         proxyListDir = new File(getDataFolder(), "proxy-lists");
-        if (proxyListDir.isDirectory() || !proxyListDir.mkdirs()){
+        if (!proxyListDir.isDirectory() && !proxyListDir.mkdirs()){
             getLogger().warning("Couldn't create " + proxyListDir.getAbsolutePath() + "!");
         }
         File defaultProxyListFile = new File(proxyListDir, "default-proxy-list.txt");
