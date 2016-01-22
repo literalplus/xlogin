@@ -232,7 +232,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
      * @return a color representing this player's premium state
      */
     public ChatColor getPremiumColor() {
-        return premium ? ChatColor.GREEN : ChatColor.RED;
+        return isPremium() ? ChatColor.GREEN : ChatColor.RED;
     }
 
     /**
@@ -244,7 +244,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         return new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new XyComponentBuilder("Spieler: ").color(ChatColor.GOLD)
                         .append(getName(), ChatColor.YELLOW)
-                        .append("\nUUID: ", ChatColor.GOLD)
+                        .append("\nUUID:\n", ChatColor.GOLD) //takes up too much space in auto GUI scale
                         .append(getUuid(), ChatColor.YELLOW)
                         .append("\nPremium? ", ChatColor.GOLD)
                         .append(isPremium() ? "ja" : "nein", getPremiumColor())
