@@ -1,13 +1,22 @@
-package io.github.xxyy.xlogin.spigot.commands;
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+package io.github.xxyy.xlogin.spigot.commands;
 
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.spigot.XLoginPlugin;
 import io.github.xxyy.xlogin.spigot.listener.GenericListener;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
 /**
  * Teleports players to spawn. wow.

@@ -1,6 +1,18 @@
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
+
 package io.github.xxyy.xlogin.bungee.punishment.ban;
 
 import com.google.common.collect.ImmutableSet;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -11,17 +23,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import io.github.xxyy.xlogin.bungee.JSONChatHelper;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static net.md_5.bungee.api.ChatColor.GOLD;
-import static net.md_5.bungee.api.ChatColor.GREEN;
-import static net.md_5.bungee.api.ChatColor.RED;
-import static net.md_5.bungee.api.ChatColor.YELLOW;
+import static net.md_5.bungee.api.ChatColor.*;
 
 /**
  * Command which displays information about bans.

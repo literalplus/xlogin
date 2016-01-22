@@ -1,13 +1,22 @@
-package io.github.xxyy.xlogin.bungee.dynlist;
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
 
-import lombok.Getter;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.md_5.bungee.api.config.ServerInfo;
+package io.github.xxyy.xlogin.bungee.dynlist;
 
 import io.github.xxyy.xlogin.bungee.XLoginBungee;
 import io.github.xxyy.xlogin.common.module.XLoginModule;
 import io.github.xxyy.xlogin.common.module.annotation.CanHasPotato;
 import io.github.xxyy.xlogin.common.module.annotation.Module;
+import lombok.Getter;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import net.md_5.bungee.api.config.ServerInfo;
 
 import java.util.ArrayList;
 import java.util.Iterator;

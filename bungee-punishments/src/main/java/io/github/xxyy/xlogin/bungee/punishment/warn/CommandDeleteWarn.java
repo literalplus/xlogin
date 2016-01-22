@@ -1,7 +1,22 @@
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
+
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import io.github.xxyy.common.XycConstants;
+import io.github.xxyy.common.bungee.ChatHelper;
+import io.github.xxyy.xlogin.bungee.JSONChatHelper;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -11,17 +26,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import org.apache.commons.lang3.StringUtils;
 
-import io.github.xxyy.common.XycConstants;
-import io.github.xxyy.common.bungee.ChatHelper;
-import io.github.xxyy.xlogin.bungee.JSONChatHelper;
-import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A command which allows to delete warnings.
@@ -127,7 +132,7 @@ class CommandDeleteWarn extends Command implements TabExecutor {
         private final String description;
         private final String permission;
 
-        private DelWarnFlag(char flag, String description, String permission) {
+        DelWarnFlag(char flag, String description, String permission) {
             this.description = description;
             this.permission = permission;
             this.flag = "-" + flag;

@@ -1,11 +1,20 @@
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
+
 package io.github.xxyy.xlogin.bungee.punishment.ban;
 
 import com.google.common.collect.ImmutableList;
-import net.md_5.bungee.api.connection.Server;
-
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
+import net.md_5.bungee.api.connection.Server;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;

@@ -1,9 +1,18 @@
-package io.github.xxyy.xlogin.common.api.punishments;
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
 
-import net.md_5.bungee.api.connection.Server;
+package io.github.xxyy.xlogin.common.api.punishments;
 
 import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
+import net.md_5.bungee.api.connection.Server;
 
 import java.util.List;
 import java.util.UUID;

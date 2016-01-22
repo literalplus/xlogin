@@ -1,9 +1,17 @@
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
+
 package io.github.xxyy.xlogin.common.authedplayer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.bukkit.plugin.ServicePriority;
-
 import io.github.xxyy.common.collections.CaseInsensitiveMap;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.Profile;
 import io.github.xxyy.common.lib.net.minecraft.server.UtilUUID;
@@ -13,6 +21,7 @@ import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.lib.intellij_annotations.Nullable;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.api.XLoginRepository;
+import org.bukkit.plugin.ServicePriority;
 
 import java.sql.SQLException;
 import java.util.Collections;

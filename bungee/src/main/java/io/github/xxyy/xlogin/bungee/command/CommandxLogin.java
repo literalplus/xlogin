@@ -1,12 +1,14 @@
-package io.github.xxyy.xlogin.bungee.command;
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
+package io.github.xxyy.xlogin.bungee.command;
 
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.lib.com.mojang.api.profiles.HttpProfileRepository;
@@ -20,25 +22,19 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-import static net.md_5.bungee.api.ChatColor.DARK_GREEN;
-import static net.md_5.bungee.api.ChatColor.DARK_RED;
-import static net.md_5.bungee.api.ChatColor.GOLD;
-import static net.md_5.bungee.api.ChatColor.GRAY;
-import static net.md_5.bungee.api.ChatColor.GREEN;
-import static net.md_5.bungee.api.ChatColor.RED;
-import static net.md_5.bungee.api.ChatColor.UNDERLINE;
-import static net.md_5.bungee.api.ChatColor.YELLOW;
+import static net.md_5.bungee.api.ChatColor.*;
 
 /**
  * Handles administrative commands.
@@ -51,8 +47,8 @@ public class CommandxLogin extends Command {
     public static final String PERMISSION = "xlogin.cmd";
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm");
     private static final BaseComponent[][] HELP_COMPONENTS = {
-            new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication system.").color(GOLD).create(),
-            new ComponentBuilder("Copyright (C) 2014-2015 Literallie - https://xxyy.github.io/").color(ChatColor.DARK_GRAY).create(),
+            new ComponentBuilder("xLogin BungeeCord - Xtreme BungeeCord authentication.").color(GOLD).create(),
+            new ComponentBuilder("Copyright (C) 2014-2016 Literallie - https://l1t.li/").color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("Version " + XLoginPlugin.PLUGIN_VERSION).color(ChatColor.DARK_GRAY).create(),
             new ComponentBuilder("/xlo ").color(GOLD).append("Swiss Army Knife for xLogin :)").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo reload ").color(GOLD).append("Reloads data/configs from database & disk.").color(ChatColor.GRAY).create(),
@@ -60,8 +56,8 @@ public class CommandxLogin extends Command {
             new ComponentBuilder("/xlo free [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Adds slots to all IPs associated with accounts that match given criteria.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo user [/IP|%Part of name|UUID|Name] ").color(GOLD).append("Displays information about users.").color(ChatColor.GRAY).create(),
             new ComponentBuilder("/xlo mojang [Name] ").color(GOLD).append("Gets Mojang user info for a name.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R]").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
-            new ComponentBuilder("/xlo forcecrack [Name]").color(GOLD).append("Adds a user to the `force cracked` list so that they can join with a cracked session on a premium account. Note that this changes the UUID and will remove ranks, inventories and similar.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo unregister [/IP|UUID|Name] [-R] ").color(GOLD).append("PERMANENTLY unregisters a user. Cannot be undone. Add -R to remove multiple users.").color(ChatColor.GRAY).create(),
+            new ComponentBuilder("/xlo forcecrack [Name] ").color(GOLD).append("Adds a user to the `force cracked` list so that they can join with a cracked session on a premium account. Note that this changes the UUID and will remove ranks, inventories and similar.").color(ChatColor.GRAY).create(),
     };
     private final XLoginPlugin plugin;
 

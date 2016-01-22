@@ -1,12 +1,21 @@
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
+
 package io.github.xxyy.xlogin.bungee.punishment.warn;
 
+import io.github.xxyy.xlogin.bungee.punishment.ban.BanInfo;
+import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-
-import io.github.xxyy.xlogin.bungee.punishment.ban.BanInfo;
-import io.github.xxyy.xlogin.common.api.punishments.XLoginWarning;
 
 import java.util.ArrayList;
 import java.util.Calendar;

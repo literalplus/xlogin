@@ -1,12 +1,21 @@
-package io.github.xxyy.xlogin.bungee.limits;
+/*
+ * Copyright (C) 2014-2016 Philipp Nowak (Literallie; xxyy98+xlo@gmail.com; The Author)
+ *
+ * This application and all related code, assets and concepts are protected by international Copyright laws.
+ * Any usage, including, but not limited to, decompilation, execution, compilation and distribution,
+ *  is explicitly and strictly prohibited without explicit written permission from The Author.
+ * Any such permission can be revoked at any time.
+ * Legal steps may be taken in case of a violation of these terms.
+ */
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+package io.github.xxyy.xlogin.bungee.limits;
 
 import io.github.xxyy.common.sql.QueryResult;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.sql.SQLException;
 import java.util.Map;
