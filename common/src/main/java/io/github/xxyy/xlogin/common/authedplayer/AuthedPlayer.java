@@ -1,7 +1,6 @@
 package io.github.xxyy.xlogin.common.authedplayer;
 
-import org.apache.commons.lang3.Validate;
-
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.util.ToShortStringable;
 import io.github.xxyy.common.util.encryption.PasswordHelper;
 import io.github.xxyy.lib.intellij_annotations.NotNull;
@@ -10,8 +9,12 @@ import io.github.xxyy.xlogin.common.api.XLoginProfile;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import io.github.xxyy.xlogin.common.ips.IpAddressFactory;
 import io.github.xxyy.xlogin.common.ips.SessionHelper;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.HoverEvent;
+import org.apache.commons.lang3.Validate;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 /**
@@ -23,6 +26,7 @@ import java.util.UUID;
 //TODO common interface w/ PlayerWrapper
 public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     public static final String AUTH_DATA_TABLE_NAME = "mt_main.xlogin_data";
+    private static final SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private final AuthedPlayerRepository repository;
     private String uuid;
@@ -211,6 +215,37 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
         this.premium = premium;
     }
 
+    /**
+     * Returns a color representing this player's premium state. If their account is Mojang Premium, returns a green
+     * color, otherwise a red color.
+     *
+     * @return a color representing this player's premium state
+     */
+    public ChatColor getPremiumColor() {
+        return premium ? ChatColor.GREEN : ChatColor.RED;
+    }
+
+    /**
+     * Creates a hover event describing important data about this player.
+     *
+     * @return a hover event describing this player
+     */
+    public HoverEvent buildHoverInfo() {
+        return new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new XyComponentBuilder("Spieler: ").color(ChatColor.GOLD)
+                        .append(getName(), ChatColor.YELLOW)
+                        .append("\nUUID: ", ChatColor.GOLD)
+                        .append(getUuid(), ChatColor.YELLOW)
+                        .append("\nPremium? ", ChatColor.GOLD)
+                        .append(isPremium() ? "ja" : "nein", getPremiumColor())
+                        .append("\nLetzte IP: ", ChatColor.GOLD)
+                        .append(getLastIp(), ChatColor.YELLOW)
+                        .append("\nLetzter Login: ", ChatColor.GOLD)
+                        .append(ISO_DATE_FORMAT.format(lastLoginDate), ChatColor.YELLOW)
+                        .create()
+        );
+    }
+
     public boolean isDisabledPremiumMessage() {
         return this.disabledPremiumMessage;
     }
@@ -341,7 +376,7 @@ public class AuthedPlayer implements ToShortStringable, XLoginProfile {
     @NotNull
     @Override
     public String toShortString() {
-        return "AuthedPlayer{uuid="+this.getUuid()+", name="+this.getName()+"}";
+        return "AuthedPlayer{uuid=" + this.getUuid() + ", name=" + this.getName() + "}";
     }
 
     @Nullable

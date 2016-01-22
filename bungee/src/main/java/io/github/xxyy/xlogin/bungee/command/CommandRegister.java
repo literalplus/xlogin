@@ -80,13 +80,12 @@ public class CommandRegister extends Command {
         authedPlayer.registerPassword(args[0], plr.getAddress().getAddress().toString());
         plugin.getRegistry().registerAuthentication(authedPlayer);
 
-        plugin.announceRegistration(plr);
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
         plugin.getRepository().updateProfile(authedPlayer);
 
         AuthedPlayerFactory.save(authedPlayer);
-        plugin.notifyRegister(plr);
+        plugin.notifyRegister(authedPlayer, plr);
         plugin.sendAuthNotification(plr, authedPlayer);
     }
 }

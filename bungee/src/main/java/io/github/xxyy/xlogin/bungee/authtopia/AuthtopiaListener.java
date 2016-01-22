@@ -146,12 +146,10 @@ public class AuthtopiaListener implements Listener {
                 if (!knownBefore) { //This just notifies and registers, nothing authenticating here
                     if (authedPlayer != null && authedPlayer.isAuthenticated() &&
                             AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider())) {
-
-                        plugin.announceRegistration(evt.getPlayer());
                         authedPlayer.setPremium(true);
 
                         if (evt.getPlayer().getServer() != null) {
-                            plugin.notifyRegister(evt.getPlayer());
+                            plugin.notifyRegister(authedPlayer, evt.getPlayer());
                         }
 
                         AuthedPlayerFactory.save(authedPlayer); //TODO: This should theoretically be obsolete since we're now saving on auth

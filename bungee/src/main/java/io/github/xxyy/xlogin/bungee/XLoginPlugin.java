@@ -15,6 +15,7 @@ import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
 import io.github.xxyy.xlogin.bungee.limits.IpOnlineLimitManager;
 import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
+import io.github.xxyy.xlogin.bungee.notifier.AltAccountNotifer;
 import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
 import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
 import io.github.xxyy.xlogin.common.Const;
@@ -69,6 +70,7 @@ public class XLoginPlugin extends XLoginBungee {
     private final XyComponentBuilder prefix = new XyComponentBuilder("[").color(ChatColor.GOLD)
             .append("xLogin", ChatColor.GRAY)
             .append("] ", ChatColor.GOLD);
+    private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
 
     @Override
     public void onEnable() {
@@ -173,15 +175,13 @@ public class XLoginPlugin extends XLoginBungee {
         sendAPIMessage(plr, "tp");
     }
 
-    public void notifyRegister(ProxiedPlayer plr) {
+    public void notifyRegister(AuthedPlayer aplr, ProxiedPlayer plr) {
         sendAPIMessage(plr, "register");
+        announceRegistration(plr);
+        altAccountNotifer.scheduleCheck(aplr);
     }
 
-    public void sendAPIMessage(ProxiedPlayer plr, String action) {
-        sendAPIMessage(plr.getServer(), action, plr.getUniqueId().toString());
-    }
-
-    public void announceRegistration(ProxiedPlayer newPlayer) {
+    private void announceRegistration(ProxiedPlayer newPlayer) {
         XyComponentBuilder welcomeBuilder = getPrefix()
                 .append("Willkommen auf ✪MinoTopia✪, " + newPlayer.getName() + "!", ChatColor.GRAY);
         BaseComponent[] userComponents = new XyComponentBuilder(welcomeBuilder).create(); //create actually modifies the state ;-;
@@ -197,6 +197,10 @@ public class XLoginPlugin extends XLoginBungee {
                 player.sendMessage(userComponents);
             }
         }
+    }
+
+    public void sendAPIMessage(ProxiedPlayer plr, String action) {
+        sendAPIMessage(plr.getServer(), action, plr.getUniqueId().toString());
     }
 
     public void sendAPIMessage(Server server, String... data) {
