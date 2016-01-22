@@ -79,7 +79,7 @@ public class AuthtopiaHelper {
 
     public void tryRegisterAuth(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
         if (authedPlayer.isAuthenticated()){
-            plugin.sendAuthNotification(plr, authedPlayer);
+            plugin.notifyAuthentication(plr, authedPlayer);
             plugin.teleportToLastLocation(plr);
         }
     }

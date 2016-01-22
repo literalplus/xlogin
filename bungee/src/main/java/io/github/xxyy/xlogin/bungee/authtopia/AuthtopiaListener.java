@@ -159,7 +159,7 @@ public class AuthtopiaListener implements Listener {
                         authedPlayer.setPremium(true);
 
                         if (evt.getPlayer().getServer() != null) {
-                            plugin.notifyRegister(authedPlayer, evt.getPlayer());
+                            plugin.notifyRegister(evt.getPlayer());
                         }
 
                         AuthedPlayerFactory.save(authedPlayer); //TODO: This should theoretically be obsolete since we're now saving on auth

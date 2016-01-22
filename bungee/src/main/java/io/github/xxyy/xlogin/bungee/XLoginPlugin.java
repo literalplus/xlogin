@@ -186,10 +186,9 @@ public class XLoginPlugin extends XLoginBungee {
         sendAPIMessage(plr, "tp");
     }
 
-    public void notifyRegister(AuthedPlayer aplr, ProxiedPlayer plr) {
+    public void notifyRegister(ProxiedPlayer plr) {
         sendAPIMessage(plr, "register");
         announceRegistration(plr);
-        altAccountNotifer.scheduleCheck(aplr);
     }
 
     private void announceRegistration(ProxiedPlayer newPlayer) {
@@ -232,8 +231,29 @@ public class XLoginPlugin extends XLoginBungee {
         }
     }
 
+    /**
+     * Notifies the plugin that a player has authenticated in any way. This method also notifies other servers and
+     * performs some routine checks on the player.
+     *
+     * @param plr          the player that authenticated
+     * @param authedPlayer the player that authenticated
+     * @see #sendAuthNotification(ProxiedPlayer, AuthedPlayer)
+     */ //dat @param
+    public void notifyAuthentication(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
+        sendAuthNotification(plr, authedPlayer);
+        altAccountNotifer.scheduleCheck(authedPlayer);
+    }
+
+    /**
+     * Notifies other servers that a player has authenticated in any way. Note that, normally,
+     * {@link #notifyAuthentication(ProxiedPlayer, AuthedPlayer)} should be preferred over this method, except if you
+     * want to explicitly bypass routine checks, such as when bulk-sending notifications.
+     *
+     * @param plr          the player that authenticated
+     * @param authedPlayer the player that authenticated
+     */
     public void sendAuthNotification(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
-        Preconditions.checkNotNull(authedPlayer.getAuthenticationProvider(), "autherPlayer.authenticationProvider");
+        Preconditions.checkNotNull(authedPlayer.getAuthenticationProvider(), "authedPlayer.authenticationProvider");
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 

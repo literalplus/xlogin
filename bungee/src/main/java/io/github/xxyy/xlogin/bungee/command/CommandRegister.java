@@ -95,7 +95,7 @@ public class CommandRegister extends Command {
         plugin.getRepository().updateProfile(authedPlayer);
 
         AuthedPlayerFactory.save(authedPlayer);
-        plugin.notifyRegister(authedPlayer, plr);
-        plugin.sendAuthNotification(plr, authedPlayer);
+        plugin.notifyRegister(plr);
+        plugin.notifyAuthentication(plr, authedPlayer);
     }
 }

@@ -86,7 +86,7 @@ public class MainListener implements Listener {
                             AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
 
                             if (authedPlayer.isAuthenticated()) {
-                                plugin.sendAuthNotification(plr, authedPlayer);
+                                plugin.sendAuthNotification(plr, authedPlayer); //not using #notifyAuthentication to prevent spam of alt account messages
                                 plugin.teleportToLastLocation(plr);
                             }
                         }

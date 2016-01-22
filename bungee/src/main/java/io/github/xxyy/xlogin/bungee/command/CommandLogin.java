@@ -81,7 +81,7 @@ public class CommandLogin extends Command {
         }
 
         plugin.getRegistry().registerAuthentication(authedPlayer);
-        plugin.sendAuthNotification(plr, authedPlayer);
+        plugin.notifyAuthentication(plr, authedPlayer);
 
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
