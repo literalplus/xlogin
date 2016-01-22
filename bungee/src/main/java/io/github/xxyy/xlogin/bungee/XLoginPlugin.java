@@ -1,25 +1,14 @@
 package io.github.xxyy.xlogin.bungee;
 
 import com.google.common.base.Preconditions;
-import lombok.Getter;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.md_5.bungee.api.config.ConfigurationAdapter;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.connection.Server;
-
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectable;
 import io.github.xxyy.common.sql.SqlConnectables;
 import io.github.xxyy.common.version.PluginVersion;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaHelper;
 import io.github.xxyy.xlogin.bungee.authtopia.AuthtopiaListener;
-import io.github.xxyy.xlogin.bungee.command.CommandChangePassword;
-import io.github.xxyy.xlogin.bungee.command.CommandLogin;
-import io.github.xxyy.xlogin.bungee.command.CommandPremium;
-import io.github.xxyy.xlogin.bungee.command.CommandRegister;
-import io.github.xxyy.xlogin.bungee.command.CommandSessions;
-import io.github.xxyy.xlogin.bungee.command.CommandxLogin;
-import io.github.xxyy.xlogin.bungee.command.CommandxLoginLimit;
+import io.github.xxyy.xlogin.bungee.command.*;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
@@ -36,6 +25,13 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
 import io.github.xxyy.xlogin.common.module.ModuleManager;
 import io.github.xxyy.xlogin.common.module.ProxyListManager;
 import io.github.xxyy.xlogin.lib.quietcord.filter.PasswordFilter;
+import lombok.Getter;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.config.ConfigurationAdapter;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -69,7 +65,10 @@ public class XLoginPlugin extends XLoginBungee {
     @Getter
     private ProxyListManager proxyListManager;
     @Getter
-    private File proxyListDir;
+    private File proxyListDir; //§6[§8xLogin§6] §7
+    private final XyComponentBuilder prefix = new XyComponentBuilder("[").color(ChatColor.GOLD)
+            .append("xLogin", ChatColor.GRAY)
+            .append("] ", ChatColor.GOLD);
 
     @Override
     public void onEnable() {
@@ -79,11 +78,11 @@ public class XLoginPlugin extends XLoginBungee {
         //Load proxy list
         proxyListManager = new ProxyListManager();
         proxyListDir = new File(getDataFolder(), "proxy-lists");
-        if (!proxyListDir.isDirectory() && !proxyListDir.mkdirs()){
+        if (!proxyListDir.isDirectory() && !proxyListDir.mkdirs()) {
             getLogger().warning("Couldn't create " + proxyListDir.getAbsolutePath() + "!");
         }
         File defaultProxyListFile = new File(proxyListDir, "default-proxy-list.txt");
-        if (!defaultProxyListFile.isFile()){
+        if (!defaultProxyListFile.isFile()) {
             try {
                 Files.copy(getResourceAsStream("default-proxy-list.txt"), defaultProxyListFile.toPath());
             } catch (IOException e) {
@@ -182,6 +181,24 @@ public class XLoginPlugin extends XLoginBungee {
         sendAPIMessage(plr.getServer(), action, plr.getUniqueId().toString());
     }
 
+    public void announceRegistration(ProxiedPlayer newPlayer) {
+        XyComponentBuilder welcomeBuilder = getPrefix()
+                .append("Willkommen auf ✪MinoTopia✪, " + newPlayer.getName() + "!", ChatColor.GRAY);
+        BaseComponent[] userComponents = new XyComponentBuilder(welcomeBuilder).create(); //create actually modifies the state ;-;
+        BaseComponent[] adminComponents = welcomeBuilder.append(" [i]", ChatColor.DARK_BLUE)
+                .command("/xlo user " + newPlayer.getUniqueId())
+                .tooltip("§6§nZeige User-Info", "§6IP: " + newPlayer.getAddress().getAddress().getHostAddress())
+                .create();
+
+        for (ProxiedPlayer player : getProxy().getPlayers()) {
+            if (player.hasPermission("xlogin.admin")) {
+                player.sendMessage(adminComponents);
+            } else {
+                player.sendMessage(userComponents);
+            }
+        }
+    }
+
     public void sendAPIMessage(Server server, String... data) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
@@ -228,5 +245,10 @@ public class XLoginPlugin extends XLoginBungee {
     @Override
     public AuthedPlayerRegistry getRegistry() {
         return AUTHED_PLAYER_REGISTRY;
+    }
+
+    @Override
+    public XyComponentBuilder getPrefix() {
+        return new XyComponentBuilder(prefix);
     }
 }

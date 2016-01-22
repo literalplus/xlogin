@@ -1,5 +1,11 @@
 package io.github.xxyy.xlogin.bungee.authtopia;
 
+import io.github.xxyy.common.chat.XyComponentBuilder;
+import io.github.xxyy.xlogin.bungee.XLoginPlugin;
+import io.github.xxyy.xlogin.bungee.limits.IpAccountLimitManager;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
+import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+import io.github.xxyy.xlogin.common.ips.IpAddress;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
@@ -8,13 +14,6 @@ import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.apache.commons.lang.Validate;
-
-import io.github.xxyy.common.chat.XyComponentBuilder;
-import io.github.xxyy.xlogin.bungee.XLoginPlugin;
-import io.github.xxyy.xlogin.bungee.limits.IpAccountLimitManager;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
-import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
-import io.github.xxyy.xlogin.common.ips.IpAddress;
 
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
@@ -40,14 +39,14 @@ public class AuthtopiaListener implements Listener {
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
         InetSocketAddress address = evt.getConnection().getAddress();
-        if (plugin.getRateLimitManager().checkLimited(address)){
+        if (plugin.getRateLimitManager().checkLimited(address)) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
                     "Bitte versuche es in 5 Minuten erneut.");
             return;
         }
 
-        if (plugin.getProxyListManager().isBlockedProxy(evt.getConnection().getAddress())){
+        if (plugin.getProxyListManager().isBlockedProxy(evt.getConnection().getAddress())) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, aber Proxies können wir nicht erlauben.");
             return;
@@ -119,7 +118,7 @@ public class AuthtopiaListener implements Listener {
                 if (!knownBefore && evt.getPlayer().getPendingConnection().isOnlineMode()) {
                     assert authedPlayer != null;
                     authedPlayer.setPremium(true);  //TODO: Do we need this call?
-                    if (plugin.getRateLimitManager().getRegisterLimit().incrementAndCheck()){
+                    if (plugin.getRateLimitManager().getRegisterLimit().incrementAndCheck()) {
                         evt.getPlayer().disconnect(
                                 new XyComponentBuilder(
                                         "Es betreten leider gerade zu viele Spieler den Server!\n").color(ChatColor.RED)
@@ -148,7 +147,7 @@ public class AuthtopiaListener implements Listener {
                     if (authedPlayer != null && authedPlayer.isAuthenticated() &&
                             AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider())) {
 
-                        plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, evt.getPlayer().getName()));
+                        plugin.announceRegistration(evt.getPlayer());
                         authedPlayer.setPremium(true);
 
                         if (evt.getPlayer().getServer() != null) {

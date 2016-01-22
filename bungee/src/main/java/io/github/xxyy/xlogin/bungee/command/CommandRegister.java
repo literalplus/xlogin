@@ -1,14 +1,13 @@
 package io.github.xxyy.xlogin.bungee.command;
 
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
-
 import io.github.xxyy.common.bungee.ChatHelper;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 
 import java.util.concurrent.TimeUnit;
 
@@ -81,7 +80,7 @@ public class CommandRegister extends Command {
         authedPlayer.registerPassword(args[0], plr.getAddress().getAddress().toString());
         plugin.getRegistry().registerAuthentication(authedPlayer);
 
-        plugin.getProxy().broadcast(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().welcome, plr.getName()));
+        plugin.announceRegistration(plr);
         plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().successfullyAuthenticated));
 
         plugin.getRepository().updateProfile(authedPlayer);

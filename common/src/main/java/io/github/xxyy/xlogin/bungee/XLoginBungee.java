@@ -1,9 +1,6 @@
 package io.github.xxyy.xlogin.bungee;
 
-import lombok.Getter;
-import net.md_5.bungee.api.plugin.Plugin;
-import org.apache.commons.lang.Validate;
-
+import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
 import io.github.xxyy.xlogin.common.api.ApiConsumer;
@@ -11,6 +8,9 @@ import io.github.xxyy.xlogin.common.api.punishments.BanManager;
 import io.github.xxyy.xlogin.common.api.punishments.WarningManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRegistry;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerRepository;
+import lombok.Getter;
+import net.md_5.bungee.api.plugin.Plugin;
+import org.apache.commons.lang.Validate;
 
 /**
  * This represents the base class used to interface with other xLogin modules and the proxy on BungeeCord.
@@ -43,4 +43,9 @@ public abstract class XLoginBungee extends Plugin implements ApiConsumer { //Ple
 
     @Override
     public abstract AuthedPlayerRegistry getRegistry();
+
+    /**
+     * @return a clone of the plugin's prefix, for easy construction of prefixed messages
+     */
+    public abstract XyComponentBuilder getPrefix();
 }
