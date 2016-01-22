@@ -17,6 +17,7 @@ import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -25,20 +26,41 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Notifies administrators if a users is using multiple names on a single IP address.
+ * Notifies administrators if a player is using multiple accounts on a single IP address.
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 2016-01-22
  */
 public class AltAccountNotifer {
-    private static final long IGNORE_ALTS_OLDER_THAN_DAYS = 14;
+    public static final long IGNORE_ALTS_OLDER_THAN_DAYS = 14;
     private final XLoginPlugin plugin;
 
     public AltAccountNotifer(XLoginPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void scheduleCheck(final AuthedPlayer plr) {
+    /**
+     * Schedules an alt account check for a player in an async thread. The check only takes into account accounts which
+     * have been used in the last {@link #IGNORE_ALTS_OLDER_THAN_DAYS} days. If any alt accounts are encountered, a
+     * message is broadcast to all players with the {@code xlogin.altinfo} permission. All accounts on one IP are
+     * considered alt accounts.
+     *
+     * @param plr the player to check for alt accounts
+     */
+    public void scheduleCheck(AuthedPlayer plr) {
+        scheduleCheck(plr, null);
+    }
+
+    /**
+     * Schedules an alt account check for a player in an async thread. The check only takes into account accounts which
+     * have been used in the last {@link #IGNORE_ALTS_OLDER_THAN_DAYS} days. If any alt accounts are encountered, a
+     * message is broadcast to all players with the {@code xlogin.altinfo} permission. All accounts on one IP are
+     * considered alt accounts. If there are no alt accounts, {@code receiver} is notified of that fact, if not null.
+     *
+     * @param plr      the player to check for alt accounts
+     * @param receiver the receiver of result messages, or null to notify all players.
+     */
+    public void scheduleCheck(final AuthedPlayer plr, final CommandSender receiver) {
         Preconditions.checkNotNull(plr, "plr");
         if (plr.getLastIp() == null) {
             ProxiedPlayer proxiedPlayer = plugin.getProxy().getPlayer(plr.getUniqueId());
@@ -70,6 +92,11 @@ public class AltAccountNotifer {
                 }
 
                 if (ipPlayers.isEmpty()) {
+                    if (receiver != null) {
+                        receiver.sendMessage(new XyComponentBuilder(plr.getName()).color(plr.getPremiumColor())
+                                .append(" hat keine offensichtlichen Doppelaccounts.", ChatColor.GREEN)
+                                .create());
+                    }
                     return; //No recent alts on this account
                 }
 
@@ -90,7 +117,7 @@ public class AltAccountNotifer {
 
                 BaseComponent[] components = builder.create();
 
-                for (ProxiedPlayer proxiedPlayer : plugin.getProxy().getPlayers()) {
+                for (ProxiedPlayer proxiedPlayer : plugin.getProxy().getPlayers()) { //Receiver must be in there - permission required to request
                     if (proxiedPlayer.hasPermission("xlogin.altinfo")) {
                         proxiedPlayer.sendMessage(components);
                     }

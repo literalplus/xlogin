@@ -80,6 +80,7 @@ public class XLoginPlugin extends XLoginBungee {
     private final XyComponentBuilder prefix = new XyComponentBuilder("[").color(ChatColor.GOLD)
             .append("xLogin", ChatColor.GRAY)
             .append("] ", ChatColor.GOLD);
+    @Getter
     private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
 
     @Override

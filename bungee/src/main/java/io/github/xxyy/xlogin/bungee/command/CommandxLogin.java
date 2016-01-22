@@ -68,21 +68,21 @@ public class CommandxLogin extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0 || args[0].equalsIgnoreCase("help")){
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sendAll(sender, HELP_COMPONENTS);
             return;
         }
 
         switch (args[0].toLowerCase()) {
             case "reload":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
                 Map<UUID, AuthedPlayer.AuthenticationProvider> providerMap = new HashMap<>();
                 for (UUID uuid : plugin.getRegistry().getAuthenticatedPlayers()) {
                     AuthedPlayer plr = plugin.getRepository().getProfile(uuid);
-                    if (plr != null && plr.isAuthenticated()){
+                    if (plr != null && plr.isAuthenticated()) {
                         providerMap.put(uuid, plr.getAuthenticationProvider());
                     }
                 }
@@ -93,7 +93,7 @@ public class CommandxLogin extends Command {
 
                 for (Map.Entry<UUID, AuthedPlayer.AuthenticationProvider> entry : providerMap.entrySet()) {
                     AuthedPlayer plr = plugin.getRepository().getProfile(entry.getKey()); //Registry removes players not in repo
-                    if (plr != null){
+                    if (plr != null) {
                         plr.setAuthenticated(true);
                         plr.setAuthenticationProvider(entry.getValue());
                     }
@@ -102,16 +102,16 @@ public class CommandxLogin extends Command {
                 sender.sendMessage(new TextComponent("Reloaded BungeeCord-side message and general config, IPs, players and sessions."));
                 return;
             case "cpw":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 3){
+                if (args.length < 3) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     AuthedPlayer authedPlayer = plugin.getRepository().getProfile(UtilUUID.offlineUUID(args[1]), args[1]);
-                    if (authedPlayer == null){
+                    if (authedPlayer == null) {
                         sender.sendMessage(new ComponentBuilder("Zu diesem Namen ist uns kein Cracked-Account bekannt!")
                                 .color(RED).create());
                         return;
@@ -121,7 +121,7 @@ public class CommandxLogin extends Command {
                     AuthedPlayerFactory.save(authedPlayer, true);
 
                     ProxiedPlayer player = plugin.getProxy().getPlayer(args[1]);
-                    if (player != null){
+                    if (player != null) {
                         player.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().passwordChangeAdmin, sender.getName()));
                     }
 
@@ -165,17 +165,17 @@ public class CommandxLogin extends Command {
 //                }
 //                return;
             case "free":
-                if (!sender.hasPermission("xlogin.free")){
+                if (!sender.hasPermission("xlogin.free")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 2){
+                if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     int amount = 4;
 
-                    if (args.length > 2 && org.apache.commons.lang3.StringUtils.isNumeric(args[2])){
+                    if (args.length > 2 && org.apache.commons.lang3.StringUtils.isNumeric(args[2])) {
                         amount = Integer.parseInt(args[2]);
                     }
 
@@ -183,16 +183,16 @@ public class CommandxLogin extends Command {
 
                     boolean doMatchCheck = !args[1].startsWith("/");
 
-                    if (matches.length == 0 && !doMatchCheck){
+                    if (matches.length == 0 && !doMatchCheck) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
                         return;
                     }
 
-                    if (doMatchCheck){
+                    if (doMatchCheck) {
                         Set<String> freedIps = new HashSet<>();
                         for (AuthedPlayer authedPlayer : matches) {
-                            if (!freedIps.contains(authedPlayer.getLastIp())){
-                                if (authedPlayer.getLastIp() == null){
+                            if (!freedIps.contains(authedPlayer.getLastIp())) {
+                                if (authedPlayer.getLastIp() == null) {
                                     sender.sendMessage(new ComponentBuilder("Für folgenden Spieler gibt es keine letzte IP: ").color(GOLD)
                                             .append(authedPlayer.toShortString()).color(YELLOW).create());
                                 } else {
@@ -221,12 +221,12 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "user":
-                if (args.length < 2){
+                if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
-                    if (matches.length == 0){
+                    if (matches.length == 0) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
                         return;
                     }
@@ -246,7 +246,7 @@ public class CommandxLogin extends Command {
                         sender.sendMessage(new ComponentBuilder("Sessions? ").color(GOLD)
                                 .append(match.isSessionsEnabled() ? "ja" : "nein").color(match.isSessionsEnabled() ? GREEN : RED).create());
                         IpAddress ip = IpAddressFactory.get(match.getLastIp());
-                        if (ip != null){
+                        if (ip != null) {
                             sender.sendMessage(new XyComponentBuilder("Letzte IP: ").color(GOLD)
                                     .append(match.getLastIp(), YELLOW)
                                     .tooltip("Klicken zum Kopieren")
@@ -264,12 +264,12 @@ public class CommandxLogin extends Command {
 
                         String registrationDateString = "unbekannt";
                         String lastLoginDateString = "unbekannt";
-                        if (match.getRegistrationTimestamp() != null){
+                        if (match.getRegistrationTimestamp() != null) {
                             registrationDateString = SIMPLE_DATE_FORMAT.format(
                                     new Date(match.getRegistrationTimestamp().getTime())
                             );
                         }
-                        if (match.getLastLoginDate() != null){
+                        if (match.getLastLoginDate() != null) {
                             lastLoginDateString = SIMPLE_DATE_FORMAT.format(
                                     new Date(match.getLastLoginDate().getTime())
                             );
@@ -282,24 +282,24 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "unregister":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 2){
+                if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
-                    if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))){
-                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurden mehr als ein Spieler gefunden. " +
+                    if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurde mehr als ein Spieler gefunden. " +
                                 "Bitte verwende -R am Ende, um mehrere User zu löschen. Gefundene User: ").color(GOLD)
                                 .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
                         return;
                     }
 
-                    if (matches.length == 0){
+                    if (matches.length == 0) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
                         return;
                     }
@@ -312,12 +312,12 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "forcecrack":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 2){
+                if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                 } else {
                     PreferencesHolder.getSql().safelyExecuteUpdate("INSERT INTO auth_list SET name=? ON DUPLICATE KEY UPDATE name=?", args[1], args[1]);
@@ -330,13 +330,13 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "mojang":
-                if (args.length < 2){
+                if (args.length < 2) {
                     sendAll(sender, HELP_COMPONENTS);
                     return;
                 }
                 Profile[] profiles = HTTP_PROFILE_REPOSITORY.findProfilesByNames(args[1]);
 
-                if (profiles.length == 0){
+                if (profiles.length == 0) {
                     sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer bei Mojang gefunden.").color(RED).create());
                     return;
                 }
@@ -352,7 +352,7 @@ public class CommandxLogin extends Command {
                             .tooltip("Klicken zum Kopieren")
                             .suggest(uuid).create());
                     AuthedPlayer xloginPlayer = plugin.getRepository().getProfile(profile.getUniqueId());
-                    if (xloginPlayer != null){
+                    if (xloginPlayer != null) {
                         sender.sendMessage(new XyComponentBuilder("xLogin: ").color(GOLD)
                                 .append("[Info]", YELLOW, UNDERLINE)
                                 .tooltip("Hier klicken für /xlo user ")
@@ -362,17 +362,17 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "debugp":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 2){
+                if (args.length < 2) {
                     sender.sendMessage(new ComponentBuilder("/xlo debugp <UUID|%Part|Name|/IP>").create());
                 } else {
                     AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
 
-                    if (matches.length == 0){
+                    if (matches.length == 0) {
                         sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Benutzer gefunden.").color(RED).create());
                         return;
                     }
@@ -384,12 +384,12 @@ public class CommandxLogin extends Command {
                 }
                 return;
             case "addproxy":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
-                if (args.length < 2){
+                if (args.length < 2) {
                     sender.sendMessage(new ComponentBuilder("/xlo addproxy <IP>").create());
                 } else {
                     try {
@@ -401,6 +401,37 @@ public class CommandxLogin extends Command {
                                 .create());
                     }
                 }
+                return;
+            case "alts":
+                if (!sender.hasPermission("xlogin.altinfo")) {
+                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+                    return;
+                }
+
+                if (args.length < 2) {
+                    sendAll(sender, HELP_COMPONENTS);
+                } else {
+                    AuthedPlayer[] matches = AuthedPlayerFactory.getByCriteria(args[1], plugin.getRepository());
+
+                    if (matches.length > 1) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurde mehr als ein Spieler gefunden. " +
+                                "Gefundene User: ").color(GOLD)
+                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
+                        return;
+                    }
+
+                    if (matches.length == 0) {
+                        sender.sendMessage(new ComponentBuilder("Für dein Kriterium wurde kein Spieler gefunden.").color(RED).create());
+                        return;
+                    }
+
+                    sender.sendMessage(
+                            new XyComponentBuilder("Überprüfe " + matches[0].getName() + " auf Doppelaccounts...")
+                                    .color(GREEN).create()
+                    );
+                    plugin.getAltAccountNotifer().scheduleCheck(matches[0], sender);
+                }
+                return;
             default:
                 sendAll(sender, HELP_COMPONENTS);
         }
