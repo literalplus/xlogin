@@ -107,12 +107,12 @@ public class AltAccountNotifer {
 
                 boolean first = true;
                 for (AuthedPlayer altPlayer : ipPlayers) {
-                    builder.append(altPlayer.getName(), plr.getPremiumColor())
-                            .event(altPlayer.buildHoverInfo());
-                    if (first) {
+                    if (!first) {
                         builder.append(", ", ChatColor.GRAY);
-                        first = false;
                     }
+                    builder.append(altPlayer.getName(), altPlayer.getPremiumColor())
+                            .event(altPlayer.buildHoverInfo());
+                    first = false;
                 }
 
                 BaseComponent[] components = builder.create();
