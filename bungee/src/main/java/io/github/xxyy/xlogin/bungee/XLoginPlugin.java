@@ -78,7 +78,7 @@ public class XLoginPlugin extends XLoginBungee {
     @Getter
     private File proxyListDir; //§6[§8xLogin§6] §7
     private final XyComponentBuilder prefix = new XyComponentBuilder("[").color(ChatColor.GOLD)
-            .append("xLogin", ChatColor.GRAY)
+            .append("xLogin", ChatColor.DARK_GRAY)
             .append("] ", ChatColor.GOLD);
     @Getter
     private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
