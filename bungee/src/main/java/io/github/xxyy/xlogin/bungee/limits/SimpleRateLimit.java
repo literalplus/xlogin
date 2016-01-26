@@ -13,7 +13,9 @@ package io.github.xxyy.xlogin.bungee.limits;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Simple implementation of a rate limit. Offers reset and increment methods.
+ * Simple implementation of a rate limit. Offers reset and increment methods. Note that only the methods for setting and
+ * checking limit status and getting the current value are thread-safe. All other methods are not built to be called
+ * from multiple threads at the same time.
  *
  * @author <a href="http://xxyy.github.io/">xxyy</a>
  * @since 2015-12-04
@@ -45,7 +47,7 @@ public class SimpleRateLimit {
      */
     public int reset() {
         int previousCount = currentValue.getAndSet(0);
-        if (previousCount > threshold){
+        if (previousCount > threshold && hitMessage != null) {
             manager.sendNotice(hitMessage,
                     previousCount, threshold);
         }

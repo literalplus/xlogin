@@ -13,6 +13,7 @@ package io.github.xxyy.xlogin.bungee.command;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.bungee.limits.AdaptiveRateLimit;
+import io.github.xxyy.xlogin.bungee.limits.IpRateLimit;
 import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.bungee.limits.SimpleRateLimit;
 import net.md_5.bungee.api.CommandSender;
@@ -20,8 +21,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-
-import java.util.Map;
 
 import static net.md_5.bungee.api.ChatColor.*;
 
@@ -48,7 +47,7 @@ public class CommandxLoginLimit extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0 || args[0].equalsIgnoreCase("help")){
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sendAll(sender, HELP_COMPONENTS);
             return;
         }
@@ -62,45 +61,37 @@ public class CommandxLoginLimit extends Command {
                 showRateLimit(sender, manager.getJoinLimit(), "Join: ");
                 return;
             case "ips":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
                 sender.sendMessage(new XyComponentBuilder("Current IP rate limits: (red = limited)").color(GOLD).create());
                 int i = 0;
-                for (Map.Entry<String, Integer> entry : manager.getIpJoins().entrySet()) {
-                    if (entry.getValue() > 1){
-                        sender.sendMessage(new XyComponentBuilder(" " + entry.getKey()).color(YELLOW)
-                                .append(" -> ")
-                                .append(String.valueOf(entry.getValue()),
-                                        entry.getValue() > RateLimitManager.IP_JOIN_THRESHOLD ? RED : GREEN)
-                                .create());
+                for (IpRateLimit limit : manager.getIpRateLimits()) {
+                    if (limit.getCurrentValue() > 1 || limit.getTimeLimit() > 1) {
+                        showRateLimit(sender, limit, " ▶ ");
                         i++;
                     }
                 }
-                if (i == 0){
+                if (i == 0) {
                     sender.sendMessage(new XyComponentBuilder("(none)").color(DARK_GREEN).create());
                 }
                 return;
             case "reset":
-                if (!sender.hasPermission("xlogin.admin")){
+                if (!sender.hasPermission("xlogin.admin")) {
                     sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
                     return;
                 }
 
                 for (ProxiedPlayer player : plugin.getProxy().getPlayers()) {
-                    if (player.hasPermission("xlogin.cmd")){
+                    if (player.hasPermission("xlogin.cmd")) {
                         sender.sendMessage(new ComponentBuilder("[" + sender.getName() + ": Reset xLogin limits]")
                                 .color(GRAY).italic(true).create());
                     }
                 }
-                plugin.getLogger().info(sender.getName() + "reset xLogin limits");
-                manager.getJoinLimit().reset();
-                if (manager.getRegisterLimit() instanceof AdaptiveRateLimit){
-                    ((AdaptiveRateLimit) manager.getRegisterLimit()).resetThreshold();
-                }
-                manager.getRegisterLimit().reset();
+                plugin.getLogger().info(sender.getName() + " reset xLogin limits");
+                manager.resetAllLimits();
                 return;
             default:
                 sender.sendMessage(new XyComponentBuilder("Unbekannte Aktion. Hilfe:").color(RED).create());
@@ -114,10 +105,17 @@ public class CommandxLoginLimit extends Command {
                                 " / " + rateLimit.getThreshold(),
                         rateLimit.isLimited() ? RED : DARK_GREEN);
 
-        if (rateLimit instanceof AdaptiveRateLimit){
+        if (rateLimit instanceof AdaptiveRateLimit) {
             builder.append(" (adaptive: base=", BLUE, ITALIC)
                     .append(String.valueOf(((AdaptiveRateLimit) rateLimit).getBaseThreshold()))
                     .append(")");
+        } else if (rateLimit instanceof IpRateLimit) {
+            IpRateLimit ipRateLimit = (IpRateLimit) rateLimit;
+            builder.append(" (ip: ", DARK_AQUA, ITALIC)
+                    .append(ipRateLimit.getIpString())
+                    .append(", time=")
+                    .append(String.valueOf(ipRateLimit.getTimeLimit() * RateLimitManager.LIMIT_RESET_INTERVAL))
+                    .append("s)");
         }
 
         sender.sendMessage(builder.create());
