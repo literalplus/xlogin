@@ -37,6 +37,7 @@ public class CommandxLoginLimit extends Command {
             new XyComponentBuilder("/xlol show ").color(GOLD).append("Zeigt aktuelle Rate-Limits.", GRAY).create(),
             new XyComponentBuilder("/xlol ips ").color(GOLD).append("Zeigt aktuelle IP-Limits.", GRAY).create(),
             new XyComponentBuilder("/xlol reset ").color(GOLD).append("Setzt die Limits zurück.", GRAY).create(),
+            new XyComponentBuilder("/xlol stfu ").color(GOLD).append("Blendet Angriffswarnungen aus (oder wieder ein).", GRAY).create(),
     };
     private final XLoginPlugin plugin;
 
@@ -52,6 +53,11 @@ public class CommandxLoginLimit extends Command {
             return;
         }
 
+        if (!args[0].equalsIgnoreCase("show") && !sender.hasPermission("xlogin.admin")) {
+            sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
+            return;
+        }
+
         RateLimitManager manager = plugin.getRateLimitManager();
 
         switch (args[0].toLowerCase()) {
@@ -61,11 +67,6 @@ public class CommandxLoginLimit extends Command {
                 showRateLimit(sender, manager.getJoinLimit(), "Join: ");
                 return;
             case "ips":
-                if (!sender.hasPermission("xlogin.admin")) {
-                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
-                    return;
-                }
-
                 sender.sendMessage(new XyComponentBuilder("Current IP rate limits: (red = limited)").color(GOLD).create());
                 int i = 0;
                 for (IpRateLimit limit : manager.getIpRateLimits()) {
@@ -79,11 +80,6 @@ public class CommandxLoginLimit extends Command {
                 }
                 return;
             case "reset":
-                if (!sender.hasPermission("xlogin.admin")) {
-                    sender.sendMessage(new ComponentBuilder("Du hast auf diesen Befehl keinen Zugriff!").color(RED).create());
-                    return;
-                }
-
                 for (ProxiedPlayer player : plugin.getProxy().getPlayers()) {
                     if (player.hasPermission("xlogin.cmd")) {
                         sender.sendMessage(new ComponentBuilder("[" + sender.getName() + ": Reset xLogin limits]")
@@ -92,6 +88,18 @@ public class CommandxLoginLimit extends Command {
                 }
                 plugin.getLogger().info(sender.getName() + " reset xLogin limits");
                 manager.resetAllLimits();
+                return;
+            case "stfu":
+                if (!(sender instanceof ProxiedPlayer)) {
+                    sender.sendMessage(new XyComponentBuilder("Nur Spieler können Angriffsnachrichten abschalten! :P").create());
+                    return;
+                }
+                boolean ignoresNotices = manager.toggleIgnoresNotices(((ProxiedPlayer) sender).getUniqueId());
+                sender.sendMessage(
+                        new XyComponentBuilder("Benachrichtigungen über mögliche Angriffe sind für dich jetzt ").color(GOLD)
+                                .append(ignoresNotices ? "ausgeschaltet" : "eingeschaltet").color(ignoresNotices ? RED : GREEN)
+                                .append("!", GOLD).create()
+                );
                 return;
             default:
                 sender.sendMessage(new XyComponentBuilder("Unbekannte Aktion. Hilfe:").color(RED).create());

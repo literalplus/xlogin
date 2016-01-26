@@ -18,8 +18,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +38,7 @@ public class RateLimitManager {
             "[/xlol] %d/%d players tried to register in " + LIMIT_RESET_INTERVAL + "s!",
             5);
     private final Map<String, IpRateLimit> ipLimits = new ConcurrentHashMap<>();
+    private final Set<UUID> noticeIgnorers = new HashSet<>();
     private final XLoginPlugin plugin;
     private boolean started = false;
 
@@ -119,7 +119,7 @@ public class RateLimitManager {
                 new TextComponent(mergedMessage)
         );
         for (ProxiedPlayer plr : plugin.getProxy().getPlayers()) {
-            if (plr.hasPermission("xlogin.admin")) {
+            if (plr.hasPermission("xlogin.admin") && !doesIgnoreNotices(plr.getUniqueId())) {
                 plr.sendMessage(jsonMessage);
             }
         }
@@ -173,5 +173,30 @@ public class RateLimitManager {
             ipLimits.put(ipString, limit);
         }
         return limit;
+    }
+
+    /**
+     * Toggles whether a player ignores notices sent by the rate limit manager.
+     *
+     * @param uuid the unique id of the player
+     * @return whether notices are ignored by that player now
+     */
+    public boolean toggleIgnoresNotices(UUID uuid) {
+        if (noticeIgnorers.contains(uuid)) {
+            noticeIgnorers.remove(uuid);
+        } else {
+            noticeIgnorers.add(uuid);
+        }
+        return doesIgnoreNotices(uuid);
+    }
+
+    /**
+     * Checks whether a player ignores notices sent by the rate limit manager.
+     *
+     * @param uuid the unique id of the player
+     * @return whether notices are ignored by that player
+     */
+    public boolean doesIgnoreNotices(UUID uuid) {
+        return noticeIgnorers.contains(uuid);
     }
 }
