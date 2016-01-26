@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class IpRateLimit extends SimpleRateLimit {
     private final String ipString;
-    private AtomicInteger blockedForHits = new AtomicInteger(-1);
+    private AtomicInteger blockedForHits = new AtomicInteger(0);
 
     /**
      * Creates a new rate limit.
@@ -56,7 +56,7 @@ public class IpRateLimit extends SimpleRateLimit {
 
         if (infringementDelta > 0) { //only time limit if the threshold was actually exceeded
             blockedForHits.addAndGet(infringementDelta); //block for N resets
-        } else if (blockedForHits.get() >= 0) {
+        } else if (blockedForHits.get() > 0) {
             blockedForHits.decrementAndGet(); //only reduce limit if the threshold hasn't been exceeded
         }
 

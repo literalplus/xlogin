@@ -27,9 +27,11 @@ public class SimpleRateLimitTest {
 
     @Test
     public void testIncrementAndCheck() throws Exception {
+        assumeThat(simpleRateLimit.isLimited(), is(false));
         assertThat("limit wrongly kicked in after 1 hit", simpleRateLimit.incrementAndCheck(), is(false));
         assertThat("limit wrongly kicked in after 2 hits", simpleRateLimit.incrementAndCheck(), is(false));
         assertThat("limit didn't kick in after 3 hits", simpleRateLimit.incrementAndCheck(), is(true)); //limit is three
+        assertThat("isLimited doesn't reflect limit state", simpleRateLimit.isLimited(), is(true)); //limit is three
         assertThat("limit didn't kick in after 4 hits", simpleRateLimit.incrementAndCheck(), is(true));
     }
 

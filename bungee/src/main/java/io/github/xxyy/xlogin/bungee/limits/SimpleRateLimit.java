@@ -60,7 +60,7 @@ public class SimpleRateLimit {
      * @return whether the threshold has been reached
      */
     public boolean incrementAndCheck() {
-        return currentValue.incrementAndGet() > threshold;
+        return currentValue.incrementAndGet() >= threshold;
     }
 
     /**
@@ -69,7 +69,7 @@ public class SimpleRateLimit {
      * @return whether the threshold has been reached
      */
     public boolean isLimited() {
-        return getCurrentValue() > threshold;
+        return getCurrentValue() >= threshold;
     }
 
     /**
