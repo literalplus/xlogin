@@ -81,7 +81,7 @@ public class CommandRegister extends Command {
         }
 
         if (plugin.getRateLimitManager().getRegisterLimit().incrementAndCheck()){
-            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().registerRateLimit));
+            plr.disconnect(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().registerRateLimit));
             return;
         }
 
