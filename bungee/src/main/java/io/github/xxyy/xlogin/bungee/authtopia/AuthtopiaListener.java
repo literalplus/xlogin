@@ -52,7 +52,7 @@ public class AuthtopiaListener implements Listener {
         if (plugin.getRateLimitManager().checkLimited(address)) {
             evt.setCancelled(true);
             evt.setCancelReason("Entschuldige, es betreten gerade zu viele Benutzer den Server. " +
-                    "Bitte versuche es in 5 Minuten erneut.");
+                    "Bitte versuche es später erneut.");
             return;
         }
 

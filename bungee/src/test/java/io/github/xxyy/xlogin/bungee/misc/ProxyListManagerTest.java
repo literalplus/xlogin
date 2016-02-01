@@ -8,7 +8,7 @@
  * Legal steps may be taken in case of a violation of these terms.
  */
 
-package io.github.xxyy.xlogin.common.module;
+package io.github.xxyy.xlogin.bungee.misc;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -20,18 +20,20 @@ import java.util.logging.Logger;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author <a href="http://xxyy.github.io/">xxyy</a>
- * @since 2016-01-10
- */
 public class ProxyListManagerTest {
 
     @Test
     public void testLoadFromFile() throws Exception {
         ProxyListManager proxyListManager = new ProxyListManager();
         proxyListManager.loadFromFile(new File("../bungee/src/main/resources/default-proxy-list.txt"));
-        assertThat("listed ip not loaded",
-                proxyListManager.isBlockedProxy(new InetSocketAddress("100.38.22.140", 1337)), is(true));
+        assertThat("listed ip not loaded (range)",
+                proxyListManager.isBlockedProxy(new InetSocketAddress("101.255.17.245", 1337)), is(true));
+        assertThat("listed ip not loaded (range)",
+                proxyListManager.isBlockedProxy(new InetSocketAddress("101.255.17.246", 1337)), is(true));
+        assertThat("listed ip not loaded (range broadcast)",
+                proxyListManager.isBlockedProxy(new InetSocketAddress("101.255.17.247", 1337)), is(true));
+        assertThat("listed ip not loaded (single)",
+                proxyListManager.isBlockedProxy(new InetSocketAddress("103.16.114.1", 1337)), is(true));
         assertThat("unlisted ip falsely loaded",
                 proxyListManager.isBlockedProxy(new InetSocketAddress("192.168.1.1", 1337)), is(false));
     }
@@ -40,7 +42,7 @@ public class ProxyListManagerTest {
     public void testLoadFromDirectory() throws Exception {
         ProxyListManager proxyListManager = new ProxyListManager();
         Logger logger = Mockito.spy(Logger.getAnonymousLogger());
-        //this ignores non-IP lines and therefor non-IP files:
+        //this ignores non-IP lines and therefore non-IP files:
         proxyListManager.loadFromDirectory(new File("../bungee/src/main/resources/"), logger);
         Mockito.verifyZeroInteractions(logger);
         assertThat("listed ip not loaded from dir",

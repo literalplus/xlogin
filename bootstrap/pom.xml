@@ -64,6 +64,10 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+        </dependency>
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
@@ -90,6 +94,7 @@
                             <include>org.projectlombok:lombok</include>
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
+                            <include>commons-net:commons-net</include>
                             <!-- required by XYC and BungeeCord no longer seems to have it -->
                             <include>commons-lang:commons-lang</include>
                             <include>mysql:mysql-connector-java</include>
