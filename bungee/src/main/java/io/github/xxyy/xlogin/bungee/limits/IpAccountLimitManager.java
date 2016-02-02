@@ -17,8 +17,10 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.net.InetSocketAddress;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +36,7 @@ import java.util.concurrent.FutureTask;
 public class IpAccountLimitManager {
     private final XLoginPlugin plugin;
     private Map<String, Integer> ipOnlinePlayers = new ConcurrentHashMap<>();
-    private Map<ProxiedPlayer, Future<Boolean>> futuresById = new WeakHashMap<>();
+    private Map<UUID, Future<Boolean>> futuresById = new WeakHashMap<>();
 
     public IpAccountLimitManager(XLoginPlugin plugin) {
         this.plugin = plugin;
@@ -45,22 +47,24 @@ public class IpAccountLimitManager {
      * Because the computation requires access to database resources, it it performed in a separate thread and the result
      * provided by a {@link Future}. The future can later be obtained with {@link #getAccountLimitFuture(ProxiedPlayer)}.
      *
-     * @param player the player attempting to connect to the server
+     * @param uuid    the unique id of the player attempting to connect
+     * @param name    the name of the player
+     * @param address the address the player is using to connect
      * @return whether the player should be allowed to connect and possibly create an account
      */
-    public Future<Boolean> requestAccountLimit(final ProxiedPlayer player) {
+    public Future<Boolean> requestAccountLimit(final UUID uuid, final String name, final InetSocketAddress address) {
         final FutureTask<Boolean> future = new FutureTask<>(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                String ipString = player.getAddress().getAddress().toString();
+                String ipString = address.getAddress().toString();
                 IpAddress ipAddress = IpAddress.fromIpString(ipString);
                 Integer maxUsers = getMaxUsers(ipAddress);
-                int registeredCount = getRegisteredCount(ipString, player);
+                int registeredCount = getRegisteredCount(ipString, uuid, name);
                 return registeredCount >= maxUsers;
             }
         });
         plugin.getProxy().getScheduler().runAsync(plugin, future);
-        futuresById.put(player, future);
+        futuresById.put(uuid, future);
         return future;
     }
 
@@ -82,15 +86,15 @@ public class IpAccountLimitManager {
      * @return the future or null if no computation has been requested
      */
     public Future<Boolean> getAccountLimitFuture(ProxiedPlayer player) {
-        return futuresById.remove(player);
+        return futuresById.remove(player.getUniqueId());
     }
 
-    private int getRegisteredCount(String ipString, ProxiedPlayer ignore) throws SQLException {
+    private int getRegisteredCount(String ipString, UUID ignoreId, String ignoreName) throws SQLException {
         int registeredCount = 0;
         try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult("SELECT COUNT(*) AS cnt FROM " +
                         AuthedPlayer.AUTH_DATA_TABLE_NAME +
                         " WHERE user_lastip=? AND uuid != ? AND username != ?",
-                ipString, ignore.getUniqueId().toString(), ignore.getName())) {
+                ipString, ignoreId.toString(), ignoreName)) {
             if (qr.rs().next()) {
                 registeredCount = qr.rs().getInt("cnt");
             }

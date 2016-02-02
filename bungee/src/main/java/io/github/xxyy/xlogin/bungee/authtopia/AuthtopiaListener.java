@@ -17,12 +17,11 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 import org.apache.commons.lang.Validate;
 
 import java.net.InetSocketAddress;
@@ -92,9 +91,14 @@ public class AuthtopiaListener implements Listener {
         plugin.getAuthtopiaHelper().figureOutOnlineMode(evt);
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onLogin(final LoginEvent evt) {
+        PendingConnection connection = evt.getConnection();
+        accountLimiter.requestAccountLimit(connection.getUniqueId(), connection.getName(), connection.getAddress()); //Schedules async task
+    }
+
     @EventHandler
     public void onPostLogin(final PostLoginEvent evt) {
-        accountLimiter.requestAccountLimit(evt.getPlayer()); //schedules async task
         final boolean knownBefore = plugin.getRepository().isPlayerKnown(evt.getPlayer().getUniqueId());
         if (knownBefore) {
             plugin.getRepository().refreshPlayer(evt.getPlayer().getUniqueId(), evt.getPlayer().getName());
