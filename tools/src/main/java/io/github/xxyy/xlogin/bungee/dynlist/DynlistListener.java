@@ -71,7 +71,7 @@ public class DynlistListener implements Listener {
             }
         } else {
             final ProxiedPlayer plr = manager.getPlugin().getProxy().getPlayer(args[1]);
-            if(plr != null) {
+            if (plr != null) {
                 bypasses.put(plr.getUniqueId(), args[2]);
                 manager.getPlugin().getProxy().getScheduler().schedule(manager.getPlugin(),
                         new Runnable() {
@@ -89,11 +89,11 @@ public class DynlistListener implements Listener {
 
     @EventHandler
     public void onServerSwitch(ServerConnectEvent evt) {
-        if (evt.getPlayer().hasPermission("xlogin.dynlist") || fullBypass ) {
+        if (evt.isCancelled() || evt.getPlayer().hasPermission("xlogin.dynlist") || fullBypass) {
             return;
         }
 
-        if(bypasses.containsKey(evt.getPlayer().getUniqueId()) &&
+        if (bypasses.containsKey(evt.getPlayer().getUniqueId()) &&
                 evt.getTarget().getName().equalsIgnoreCase(bypasses.get(evt.getPlayer().getUniqueId()))) {
             bypasses.remove(evt.getPlayer().getUniqueId());
         }
