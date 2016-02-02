@@ -11,6 +11,7 @@
 package io.github.xxyy.xlogin.bungee.limits;
 
 import io.github.xxyy.common.sql.QueryResult;
+import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
@@ -22,10 +23,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * Manages registered account limit per ip address.
@@ -53,7 +51,29 @@ public class IpAccountLimitManager {
      * @return whether the player should be allowed to connect and possibly create an account
      */
     public Future<Boolean> requestAccountLimit(final UUID uuid, final String name, final InetSocketAddress address) {
-        final FutureTask<Boolean> future = new FutureTask<>(new Callable<Boolean>() {
+        final FutureTask<Boolean> future = createFuture(uuid, name, address);
+        plugin.getProxy().getScheduler().runAsync(plugin, future);
+        futuresById.put(uuid, future);
+        return future;
+    }
+
+    /**
+     * Checks whether a player may connect to the server based on the amount of accounts registered for their ip address.
+     * This computes the result in the current thread and returns it immediately. Note that this might take some time
+     * because it requires database access.
+     *
+     * @param uuid    the unique id of the player attempting to connect
+     * @param name    the name of the player
+     * @param address the address the player is using to connect
+     * @return whether the player should be allowed to connect and possibly create an account
+     */
+    public boolean getAccountLimit(final UUID uuid, final String name, final InetSocketAddress address) throws ExecutionException, InterruptedException {
+        return createFuture(uuid, name, address).get();
+    }
+
+    @NotNull
+    private FutureTask<Boolean> createFuture(final UUID uuid, final String name, final InetSocketAddress address) {
+        return new FutureTask<>(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 String ipString = address.getAddress().toString();
@@ -63,16 +83,13 @@ public class IpAccountLimitManager {
                 return registeredCount >= maxUsers;
             }
         });
-        plugin.getProxy().getScheduler().runAsync(plugin, future);
-        futuresById.put(uuid, future);
-        return future;
     }
 
     /**
      * Gets the maximum allowed users for given ip or the default if null is passed
      *
      * @param ipAddress the ip address to check or null for the global default
-     * @return the maxium amount of users allowed for the address denoted by the parameter
+     * @return the maximum amount of users allowed for the address denoted by the parameter
      */
     public int getMaxUsers(IpAddress ipAddress) {
         return ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();

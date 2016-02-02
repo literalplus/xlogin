@@ -17,17 +17,17 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 import org.apache.commons.lang.Validate;
 
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -91,10 +91,14 @@ public class AuthtopiaListener implements Listener {
         plugin.getAuthtopiaHelper().figureOutOnlineMode(evt);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     public void onLogin(final LoginEvent evt) {
         PendingConnection connection = evt.getConnection();
         accountLimiter.requestAccountLimit(connection.getUniqueId(), connection.getName(), connection.getAddress()); //Schedules async task
+
+        if (!checkIpAllowed(evt)) {
+            return; //Can't use that IP
+        }
     }
 
     @EventHandler
@@ -110,13 +114,6 @@ public class AuthtopiaListener implements Listener {
                     plugin.getLogger().info("Player left before PostLogin: " + evt.getPlayer().getName());
                     return;
                 }
-
-                IpAddress ipAddress = checkIp(evt); //ips are set and saved on auth
-
-                if (ipAddress == null) {
-                    return; //Can't use that IP
-                }
-
                 AuthedPlayer authedPlayer = null;
 
                 if (knownBefore || evt.getPlayer().getPendingConnection().isOnlineMode()) {
@@ -169,7 +166,7 @@ public class AuthtopiaListener implements Listener {
                         AuthedPlayerFactory.save(authedPlayer); //TODO: This should theoretically be obsolete since we're now saving on auth
                     }
                 } else if (!authed && plugin.getConfig().isEnableSessions()) { //**THIS** however authenticates sessions!
-                    if (authedPlayer.authenticateSession(ipAddress)) {
+                    if (authedPlayer.authenticateSession(IpAddress.fromIpString(evt.getPlayer().getAddress().getAddress().toString()))) {
                         plugin.getRegistry().registerAuthentication(authedPlayer);
                         evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().sessionsLoggedIn));
                         authed = true;
@@ -189,48 +186,39 @@ public class AuthtopiaListener implements Listener {
                 }
 
             }
-        }, 250, TimeUnit.MILLISECONDS);
+        }, 250, TimeUnit.MILLISECONDS); //Sync disconnect causes a misleading exception message
     }
 
-    private IpAddress checkIp(PostLoginEvent evt) {
-        String ipString = evt.getPlayer().getAddress().getAddress().toString();
+    private boolean checkIpAllowed(LoginEvent evt) {
+        String ipString = evt.getConnection().getAddress().getAddress().toString();
         IpAddress ipAddress = IpAddress.fromIpString(ipString);
         boolean accountLimitHit;
         try {
-            Future<Boolean> accountLimitFuture = accountLimiter.getAccountLimitFuture(evt.getPlayer());
-            if (accountLimitFuture != null) {
-                accountLimitHit = accountLimitFuture.get();
-            } else {
-                evt.getPlayer().disconnect(new XyComponentBuilder(
-                        "Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
-                                "Accountlimit wurde nicht berechnet.\n" +
-                                "Bitte versuche es erneut."
-                ).color(ChatColor.RED).create());
-                return null;
-            }
+            accountLimitHit = accountLimiter.getAccountLimit(
+                    evt.getConnection().getUniqueId(), evt.getConnection().getName(), evt.getConnection().getAddress()
+            );
         } catch (InterruptedException | ExecutionException e) {
-            evt.getPlayer().disconnect(new XyComponentBuilder(
-                    "Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
-                            "Accountlimit konnte nicht berechnet werden.\n" +
-                            "Bitte versuche es erneut."
-            ).color(ChatColor.RED).create());
+            evt.setCancelled(true);
+            evt.setCancelReason("Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
+                    "Accountlimit konnte nicht berechnet werden.\n" +
+                    "Bitte versuche es erneut.");
             e.printStackTrace();
-            return null;
+            return false;
         }
 
         if (accountLimitHit) {
-            evt.getPlayer().disconnect(plugin.getMessages().parseMessageWithPrefix(
-                    plugin.getMessages().ipAccountLimitedReached,
-                    ipString, accountLimiter.getMaxUsers(ipAddress)
-            ));
-            return null;
+            evt.setCancelled(true);
+            evt.setCancelReason(plugin.getMessages().prefix +
+                    MessageFormat.format(plugin.getMessages().ipAccountLimitedReached,
+                            ipString, accountLimiter.getMaxUsers(ipAddress))
+            );
+            return false;
         }
 
-        plugin.getOnlineLimiter().registerOnlinePlayer(evt.getPlayer().getAddress());
+        plugin.getOnlineLimiter().registerOnlinePlayer(evt.getConnection().getAddress());
 
-        return ipAddress;
+        return true;
     }
-
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
@@ -244,5 +232,15 @@ public class AuthtopiaListener implements Listener {
     public void onDisconnect(final PlayerDisconnectEvent evt) {
         plugin.getOnlineLimiter().recomputeOnlinePlayers(evt.getPlayer().getAddress());
         plugin.getAuthtopiaHelper().unregisterPremium(evt.getPlayer());
+    }
+
+    private void delayedDisconnect(final ProxiedPlayer plr, final BaseComponent[] message) {
+        plugin.getProxy().getScheduler().schedule(plugin,
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                }, 100, TimeUnit.MILLISECONDS);
     }
 }
