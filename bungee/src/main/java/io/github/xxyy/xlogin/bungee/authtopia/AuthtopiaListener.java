@@ -18,9 +18,7 @@ import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -129,6 +127,8 @@ public class AuthtopiaListener implements Listener {
         }
 
         plugin.getProxy().getScheduler().schedule(plugin, new Runnable() {
+            //TODO: This could possibly be moved into LoginEvent if we queue disconnects
+            //TODO: server is actually not available in PostLogin - move plugin messages to ServerSwitch or ServerConnect
             public void run() {
                 if (plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
                     plugin.getLogger().info("Player left before PostLogin: " + evt.getPlayer().getName());
@@ -164,7 +164,7 @@ public class AuthtopiaListener implements Listener {
 
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().premiumLoggedIn));
                     authed = true;
-                } else { //  vvvvv Inform player if they are premium
+                } else { //  vvvvv Inform player if they are premium //TODO: Is this even possible any more?
                     //noinspection ConstantConditions
                     if (evt.getPlayer().getPendingConnection().isOnlineMode() &&
                             !authedPlayer.isDisabledPremiumMessage()) {
@@ -177,7 +177,7 @@ public class AuthtopiaListener implements Listener {
                 if (!knownBefore) { //This just notifies and registers, nothing authenticating here
                     if (authedPlayer != null && authedPlayer.isAuthenticated() &&
                             AuthedPlayer.AuthenticationProvider.MINECRAFT_PREMIUM.equals(authedPlayer.getAuthenticationProvider())) {
-                        authedPlayer.setPremium(true);
+                        authedPlayer.setPremium(true); //TODO: Actually, autenticatePremium is only possible with premium=true
 
                         if (evt.getPlayer().getServer() != null) {
                             plugin.notifyRegister(evt.getPlayer());
@@ -196,7 +196,7 @@ public class AuthtopiaListener implements Listener {
                 if (authedPlayer != null) { //Happens if we are premium or already known
                     if (evt.getPlayer().getServer() != null) { //This notifies servers of a premium or session authentication...if any occurred
                         plugin.getAuthtopiaHelper().tryRegisterAuth(evt.getPlayer(), authedPlayer);
-                    }
+                    } //TODO: Is this ever called? If so, is this ever NECESSARY? We're sending that in ServerSwitch too
 
                     plugin.getRepository().updateProfile(authedPlayer);
                 }
@@ -219,15 +219,5 @@ public class AuthtopiaListener implements Listener {
     public void onDisconnect(final PlayerDisconnectEvent evt) {
         plugin.getOnlineLimiter().recomputeOnlinePlayers(evt.getPlayer().getAddress());
         plugin.getAuthtopiaHelper().unregisterPremium(evt.getPlayer());
-    }
-
-    private void delayedDisconnect(final ProxiedPlayer plr, final BaseComponent[] message) {
-        plugin.getProxy().getScheduler().schedule(plugin,
-                new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                }, 100, TimeUnit.MILLISECONDS);
     }
 }
