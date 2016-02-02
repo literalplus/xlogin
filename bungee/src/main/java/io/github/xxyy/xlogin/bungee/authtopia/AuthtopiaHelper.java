@@ -174,7 +174,7 @@ public class AuthtopiaHelper {
         if (authedPlayer.authenticatePremium(plr.getAddress().getAddress().toString())){
             plugin.getRegistry().registerAuthentication(authedPlayer);
 
-            plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());
+//            plugin.getLogger().info("Premium player " + plr.getName() + " connected. UUID: " + plr.getUniqueId());
 
             return true;
         }
