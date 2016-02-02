@@ -66,6 +66,7 @@ public class AuthtopiaHelper {
      */
     public void publishResult(final ProxiedPlayer plr) {
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
+        assert authedPlayer != null;
 
         ByteArrayDataOutput bada = ByteStreams.newDataOutput();
         bada.writeUTF(plr.getUniqueId().toString());

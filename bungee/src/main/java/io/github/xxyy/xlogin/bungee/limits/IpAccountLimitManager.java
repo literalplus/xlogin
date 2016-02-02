@@ -10,20 +10,17 @@
 
 package io.github.xxyy.xlogin.bungee.limits;
 
+import com.google.common.base.Preconditions;
 import io.github.xxyy.common.sql.QueryResult;
-import io.github.xxyy.lib.intellij_annotations.NotNull;
 import io.github.xxyy.xlogin.bungee.XLoginPlugin;
 import io.github.xxyy.xlogin.common.PreferencesHolder;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.Callback;
 
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.UUID;
-import java.util.WeakHashMap;
-import java.util.concurrent.*;
 
 /**
  * Manages registered account limit per ip address.
@@ -33,8 +30,6 @@ import java.util.concurrent.*;
  */
 public class IpAccountLimitManager {
     private final XLoginPlugin plugin;
-    private Map<String, Integer> ipOnlinePlayers = new ConcurrentHashMap<>();
-    private Map<UUID, Future<Boolean>> futuresById = new WeakHashMap<>();
 
     public IpAccountLimitManager(XLoginPlugin plugin) {
         this.plugin = plugin;
@@ -42,45 +37,28 @@ public class IpAccountLimitManager {
 
     /**
      * Checks whether a player may connect to the server based on the amount of accounts registered for their ip address.
-     * Because the computation requires access to database resources, it it performed in a separate thread and the result
-     * provided by a {@link Future}. The future can later be obtained with {@link #getAccountLimitFuture(ProxiedPlayer)}.
+     * Because the computation requires access to database resources, it it performed in a separate thread.
      *
-     * @param uuid    the unique id of the player attempting to connect
-     * @param name    the name of the player
-     * @param address the address the player is using to connect
-     * @return whether the player should be allowed to connect and possibly create an account
+     * @param uuid     the unique id of the player attempting to connect
+     * @param name     the name of the player
+     * @param address  the address the player is using to connect
+     * @param callback the callback that is called upon completion of the operation
      */
-    public Future<Boolean> requestAccountLimit(final UUID uuid, final String name, final InetSocketAddress address) {
-        final FutureTask<Boolean> future = createFuture(uuid, name, address);
-        plugin.getProxy().getScheduler().runAsync(plugin, future);
-        futuresById.put(uuid, future);
-        return future;
-    }
-
-    /**
-     * Checks whether a player may connect to the server based on the amount of accounts registered for their ip address.
-     * This computes the result in the current thread and returns it immediately. Note that this might take some time
-     * because it requires database access.
-     *
-     * @param uuid    the unique id of the player attempting to connect
-     * @param name    the name of the player
-     * @param address the address the player is using to connect
-     * @return whether the player should be allowed to connect and possibly create an account
-     */
-    public boolean getAccountLimit(final UUID uuid, final String name, final InetSocketAddress address) throws ExecutionException, InterruptedException {
-        return createFuture(uuid, name, address).get();
-    }
-
-    @NotNull
-    private FutureTask<Boolean> createFuture(final UUID uuid, final String name, final InetSocketAddress address) {
-        return new FutureTask<>(new Callable<Boolean>() {
+    public void requestAccountLimit(final UUID uuid, final String name, final InetSocketAddress address,
+                                    final Callback<Boolean> callback) {
+        Preconditions.checkNotNull(callback, "callback");
+        plugin.getProxy().getScheduler().runAsync(plugin, new Runnable() {
             @Override
-            public Boolean call() throws Exception {
-                String ipString = address.getAddress().toString();
-                IpAddress ipAddress = IpAddress.fromIpString(ipString);
-                Integer maxUsers = getMaxUsers(ipAddress);
-                int registeredCount = getRegisteredCount(ipString, uuid, name);
-                return registeredCount >= maxUsers;
+            public void run() {
+                try {
+                    String ipString = address.getAddress().toString();
+                    IpAddress ipAddress = IpAddress.fromIpString(ipString);
+                    Integer maxUsers = getMaxUsers(ipAddress);
+                    int registeredCount = getRegisteredCount(ipString, uuid, name);
+                    callback.done(registeredCount >= maxUsers, null);
+                } catch (Exception e) {
+                    callback.done(null, e);
+                }
             }
         });
     }
@@ -93,17 +71,6 @@ public class IpAccountLimitManager {
      */
     public int getMaxUsers(IpAddress ipAddress) {
         return ipAddress == null ? plugin.getConfig().getMaxUsers() : ipAddress.getMaxUsers();
-    }
-
-    /**
-     * Gets and removes the future for the account limit computation for a specified player. If no computation has
-     * been requested, null is returned.
-     *
-     * @param player the player to request the future for
-     * @return the future or null if no computation has been requested
-     */
-    public Future<Boolean> getAccountLimitFuture(ProxiedPlayer player) {
-        return futuresById.remove(player.getUniqueId());
     }
 
     private int getRegisteredCount(String ipString, UUID ignoreId, String ignoreName) throws SQLException {

@@ -16,6 +16,7 @@ import io.github.xxyy.xlogin.bungee.limits.IpAccountLimitManager;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayer;
 import io.github.xxyy.xlogin.common.authedplayer.AuthedPlayerFactory;
 import io.github.xxyy.xlogin.common.ips.IpAddress;
+import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
@@ -27,7 +28,6 @@ import org.apache.commons.lang.Validate;
 
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -94,11 +94,31 @@ public class AuthtopiaListener implements Listener {
     @EventHandler
     public void onLogin(final LoginEvent evt) {
         PendingConnection connection = evt.getConnection();
-        accountLimiter.requestAccountLimit(connection.getUniqueId(), connection.getName(), connection.getAddress()); //Schedules async task
-
-        if (!checkIpAllowed(evt)) {
-            return; //Can't use that IP
-        }
+        final String ipString = connection.getAddress().getAddress().toString();
+        final IpAddress ipAddress = IpAddress.fromIpString(ipString);
+        accountLimiter.requestAccountLimit(connection.getUniqueId(), connection.getName(), connection.getAddress(),
+                new Callback<Boolean>() {
+                    @Override
+                    public void done(Boolean accountLimitHit, Throwable error) {
+                        if (error != null) {
+                            evt.setCancelled(true);
+                            evt.setCancelReason(String.format(
+                                    "%sKonnte IP nicht überprüfen. Bitte versuche es später erneut. (%s)",
+                                    plugin.getMessages().prefix, error.getClass().getSimpleName())
+                            );
+                        } else if (accountLimitHit) { //To many existing accounts on that IP
+                            evt.setCancelled(true);
+                            evt.setCancelReason(plugin.getMessages().prefix +
+                                    MessageFormat.format(plugin.getMessages().ipAccountLimitedReached,
+                                            ipString, accountLimiter.getMaxUsers(ipAddress))
+                            );
+                        } else { //No error and limit not hit means IP is allowed
+                            plugin.getOnlineLimiter().registerOnlinePlayer(evt.getConnection().getAddress());
+                        }
+                        evt.completeIntent(plugin);
+                    }
+                });
+        evt.registerIntent(plugin);
     }
 
     @EventHandler
@@ -186,44 +206,11 @@ public class AuthtopiaListener implements Listener {
                 }
 
             }
-        }, 250, TimeUnit.MILLISECONDS); //Sync disconnect causes a misleading exception message
-    }
-
-    private boolean checkIpAllowed(LoginEvent evt) {
-        String ipString = evt.getConnection().getAddress().getAddress().toString();
-        IpAddress ipAddress = IpAddress.fromIpString(ipString);
-        boolean accountLimitHit;
-        try {
-            accountLimitHit = accountLimiter.getAccountLimit(
-                    evt.getConnection().getUniqueId(), evt.getConnection().getName(), evt.getConnection().getAddress()
-            );
-        } catch (InterruptedException | ExecutionException e) {
-            evt.setCancelled(true);
-            evt.setCancelReason("Entschuldige, es ist ein interner Fehler aufgetreten:\n" +
-                    "Accountlimit konnte nicht berechnet werden.\n" +
-                    "Bitte versuche es erneut.");
-            e.printStackTrace();
-            return false;
-        }
-
-        if (accountLimitHit) {
-            evt.setCancelled(true);
-            evt.setCancelReason(plugin.getMessages().prefix +
-                    MessageFormat.format(plugin.getMessages().ipAccountLimitedReached,
-                            ipString, accountLimiter.getMaxUsers(ipAddress))
-            );
-            return false;
-        }
-
-        plugin.getOnlineLimiter().registerOnlinePlayer(evt.getConnection().getAddress());
-
-        return true;
+        }, 250, TimeUnit.MILLISECONDS); //Sync disconnect causes a misleading exception message; Also: plugin messages need a server, which we don't have here
     }
 
     @EventHandler
     public void onServerSwitch(final ServerSwitchEvent evt) {
-//        plugin.getRepository().refreshProfile(evt.getPlayer().getUniqueId());
-
         plugin.getAuthtopiaHelper().publishResult(evt.getPlayer());
     }
 
