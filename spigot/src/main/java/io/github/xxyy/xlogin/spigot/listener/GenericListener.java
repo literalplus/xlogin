@@ -122,6 +122,9 @@ public class GenericListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
         final Player plr = evt.getPlayer();
+        if (plr.getUniqueId().version() == 4) { //Premium/random, according to Janmm14 - 3 is Cracked/name-based
+            plugin.getRegistry().registerAuthentication(evt.getPlayer().getUniqueId());
+        }
         evt.setJoinMessage(null); //TODO configurable
 
 //        plugin.getRepository().isPlayerKnown(plr.getUniqueId()); //Pre-fetch
