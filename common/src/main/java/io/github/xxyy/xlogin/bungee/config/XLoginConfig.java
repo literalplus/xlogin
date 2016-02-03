@@ -64,6 +64,15 @@ public class XLoginConfig extends Config {
     @Comment("Entries of the dynamic whitelist. Format: name/regex (e.g. tm/tm[1-9])")
     private List<String> dynlistEntries = new ArrayList<>();
 
+    @NotNull
+    @Path("statsd.hostname")
+    @Comment("The host name of the StatsD server to connect to. Set to 'disable' to disable sending metrics to StatsD.")
+    private String statsdHost = "disable";
+
+    @Path("statsd.port")
+    @Comment("The port of the StatsD server to connect to.")
+    private int statsdPort = 8195;
+
     public XLoginConfig(@NotNull Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",

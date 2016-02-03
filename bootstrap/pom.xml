@@ -72,6 +72,10 @@
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
         </dependency>
+        <dependency>
+            <groupId>me.minotopia</groupId>
+            <artifactId>bungee-statsd-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -99,6 +103,7 @@
                             <include>commons-lang:commons-lang</include>
                             <include>mysql:mysql-connector-java</include>
                             <include>io.github.xxyy:commo*</include>
+                            <include>me.minotopia:bungee-statsd-client</include>
                         </includes>
                     </artifactSet>
                     <relocations>

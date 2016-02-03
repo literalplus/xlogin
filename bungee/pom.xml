@@ -68,6 +68,10 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>me.minotopia</groupId>
+            <artifactId>bungee-statsd-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

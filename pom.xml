@@ -133,6 +133,11 @@
                 <version>5.1.29</version>
             </dependency>
             <dependency>
+                <groupId>me.minotopia</groupId>
+                <artifactId>bungee-statsd-client</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.5</version>

@@ -11,6 +11,7 @@
 package io.github.xxyy.xlogin.bungee;
 
 import com.google.common.base.Preconditions;
+import com.timgroup.statsd.StatsDClient;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.sql.SafeSql;
 import io.github.xxyy.common.sql.SqlConnectable;
@@ -26,6 +27,7 @@ import io.github.xxyy.xlogin.bungee.limits.IpOnlineLimitManager;
 import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
 import io.github.xxyy.xlogin.bungee.misc.ProxyListManager;
+import io.github.xxyy.xlogin.bungee.misc.StatsManager;
 import io.github.xxyy.xlogin.bungee.notifier.AltAccountNotifer;
 import io.github.xxyy.xlogin.bungee.punishment.ban.BanModule;
 import io.github.xxyy.xlogin.bungee.punishment.warn.WarnModule;
@@ -82,6 +84,8 @@ public class XLoginPlugin extends XLoginBungee {
             .append("] ", ChatColor.GOLD);
     @Getter
     private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
+    @Getter
+    private StatsManager statsManager;
 
     @Override
     public void onEnable() {
@@ -111,6 +115,11 @@ public class XLoginPlugin extends XLoginBungee {
             PreferencesHolder.setSql(new SafeSql(getConnectableFromConfig()));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }
+
+        //Connect to StatsD server for metrics
+        if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
+            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(), this);
         }
 
         //Register BungeeCord stuff
@@ -285,5 +294,12 @@ public class XLoginPlugin extends XLoginBungee {
     @Override
     public XyComponentBuilder getPrefix() {
         return new XyComponentBuilder(prefix);
+    }
+
+    /**
+     * @return the StatsD client used by the plugin to track metrics
+     */
+    public StatsDClient statsd() {
+        return statsManager.statsd();
     }
 }
