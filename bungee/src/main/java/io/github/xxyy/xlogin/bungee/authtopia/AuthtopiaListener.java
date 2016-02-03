@@ -45,6 +45,7 @@ public class AuthtopiaListener implements Listener {
 
     @EventHandler
     public void onPreLogin(final PreLoginEvent evt) {
+        plugin.statsd().increment("join-attempts");
         InetSocketAddress address = evt.getConnection().getAddress();
         if (plugin.getRateLimitManager().checkLimited(address)) {
             evt.setCancelled(true);
@@ -130,6 +131,7 @@ public class AuthtopiaListener implements Listener {
             //TODO: This could possibly be moved into LoginEvent if we queue disconnects
             //TODO: server is actually not available in PostLogin - move plugin messages to ServerSwitch or ServerConnect
             public void run() {
+                long startMs = System.currentTimeMillis();
                 if (plugin.getProxy().getPlayer(evt.getPlayer().getName()) == null) {
                     plugin.getLogger().info("Player left before PostLogin: " + evt.getPlayer().getName());
                     return;
@@ -204,6 +206,7 @@ public class AuthtopiaListener implements Listener {
                 if (!authed) {
                     evt.getPlayer().sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notLoggedIn));
                 }
+                plugin.statsd().recordExecutionTimeToNow("authtopia-listener.post-actual", startMs);
 
             }
         }, 250, TimeUnit.MILLISECONDS); //Sync disconnect causes a misleading exception message; Also: plugin messages need a server, which we don't have here

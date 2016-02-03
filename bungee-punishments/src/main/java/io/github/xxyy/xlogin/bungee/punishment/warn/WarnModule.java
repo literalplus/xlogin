@@ -56,6 +56,7 @@ public class WarnModule extends XLoginModule implements io.github.xxyy.xlogin.co
     @NotNull
     public WarningInfo createWarning(@NotNull UUID targetId, @NotNull UUID sourceId,
                                      @Nullable Server sourceServer, @NotNull String reason) {
+        plugin.statsd().increment("warns");
         return WarningInfoFactory.create(targetId, sourceId, sourceServer, reason);
     }
 

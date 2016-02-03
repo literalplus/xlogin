@@ -10,6 +10,7 @@
 
 package io.github.xxyy.xlogin.bungee;
 
+import com.timgroup.statsd.StatsDClient;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.xlogin.bungee.config.LocalisedMessageConfig;
 import io.github.xxyy.xlogin.bungee.config.XLoginConfig;
@@ -58,4 +59,9 @@ public abstract class XLoginBungee extends Plugin implements ApiConsumer { //Ple
      * @return a clone of the plugin's prefix, for easy construction of prefixed messages
      */
     public abstract XyComponentBuilder getPrefix();
+
+    /**
+     * @return the StatsD client used by the plugin to track metrics
+     */
+    public abstract StatsDClient statsd();
 }

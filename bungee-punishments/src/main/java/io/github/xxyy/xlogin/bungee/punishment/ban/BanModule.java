@@ -107,6 +107,7 @@ public class BanModule extends XLoginModule implements BanManager {
     @Override
     @NotNull
     public BanInfo setBanned(@NotNull UUID targetId, @NotNull UUID sourceId, @Nullable String sourceServerName, @NotNull String reason, @Nullable Date expiryTime) {
+        plugin.statsd().increment("bans");
         //noinspection ConstantConditions
         return setBannedCache(targetId, BanInfoFactory.create(this, targetId, sourceId, sourceServerName, reason, expiryTime));
     }

@@ -201,6 +201,7 @@ public class XLoginPlugin extends XLoginBungee {
     public void notifyRegister(ProxiedPlayer plr) {
         sendAPIMessage(plr, "register");
         announceRegistration(plr);
+        statsd().increment("registrations");
     }
 
     private void announceRegistration(ProxiedPlayer newPlayer) {
@@ -254,6 +255,7 @@ public class XLoginPlugin extends XLoginBungee {
     public void notifyAuthentication(ProxiedPlayer plr, AuthedPlayer authedPlayer) {
         sendAuthNotification(plr, authedPlayer);
         altAccountNotifer.scheduleCheck(authedPlayer);
+        statsd().increment("logins");
     }
 
     /**
@@ -299,9 +301,7 @@ public class XLoginPlugin extends XLoginBungee {
         return new XyComponentBuilder(prefix);
     }
 
-    /**
-     * @return the StatsD client used by the plugin to track metrics
-     */
+    @Override
     public StatsDClient statsd() {
         return statsManager.statsd();
     }
