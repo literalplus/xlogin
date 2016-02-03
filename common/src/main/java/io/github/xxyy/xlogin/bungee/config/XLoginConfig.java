@@ -71,7 +71,7 @@ public class XLoginConfig extends Config {
 
     @Path("statsd.port")
     @Comment("The port of the StatsD server to connect to.")
-    private int statsdPort = 8195;
+    private int statsdPort = 8125;
 
     @Path("statsd.gauge-update-interval")
     @Comment("Interval in seconds that static gauges are sent to StatsD (player count, ...)")
