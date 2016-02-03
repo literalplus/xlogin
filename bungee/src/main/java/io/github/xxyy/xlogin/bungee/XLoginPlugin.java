@@ -26,6 +26,7 @@ import io.github.xxyy.xlogin.bungee.dynlist.DynlistModule;
 import io.github.xxyy.xlogin.bungee.limits.IpOnlineLimitManager;
 import io.github.xxyy.xlogin.bungee.limits.RateLimitManager;
 import io.github.xxyy.xlogin.bungee.listener.MainListener;
+import io.github.xxyy.xlogin.bungee.misc.GaugeReporter;
 import io.github.xxyy.xlogin.bungee.misc.ProxyListManager;
 import io.github.xxyy.xlogin.bungee.misc.StatsManager;
 import io.github.xxyy.xlogin.bungee.notifier.AltAccountNotifer;
@@ -120,6 +121,8 @@ public class XLoginPlugin extends XLoginBungee {
         //Connect to StatsD server for metrics
         if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
             statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(), this);
+            getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
+                    getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);
         }
 
         //Register BungeeCord stuff

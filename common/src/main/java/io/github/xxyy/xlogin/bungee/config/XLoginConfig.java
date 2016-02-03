@@ -73,6 +73,10 @@ public class XLoginConfig extends Config {
     @Comment("The port of the StatsD server to connect to.")
     private int statsdPort = 8195;
 
+    @Path("statsd.gauge-update-interval")
+    @Comment("Interval in seconds that static gauges are sent to StatsD (player count, ...)")
+    private int gaugeUpdateInterval = 30;
+
     public XLoginConfig(@NotNull Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",
