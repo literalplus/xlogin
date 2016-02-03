@@ -11,6 +11,7 @@
 package io.github.xxyy.xlogin.bungee.misc;
 
 import com.google.common.base.Preconditions;
+import com.timgroup.statsd.StatsDClient;
 import org.apache.commons.net.util.SubnetUtils;
 
 import java.io.*;
@@ -30,12 +31,17 @@ import java.util.regex.Pattern;
  * @since 2016-01-10
  */
 public class ProxyListManager {
-    private List<SubnetUtils.SubnetInfo> proxyRanges = new ArrayList<>();
-    private final SubnetUtils.SubnetInfo dummySubnet = new SubnetUtils("127.0.0.1/32").getInfo(); //because that one method is not static
     private static final Pattern IPV4_PATTERN = Pattern.compile("(\\d{1,3}\\.){3}\\d{1,3}");
     private static final Pattern CIDRV4_PATTERN = Pattern.compile(
             "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,3})"
     ); //used by Apache commons-net, so copying here, you never know
+    private final SubnetUtils.SubnetInfo dummySubnet = new SubnetUtils("127.0.0.1/32").getInfo(); //because that one method is not static
+    private final StatsDClient statsd;
+    private List<SubnetUtils.SubnetInfo> proxyRanges = new ArrayList<>();
+
+    public ProxyListManager(StatsDClient statsd) {
+        this.statsd = statsd;
+    }
 
     /**
      * Adds an IP address range in CIDR notation to the list of proxy ranges.
@@ -72,12 +78,14 @@ public class ProxyListManager {
      * @return whether given address is a known proxy
      */
     public boolean isBlockedProxy(InetSocketAddress address) {
+        long startMs = System.currentTimeMillis();
         int ipInt = dummySubnet.asInteger(address.getAddress().getHostAddress()); //wtf Apache why is this not static
         for (SubnetUtils.SubnetInfo subnetInfo : proxyRanges) {
             if (subnetInfo.isInRange(ipInt)) {
                 return true;
             }
         }
+        statsd.recordExecutionTimeToNow("proxy-check", startMs);
         return false;
     }
 

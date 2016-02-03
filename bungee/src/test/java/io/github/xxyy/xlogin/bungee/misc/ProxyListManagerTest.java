@@ -10,6 +10,7 @@
 
 package io.github.xxyy.xlogin.bungee.misc;
 
+import com.timgroup.statsd.NoOpStatsDClient;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -24,7 +25,7 @@ public class ProxyListManagerTest {
 
     @Test
     public void testLoadFromFile() throws Exception {
-        ProxyListManager proxyListManager = new ProxyListManager();
+        ProxyListManager proxyListManager = new ProxyListManager(new NoOpStatsDClient());
         proxyListManager.loadFromFile(new File("../bungee/src/main/resources/default-proxy-list.txt"));
         assertThat("listed ip not loaded (range)",
                 proxyListManager.isBlockedProxy(new InetSocketAddress("101.255.17.245", 1337)), is(true));
@@ -40,7 +41,7 @@ public class ProxyListManagerTest {
 
     @Test
     public void testLoadFromDirectory() throws Exception {
-        ProxyListManager proxyListManager = new ProxyListManager();
+        ProxyListManager proxyListManager = new ProxyListManager(new NoOpStatsDClient());
         Logger logger = Mockito.spy(Logger.getAnonymousLogger());
         //this ignores non-IP lines and therefore non-IP files:
         proxyListManager.loadFromDirectory(new File("../bungee/src/main/resources/"), logger);

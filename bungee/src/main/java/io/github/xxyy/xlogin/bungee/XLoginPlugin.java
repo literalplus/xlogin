@@ -11,6 +11,7 @@
 package io.github.xxyy.xlogin.bungee;
 
 import com.google.common.base.Preconditions;
+import com.timgroup.statsd.NoOpStatsDClient;
 import com.timgroup.statsd.StatsDClient;
 import io.github.xxyy.common.chat.XyComponentBuilder;
 import io.github.xxyy.common.sql.SafeSql;
@@ -85,16 +86,26 @@ public class XLoginPlugin extends XLoginBungee {
             .append("] ", ChatColor.GOLD);
     @Getter
     private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
-    @Getter
     private StatsManager statsManager;
+    private StatsDClient statsd;
 
     @Override
     public void onEnable() {
         //Initialise configuration file
         reloadConfig();
 
+        //Connect to StatsD server for metrics
+        if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
+            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(), this);
+            statsd = statsManager.statsd();
+            getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
+                    getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);
+        } else {
+            statsd = new NoOpStatsDClient();
+        }
+
         //Load proxy list
-        proxyListManager = new ProxyListManager();
+        proxyListManager = new ProxyListManager(statsd());
         proxyListDir = new File(getDataFolder(), "proxy-lists");
         if (!proxyListDir.isDirectory() && !proxyListDir.mkdirs()) {
             getLogger().warning("Couldn't create " + proxyListDir.getAbsolutePath() + "!");
@@ -116,13 +127,6 @@ public class XLoginPlugin extends XLoginBungee {
             PreferencesHolder.setSql(new SafeSql(getConnectableFromConfig()));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
-
-        //Connect to StatsD server for metrics
-        if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
-            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(), this);
-            getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
-                    getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);
         }
 
         //Register BungeeCord stuff
@@ -303,6 +307,6 @@ public class XLoginPlugin extends XLoginBungee {
 
     @Override
     public StatsDClient statsd() {
-        return statsManager.statsd();
+        return statsd;
     }
 }
