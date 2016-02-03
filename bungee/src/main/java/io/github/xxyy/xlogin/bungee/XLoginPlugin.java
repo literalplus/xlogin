@@ -99,8 +99,10 @@ public class XLoginPlugin extends XLoginBungee {
                     getConfig().getStatsdPrefix(), this).statsd();
             getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
                     getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);
+            getLogger().info("Connected to StatsD server!");
         } else {
             statsd = new NoOpStatsDClient();
+            getLogger().info("Not using StatsD, disabled.");
         }
 
         //Load proxy list
