@@ -193,7 +193,11 @@ public class XLoginPlugin extends XLoginBungee {
     public void onDisable() {
         // Close database connections
         this.authtopiaHelper.destroy();
-        this.authtopiaHelper = null;
+
+        try {
+            statsd.stop();
+        } catch (Exception ignore) {
+        }
 
         this.getLogger().info("xLogin " + PLUGIN_VERSION + " disabled!");
     }
