@@ -77,6 +77,11 @@ public class XLoginConfig extends Config {
     @Comment("Interval in seconds that static gauges are sent to StatsD (player count, ...)")
     private int gaugeUpdateInterval = 30;
 
+    @NotNull
+    @Path("statsd.prefix")
+    @Comment("Proxy-specific metric prefix for StatsD, so that multiple proxies' metrics don't interfere")
+    private String statsdPrefix = "xlogin.bungee";
+
     public XLoginConfig(@NotNull Plugin plugin) {
         CONFIG_HEADER = new String[]{"Main configuration file for xLogin, BungeeCord edition.",
                 "Make sure that you know what you're doing before changing anything. Thank you!",

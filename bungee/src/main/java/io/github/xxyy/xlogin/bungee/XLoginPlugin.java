@@ -96,7 +96,8 @@ public class XLoginPlugin extends XLoginBungee {
 
         //Connect to StatsD server for metrics
         if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
-            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(), this);
+            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(),
+                    getConfig().getStatsdPrefix(), this);
             statsd = statsManager.statsd();
             getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
                     getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);

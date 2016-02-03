@@ -26,10 +26,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class StatsManager implements StatsDClientErrorHandler {
     private final StatsDClient client;
 
-    public StatsManager(String serverHostName, int serverPort, Plugin plugin) {
+    public StatsManager(String serverHostName, int serverPort, String metricPrefix, Plugin plugin) {
         StatsDClient client1 = new NoOpStatsDClient();
         try {
-            client1 = new NonBlockingStatsDClient("xlogin.bungee", serverHostName, serverPort, this, plugin);
+            client1 = new NonBlockingStatsDClient(metricPrefix, serverHostName, serverPort, this, plugin);
         } catch (Exception e) {
             e.printStackTrace();
             plugin.getLogger().severe(String.format("Could not connect to StatsD server running on %s:%d!",
