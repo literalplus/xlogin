@@ -86,7 +86,6 @@ public class XLoginPlugin extends XLoginBungee {
             .append("] ", ChatColor.GOLD);
     @Getter
     private final AltAccountNotifer altAccountNotifer = new AltAccountNotifer(this);
-    private StatsManager statsManager;
     private StatsDClient statsd;
 
     @Override
@@ -96,9 +95,8 @@ public class XLoginPlugin extends XLoginBungee {
 
         //Connect to StatsD server for metrics
         if (!getConfig().getStatsdHost().equalsIgnoreCase("disable")) {
-            statsManager = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(),
-                    getConfig().getStatsdPrefix(), this);
-            statsd = statsManager.statsd();
+            statsd = new StatsManager(getConfig().getStatsdHost(), getConfig().getStatsdPort(),
+                    getConfig().getStatsdPrefix(), this).statsd();
             getProxy().getScheduler().schedule(this, new GaugeReporter(this), getConfig().getGaugeUpdateInterval(),
                     getConfig().getGaugeUpdateInterval(), TimeUnit.SECONDS);
         } else {
