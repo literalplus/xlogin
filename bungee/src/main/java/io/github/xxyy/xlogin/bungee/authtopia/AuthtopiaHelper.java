@@ -98,7 +98,7 @@ public class AuthtopiaHelper {
             @Override
             public void run() {
                 try (QueryResult qr = PreferencesHolder.getSql().executeQueryWithResult(
-                        "SELECT COUNT(*) AS cnt FROM bungeecord.auth_list WHERE name=?", name)) {
+                        "SELECT COUNT(*) AS cnt FROM mt_main.auth_list WHERE name=?", name)) {
                     callback.onSuccess(!(qr.rs().next() && qr.rs().getInt("cnt") > 0));
                 } catch (SQLException e) {
                     callback.onFailure(e);
