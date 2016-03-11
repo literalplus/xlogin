@@ -82,7 +82,7 @@ public class CommandxLoginLimit extends Command {
             case "reset":
                 for (ProxiedPlayer player : plugin.getProxy().getPlayers()) {
                     if (player.hasPermission("xlogin.cmd")) {
-                        sender.sendMessage(new ComponentBuilder("[" + sender.getName() + ": Reset xLogin limits]")
+                        player.sendMessage(new ComponentBuilder("[" + sender.getName() + ": Reset xLogin limits]")
                                 .color(GRAY).italic(true).create());
                     }
                 }
