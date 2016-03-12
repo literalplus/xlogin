@@ -55,7 +55,7 @@ public class RateLimitManager {
                 registerLimit.reset();
                 StringBuilder sb = new StringBuilder();
                 for (IpRateLimit limit : ipLimits.values()) {
-                    if (limit.isLimited()) {
+                    if (limit.isSuspicious()) {
                         sb.append(String.format("%d from %s, ", limit.getCurrentValue(), limit.getIpString()));
                     }
                     limit.reset();

@@ -63,6 +63,11 @@ public class IpRateLimit extends SimpleRateLimit {
         return previous;
     }
 
+    @Override
+    public boolean isSuspicious() {
+        return super.isLimited(); //ignore time limits - those are not currently suspicious, just penalties; visible in /xlol ips
+    }
+
     /**
      * Resets this limit's time-based limit so that actions from this IP are allowed again.
      *

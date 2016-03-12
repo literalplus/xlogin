@@ -73,6 +73,16 @@ public class SimpleRateLimit {
     }
 
     /**
+     * Returns whether this rate limit is currently experiencing suspicious behaviour that should be reported to an
+     * administrator.
+     *
+     * @return whether this limit looks suspicious
+     */
+    public boolean isSuspicious() {
+        return isLimited();
+    }
+
+    /**
      * Sets the threshold, i.e. the maximum value before this limit is applied.
      *
      * @param threshold the new threshold
