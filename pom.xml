@@ -48,7 +48,15 @@
         <bungeecord.version>1.8</bungeecord.version>
         <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- maven-release-plugin -->
+        <ignoreSnapshots>true</ignoreSnapshots>
     </properties>
+
+    <scm>
+        <connection>scm:git:git@bitbucket.org:minotopia/xlogin.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:minotopia/xlogin.git</developerConnection>
+        <url>https://bitbucket.org/minotopia/xlogin/</url>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
