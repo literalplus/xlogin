@@ -9,20 +9,19 @@
   ~ Legal steps may be taken in case of a violation of these terms.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xlogin-parent</artifactId>
         <groupId>li.l1t.xlogin</groupId>
-        <version>2.4.0-SNAPSHOT</version>
+        <version>2.4.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <scm>
         <connection>scm:git://../</connection>
-    </scm>
+      <tag>xlogin-parent-2.4.0</tag>
+  </scm>
 
     <artifactId>xlogin-bootstrap</artifactId>
 
@@ -120,8 +119,7 @@
                         </relocation>
                     </relocations>
                     <transformers>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
                             <resource>AUTHORS</resource>
                             <resource>LICENSE</resource>
                             <resource>changelog.txt</resource>
