@@ -14,10 +14,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.xxyy.xlogin</groupId>
+    <groupId>li.l1t.xlogin</groupId>
     <artifactId>xlogin-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.4.0-SNAPSHOT</version>
 
     <modules>
         <module>spigot</module>
@@ -46,10 +46,11 @@
         <minecraft.version>1.8.3</minecraft.version>
         <bukkit.release>R0.1</bukkit.release>
         <bungeecord.version>1.8</bungeecord.version>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- maven-release-plugin -->
         <ignoreSnapshots>true</ignoreSnapshots>
+        <xyc.version>4.0.4.0</xyc.version>
     </properties>
 
     <scm>
@@ -61,9 +62,19 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.github.xxyy</groupId>
-                <artifactId>common-java7</artifactId>
-                <version>2.7.0-SNAPSHOT</version>
+                <groupId>li.l1t.common</groupId>
+                <artifactId>xyc-core</artifactId>
+                <version>${xyc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>li.l1t.common</groupId>
+                <artifactId>xyc-bungee</artifactId>
+                <version>${xyc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>li.l1t.common</groupId>
+                <artifactId>xyc-bukkit</artifactId>
+                <version>${xyc.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.md-5</groupId>
@@ -86,32 +97,32 @@
                 <version>2.2.3-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-bungee</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-bungee-punishments</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-spigot</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-tools</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.xxyy.xlogin</groupId>
+                <groupId>li.l1t.xlogin</groupId>
                 <artifactId>xlogin-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -177,6 +188,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -1,7 +1,7 @@
 name: xLogin_Spigot
 version: ${project.version}
 description: Login thing. Spigot side of things. Premium detection.
-main: io.github.xxyy.xlogin.spigot.XLoginPlugin
+main: li.l1t.xlogin.spigot.XLoginPlugin
 author: xxyy98 (Philipp Nowak)
 database: false
 website: http://xxyy.github.io/

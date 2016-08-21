@@ -14,8 +14,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>xlogin-parent</artifactId>
-        <groupId>io.github.xxyy.xlogin</groupId>
-        <version>2.3.0-SNAPSHOT</version>
+        <groupId>li.l1t.xlogin</groupId>
+        <version>2.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -28,28 +28,28 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.xxyy.xlogin</groupId>
+            <groupId>li.l1t.xlogin</groupId>
             <artifactId>xlogin-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xxyy.xlogin</groupId>
+            <groupId>li.l1t.xlogin</groupId>
             <artifactId>xlogin-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xxyy.xlogin</groupId>
+            <groupId>li.l1t.xlogin</groupId>
             <artifactId>xlogin-bungee</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xxyy.xlogin</groupId>
+            <groupId>li.l1t.xlogin</groupId>
             <artifactId>xlogin-bungee-punishments</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xxyy.xlogin</groupId>
+            <groupId>li.l1t.xlogin</groupId>
             <artifactId>xlogin-spigot</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.xxyy</groupId>
-            <artifactId>common-java7</artifactId>
+            <groupId>li.l1t.common</groupId>
+            <artifactId>xyc-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -94,7 +94,7 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>io.github.xxyy.xlogin:*</include>
+                            <include>li.l1t.xlogin:*</include>
                             <include>org.projectlombok:lombok</include>
                             <include>com.google.gag:gag</include>
                             <include>org.apache.commons:commons-lang3</include>
@@ -102,22 +102,21 @@
                             <!-- required by XYC and BungeeCord no longer seems to have it -->
                             <include>commons-lang:commons-lang</include>
                             <include>mysql:mysql-connector-java</include>
-                            <include>io.github.xxyy:commo*</include>
                             <include>me.minotopia:bungee-statsd-client</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>com.google.gag</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.lib.com.google.gag</shadedPattern>
+                            <shadedPattern>li.l1t.xlogin.lib.com.google.gag</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>lombok</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.lib.lombok</shadedPattern>
+                            <shadedPattern>li.l1t.xlogin.lib.lombok</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.apache.commons.lang3</pattern>
-                            <shadedPattern>io.github.xxyy.xlogin.lib.org.apache.commons.lang3</shadedPattern>
+                            <shadedPattern>li.l1t.xlogin.lib.org.apache.commons.lang3</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>
