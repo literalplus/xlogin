@@ -282,11 +282,11 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     @Nullable
     @Override
-    public UUID forName(@Nonnull String name) {
-        List<AuthedPlayer> profiles = getProfilesByName(name);
+    public UUID forName(@Nonnull String nameOrId) {
+        List<AuthedPlayer> profiles = getProfiles(nameOrId);
 
         if (profiles.size() == 0) {
-            return getParent().forName(name);
+            return getParent().forName(nameOrId);
         } else {
             return profiles.get(0).getUniqueId();
         }
@@ -294,11 +294,11 @@ public class AuthedPlayerRepository implements XLoginRepository {
 
     @Nonnull
     @Override
-    public UUID forNameChecked(@Nonnull String name) throws UnknownKeyException, InvalidResultException {
-        List<AuthedPlayer> profiles = getProfilesByName(name);
+    public UUID forNameChecked(@Nonnull String nameOrId) throws UnknownKeyException, InvalidResultException {
+        List<AuthedPlayer> profiles = getProfiles(nameOrId);
 
         if (profiles.size() == 0) {
-            return getParent().forNameChecked(name);
+            return getParent().forNameChecked(nameOrId);
         } else if (profiles.size() == 1) {
             return profiles.get(0).getUniqueId();
         } else {
