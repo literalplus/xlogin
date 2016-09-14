@@ -11,6 +11,7 @@
 package li.l1t.xlogin.common.authedplayer;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import li.l1t.common.collections.CaseInsensitiveMap;
 import li.l1t.common.lib.com.mojang.api.profiles.Profile;
@@ -48,7 +49,7 @@ public class AuthedPlayerRepository implements XLoginRepository {
     private Map<UUID, Boolean> knownPlayers = new ConcurrentHashMap<>();
     @Nonnull
     private Map<String, List<AuthedPlayer>> nameProfilesCache =
-            Collections.synchronizedMap(new CaseInsensitiveMap<List<AuthedPlayer>>());
+            Collections.synchronizedMap(new CaseInsensitiveMap<>());
     @Nonnull
     private Map<UUID, AuthedPlayer> idProfileCache = new ConcurrentHashMap<>();
     @Nullable
@@ -108,7 +109,6 @@ public class AuthedPlayerRepository implements XLoginRepository {
         if (result == null) {
             result = AuthedPlayerFactory.getProfilesByName(name, this);
 
-
             if (result.size() == 1) {
                 updateProfile(result.get(0));
             } else {
@@ -127,7 +127,12 @@ public class AuthedPlayerRepository implements XLoginRepository {
         if (result == null) {
             if (UUIDHelper.isValidUUID(input)) {
                 //Since the check method checks for Mojang-style UUIDs too, we need to treat those as valid.
-                result = Collections.singletonList(getProfile(UUIDHelper.getFromString(input)));
+                AuthedPlayer profile = getProfile(UUIDHelper.getFromString(input));
+                if (profile == null) {
+                    result = ImmutableList.of();
+                } else {
+                    result = ImmutableList.of(profile);
+                }
                 nameProfilesCache.put(input, result);
             } else {
                 result = getProfilesByName(input);
