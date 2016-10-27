@@ -1,5 +1,5 @@
 name: xLogin BungeeCord
 version: ${project.version}
 main: li.l1t.xlogin.bungee.XLoginPlugin
-author: xxyy
-depends: [Yamler]
+author: Literallie
+depends: [Yamler, XYC]
