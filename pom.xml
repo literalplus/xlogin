@@ -9,7 +9,8 @@
   ~ Legal steps may be taken in case of a violation of these terms.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>li.l1t.xlogin</groupId>
@@ -55,8 +56,15 @@
         <connection>scm:git:git@bitbucket.org:minotopia/xlogin.git</connection>
         <developerConnection>scm:git:git@bitbucket.org:minotopia/xlogin.git</developerConnection>
         <url>https://bitbucket.org/minotopia/xlogin/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
+
+    <repositories>
+        <repository>
+            <id>xxyy-repo</id>
+            <url>https://repo.l1t.li/all-all/</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
