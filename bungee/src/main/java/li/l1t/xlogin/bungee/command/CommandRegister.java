@@ -55,10 +55,6 @@ public class CommandRegister extends Command {
             return;
         }
 
-        if (plugin.getRepository().isPlayerKnown(plr.getUniqueId())){
-            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().alreadyRegistered));
-            return;
-        }
 
         if (args.length < 2 || args[0].equalsIgnoreCase("help")){
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().commandRegisterUsage));
@@ -87,6 +83,12 @@ public class CommandRegister extends Command {
 
         AuthedPlayer authedPlayer = plugin.getRepository().getProfile(plr.getUniqueId(), plr.getName());
         assert authedPlayer != null;
+
+        if (alreadyRegisteredAndHasPassword(authedPlayer)){
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().alreadyRegistered));
+            return;
+        }
+
         authedPlayer.registerPassword(args[0], plr.getAddress().getAddress().toString());
         plugin.getRegistry().registerAuthentication(authedPlayer);
 
@@ -97,5 +99,10 @@ public class CommandRegister extends Command {
         AuthedPlayerFactory.save(authedPlayer);
         plugin.notifyRegister(plr);
         plugin.notifyAuthentication(plr, authedPlayer);
+    }
+
+    private boolean alreadyRegisteredAndHasPassword(AuthedPlayer authedPlayer) {
+        return plugin.getRepository().isPlayerKnown(authedPlayer.getUniqueId()) &&
+                authedPlayer.getPassword() != null;
     }
 }

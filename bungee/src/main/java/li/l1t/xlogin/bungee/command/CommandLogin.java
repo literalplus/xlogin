@@ -74,6 +74,11 @@ public class CommandLogin extends Command {
 
         authedPlayer.setValid(true, false);
 
+        if(authedPlayer.getPassword() == null) {
+            plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().notRegistered));
+            return;
+        }
+
         if(!authedPlayer
                 .authenticatePassword(args[0], plr.getAddress().getAddress().toString())) {
             plr.sendMessage(plugin.getMessages().parseMessageWithPrefix(plugin.getMessages().wrongPassword));
