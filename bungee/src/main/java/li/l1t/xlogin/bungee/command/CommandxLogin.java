@@ -207,7 +207,7 @@ public class CommandxLogin extends Command {
                                 .append(" Slots zugewiesen: ").color(GOLD)
                                 .append(CommandHelper.CSCollection(freedIps)).color(ChatColor.YELLOW)
                                 .append(". Zugehörige Benutzer: ").color(GOLD)
-                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches)))
+                                .append(authedPlayerList(Arrays.asList(matches)))
                                 .create());
                     } else {
                         IpAddressFactory.free(args[1], amount);
@@ -295,7 +295,7 @@ public class CommandxLogin extends Command {
                     if (matches.length > 1 && !(args.length > 2 && args[2].equals("-R"))) {
                         sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurde mehr als ein Spieler gefunden. " +
                                 "Bitte verwende -R am Ende, um mehrere User zu löschen. Gefundene User: ").color(GOLD)
-                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
+                                .append(authedPlayerList(Arrays.asList(matches))).create());
                         return;
                     }
 
@@ -416,7 +416,7 @@ public class CommandxLogin extends Command {
                     if (matches.length > 1) {
                         sender.sendMessage(new ComponentBuilder("Für dein Suchkriterium wurde mehr als ein Spieler gefunden. " +
                                 "Gefundene User: ").color(GOLD)
-                                .append(CommandHelper.CSCollectionShort(Arrays.asList(matches))).create());
+                                .append(authedPlayerList(Arrays.asList(matches))).create());
                         return;
                     }
 
@@ -441,5 +441,14 @@ public class CommandxLogin extends Command {
         for (BaseComponent[] components : allComponents) {
             sender.sendMessage(components);
         }
+    }
+
+    public static String authedPlayerList(Collection<AuthedPlayer> input) {
+        if (input.isEmpty()) {
+            return "{empty}";
+        }
+        StringBuilder sb = new StringBuilder();
+        input.forEach(ap -> sb.append(" ► ").append(ap.toShortString()).append("\n"));
+        return sb.toString();
     }
 }

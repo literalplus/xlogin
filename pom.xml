@@ -49,7 +49,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- maven-release-plugin -->
         <ignoreSnapshots>true</ignoreSnapshots>
-        <xyc.version>4.0.4.0</xyc.version>
+        <xyc.version>4.4.0.0</xyc.version>
     </properties>
 
     <scm>
