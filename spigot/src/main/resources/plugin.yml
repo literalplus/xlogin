@@ -13,7 +13,7 @@ commands:
     description: Teleports players to the spawn
     aliases: [sporn, spawnpunkt, espawn]
     permission: xlogin.spawn
-    usage: "/<command> - Teleportiert dich zum Spawn."
+    usage: "[xLo] /<command> scheint auf diesen Server deaktiviert zu sein"
   lxlo:
     permission: xlogin.debug
 permissions:
