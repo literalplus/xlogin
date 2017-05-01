@@ -80,7 +80,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
         Bukkit.getMessenger().registerIncomingPluginChannel(this, API_CHANNEL_NAME, apiListener);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "Authtopia", apiListener);
         Bukkit.getPluginManager().registerEvents(new GenericListener(this), this);
-        getCommand("spawn").setExecutor(new CommandSpawn(this));
+        if(isSpawnEnabled()) {
+            getCommand("spawn").setExecutor(new CommandSpawn(this));
+        }
         getCommand("lxlo").setExecutor(new CommandLocalXLo(this));
 
         //Init config
