@@ -74,6 +74,9 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
 
     @Override
     public void onEnable() {
+        //Init config
+        initConfig();
+
         //Register Bukkit stuffs
         BungeeAPIListener apiListener = new BungeeAPIListener(this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, API_CHANNEL_NAME);
@@ -84,9 +87,6 @@ public class XLoginPlugin extends JavaPlugin implements ApiConsumer {
             getCommand("spawn").setExecutor(new CommandSpawn(this));
         }
         getCommand("lxlo").setExecutor(new CommandLocalXLo(this));
-
-        //Init config
-        initConfig();
 
         //Init database connection
         String dbName = getConfig().getString("sql.db");
